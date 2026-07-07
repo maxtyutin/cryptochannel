@@ -1663,6 +1663,18 @@
             track.style.transform = 'translateX(0%)';
         }
 
+        // Кнопка закрытия детального просмотра
+        function closeArticleView() {
+            document.getElementById('full-article-view').style.display = 'none';
+            document.getElementById('main-content-view').style.display = 'block';
+            currentArticleIndex = -1;
+            
+            // Очищаем хэш без перезагрузки
+            if (window.location.hash) {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
+        }
+
         // Обработка системного роутинга (кнопки Назад/Вперед в браузере)
         function handleRouting() {
             const hash = window.location.hash;
