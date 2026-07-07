@@ -305,3 +305,69 @@ Traceback (most recent call last):
     time.sleep(2)
 NameError: name 'time' is not defined
 
+[2026-07-07 18:30:20] Триггер: Наступила минута 30. Запуск публикации новостей.
+[2026-07-07 18:30:20] Запуск скрипта с аргументами: []
+[2026-07-07 18:31:32] ОШИБКА ВЫПОЛНЕНИЯ (код 1):
+[2026-07-07 18:31:32] Расписание crontab успешно обновлено! Добавлены задачи публикации новостей (каждые 3 часа), дайджестов цен и опросов.
+Загрузка ленты CoinDesk...
+Загрузка ленты Cointelegraph...
+Загрузка ленты Decrypt...
+Загрузка ленты Blockworks...
+Загрузка ленты CryptoSlate...
+Загрузка ленты Bitcoin Magazine...
+Предупреждение: стандартный XML-парсер не справился с Bitcoin Magazine (syntax error: line 1, column 0). Используем regex-фолбек.
+Загрузка ленты Bitcoin News...
+Загрузка ленты Crypto Briefing...
+Загрузка ленты BeInCrypto...
+Загрузка ленты NewsBTC...
+Загрузка ленты Glassnode...
+Загрузка ленты CryptoPanic (X / Socials)...
+Предупреждение: стандартный XML-парсер не справился с CryptoPanic (X / Socials) (mismatched tag: line 90, column 2). Используем regex-фолбек.
+Найдено новых новостей: 41. Ищем подходящую новость без дубликатов...
+Проверка кандидата: EDX Markets raises $76 million in funding round led by SBI Holdings...
+Запрос к ИИ: Попытка через модель gemini-3.5-flash...
+Модель gemini-3.5-flash выдала ошибку: The read operation timed out. Переключаемся на резервную модель...
+
+[2026-07-07 18:31:32] crontab: tmp/tmp.7490: Operation not permitted
+Traceback (most recent call last):
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 231, in call_gemini_api
+    try:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 214, in urlopen
+    return opener.open(url, data, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 517, in open
+    response = self._open(req, data)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 534, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 494, in _call_chain
+    result = func(*args)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 1389, in https_open
+    return self.do_open(http.client.HTTPSConnection, req,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 1350, in do_open
+    r = h.getresponse()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1349, in getresponse
+    response.begin()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 316, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 277, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 704, in readinto
+    return self._sock.recv_into(b)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/ssl.py", line 1241, in recv_into
+    return self.read(nbytes, buffer)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/ssl.py", line 1099, in read
+    return self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 676, in <module>
+    if __name__ == "__main__":
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 617, in main
+    print(f"Проверка кандидата: {item['title']}...")
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 407, in check_semantic_duplicate
+    """
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 239, in call_gemini_api
+    last_err = e
+NameError: name 'time' is not defined
+
