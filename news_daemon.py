@@ -34,30 +34,30 @@ def main():
     log_message("==================================================")
     log_message("ИИ-Редактор ForkLog: ФОНОВЫЙ ДЕМОН УСПЕШНО ЗАПУЩЕН")
     log_message("Расписание:")
-    log_message("- Публикация новостей: каждые 3 часа (00:00, 03:00, 06:00, ...)")
+    log_message("- Публикация новостей: каждые 10 минут")
     log_message("- Рыночный дайджест цен: ежедневно в 09:15 и 21:15")
     log_message("- Интерактивный опрос: ежедневно в 14:00")
     log_message("==================================================")
 
-    last_news_hour = -1
+    last_news_minute = -1
     last_digest_key = ""
     last_poll_date = ""
 
     # При старте делаем одну первичную проверку новостей
     log_message("Первичная проверка новостей при старте демона...")
     run_script()
-    last_news_hour = datetime.datetime.now().hour
+    last_news_minute = datetime.datetime.now().minute
 
     while True:
         try:
             now = datetime.datetime.now()
             today_str = now.strftime("%Y-%m-%d")
             
-            # 1. Новости каждые 3 часа
-            if now.hour % 3 == 0 and now.hour != last_news_hour:
-                log_message(f"Триггер: Наступил час {now.hour}. Запуск публикации новостей.")
+            # 1. Новости каждые 10 минут
+            if now.minute % 10 == 0 and now.minute != last_news_minute:
+                log_message(f"Триггер: Наступила минута {now.minute}. Запуск публикации новостей.")
                 run_script()
-                last_news_hour = now.hour
+                last_news_minute = now.minute
                 
             # 2. Дайджест цен в 09:15 и 21:15
             if (now.hour == 9 or now.hour == 21) and now.minute == 15:
