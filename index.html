@@ -1201,7 +1201,14 @@
     </footer>
 
     <script>
-        // Инициализация Lucide иконок
+        // Безопасный полифил для Lucide иконок (на случай блокировки Brave Shields или сбоя сети)
+        if (typeof lucide === 'undefined') {
+            window.lucide = {
+                createIcons: function() {
+                    console.warn('Lucide icons library is not loaded');
+                }
+            };
+        }
         lucide.createIcons();
 
         let allArticles = [];
