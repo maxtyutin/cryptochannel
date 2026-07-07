@@ -1,0 +1,55 @@
+name: Publish Crypto News
+
+on:
+  schedule:
+    # 1. Новости каждые 3 часа
+    - cron: '0 */3 * * *'
+    # 2. Дайджест цен в 06:15 и 18:15 UTC (соответствует 09:15 и 21:15 по МСК)
+    - cron: '15 6,18 * * *'
+    # 3. Интерактивный опрос в 11:00 UTC (соответствует 14:00 по МСК)
+    - cron: '0 11 * * *'
+  workflow_dispatch: # Позволяет запускать вручную
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run News Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ]; then
+            echo "Запуск дайджеста цен..."
+            python news_engine.py --digest
+          elif [ "$HOUR" = "11" ]; then
+            echo "Запуск интерактивного опроса..."
+            python news_engine.py --poll
+          else
+            echo "Запуск публикации обычных новостей..."
+            python news_engine.py
+          fi
+
+      - name: Commit and Push Database updates
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add processed_news.txt published_topics.txt || true
+          if git diff --cached --quiet; then
+            echo "Нет изменений."
+          else
+            git commit -m "Автоматическое обновление базы данных новостей [skip ci]"
+            git push
+          fi
