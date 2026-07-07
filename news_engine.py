@@ -300,33 +300,118 @@ def send_to_telegram(post_text, bot_token, chat_id):
         print(f"Ошибка отправки текста в Telegram: {e}")
         return False
 
-def send_photo_to_telegram(post_text, image_url, bot_token, chat_id):
-    """Отправка поста с изображением по ссылке в Telegram-канал"""
+def download_and_standardize_image(image_url, article_id):
+    """Скачивает изображение, приводит его к стандарту 16:9 (1200x675) и сохраняет локально"""
+    import urllib.request
+    
+    # Импортируем Pillow динамически
+    try:
+        from PIL import Image
+    except ImportError:
+        import subprocess
+        import sys
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        from PIL import Image
+    
+    os.makedirs(os.path.join(BASE_DIR, "images"), exist_ok=True)
+    local_filename = f"article_{article_id}.jpg"
+    temp_path = os.path.join(BASE_DIR, "images", f"temp_{local_filename}")
+    final_path = os.path.join(BASE_DIR, "images", local_filename)
+    relative_path = f"./images/{local_filename}"
+    
+    # 1. Скачиваем оригинальную картинку во временный файл
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        req = urllib.request.Request(image_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as response:
+            with open(temp_path, 'wb') as out_file:
+                out_file.write(response.read())
+    except Exception as e:
+        print(f"Не удалось скачать изображение по ссылке {image_url}: {e}")
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        return None
+        
+    # 2. Обрабатываем изображение с помощью Pillow
+    try:
+        target_width = 1200
+        target_height = 675  # соотношение 16:9
+        
+        with Image.open(temp_path) as img:
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+                
+            img_width, img_height = img.size
+            
+            # Рассчитываем масштаб (ratio), чтобы полностью покрыть 1200x675
+            ratio_w = target_width / img_width
+            ratio_h = target_height / img_height
+            ratio = max(ratio_w, ratio_h) # Берем максимум, чтобы заполнить холст
+            
+            new_width = int(img_width * ratio)
+            new_height = int(img_height * ratio)
+            
+            try:
+                resample_filter = Image.Resampling.LANCZOS
+            except AttributeError:
+                resample_filter = Image.ANTIALIAS
+                
+            # Изменяем размер
+            resized_img = img.resize((new_width, new_height), resample_filter)
+            
+            # Обрезаем излишки по центру
+            left = (new_width - target_width) / 2
+            top = (new_height - target_height) / 2
+            right = left + target_width
+            bottom = top + target_height
+            
+            cropped_img = resized_img.crop((left, top, right, bottom))
+            cropped_img.save(final_path, "JPEG", quality=90)
+            
+        print(f"Изображение успешно стандартизировано и сохранено в {final_path}")
+        return {
+            "local_path": final_path,
+            "relative_url": relative_path
+        }
+    except Exception as e:
+        print(f"Ошибка при обработке изображения PIL: {e}")
+        return None
+    finally:
+        # Удаляем временный файл
+        if os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception:
+                pass
+
+def send_photo_to_telegram(post_text, image_path_or_url, bot_token, chat_id):
+    """Отправка поста с изображением в Telegram-канал (поддерживает локальные файлы и URL)"""
     url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
     
-    # Регулярное выражение для поиска нашей ссылки в конце текста
+    # Импортируем requests динамически
+    try:
+        import requests
+    except ImportError:
+        import subprocess
+        import sys
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+        import requests
+        
     link_pattern = r'(\n\n👉 <a href="https://maxtyutin\.github\.io/cryptochannel/#article-[^"]+">Читать на Crypto Analytics</a>)$'
     match = re.search(link_pattern, post_text)
     
     caption = post_text
-    # Лимит Telegram на подпись к фотографии - 1024 символа
     if len(caption) > 1024:
         if match:
             link_part = match.group(1)
             text_part = post_text[:match.start()]
-            
-            # Рассчитываем размер текста так, чтобы влезла ссылка
             max_text_len = 1024 - len(link_part)
             truncated_text = text_part[:max_text_len]
-            
-            # Находим последнюю законченную фразу (точку, восклицательный или вопросительный знак)
             sentence_end_match = list(re.finditer(r'[.!?]\s', truncated_text))
             if sentence_end_match:
-                # Обрезаем по концу последнего предложения
                 last_end_idx = sentence_end_match[-1].end() - 1
                 caption = truncated_text[:last_end_idx].strip() + link_part
             else:
-                # Если предложений нет, обрезаем по последнему пробелу, чтобы не ломать слово
                 space_match = list(re.finditer(r'\s', truncated_text))
                 if space_match:
                     caption = truncated_text[:space_match[-1].start()].strip() + link_part
@@ -335,26 +420,36 @@ def send_photo_to_telegram(post_text, image_url, bot_token, chat_id):
         else:
             caption = caption[:1024]
             
-    data = {
-        "chat_id": chat_id,
-        "photo": image_url,
-        "caption": caption,
-        "parse_mode": "HTML",
-        "link_preview_options": {"is_disabled": True}
-    }
-    
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(data).encode('utf-8'),
-        headers={'Content-Type': 'application/json'}
-    )
-    
+    # Отправка
     try:
-        with urllib.request.urlopen(req) as response:
-            res = json.loads(response.read().decode('utf-8'))
-            return res.get("ok", False)
+        if os.path.exists(image_path_or_url):
+            # Если это локальный файл, загружаем как multipart/form-data
+            with open(image_path_or_url, 'rb') as f:
+                files = {'photo': f}
+                data = {
+                    "chat_id": chat_id,
+                    "caption": caption,
+                    "parse_mode": "HTML"
+                }
+                r = requests.post(url, data=data, files=files, timeout=30)
+        else:
+            # Если это внешняя ссылка URL
+            data = {
+                "chat_id": chat_id,
+                "photo": image_path_or_url,
+                "caption": caption,
+                "parse_mode": "HTML",
+                "link_preview_options": {"is_disabled": True}
+            }
+            r = requests.post(url, json=data, timeout=30)
+            
+        if r.status_code == 200:
+            return True
+        else:
+            print(f"Ошибка Telegram API ({r.status_code}): {r.text}")
+            return False
     except Exception as e:
-        print(f"Ошибка отправки фото в Telegram: {e}")
+        print(f"Ошибка при отправке изображения в Telegram: {e}")
         return False
 
 TOPICS_FILE = os.path.join(BASE_DIR, "published_topics.txt")
@@ -684,18 +779,35 @@ def main():
             f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item['link']}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
         print(f"Пост сохранен в файл: {OUTPUT_FILE}")
         
+        # Скачиваем и стандартизируем изображение, если оно есть
+        local_img_path = None
+        if selected_item.get('image_url'):
+            print(f"Скачивание и обработка изображения: {selected_item['image_url']}...")
+            img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
+            if img_result:
+                local_img_path = img_result["local_path"]
+                # Обновляем ссылку в объекте новости для сайта, чтобы вела на локальную версию
+                selected_item['image_url'] = img_result["relative_url"]
+                print(f"Ссылка на картинку обновлена на локальную: {selected_item['image_url']}")
+
         if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
             
             # Отправка полноценного фото-поста в Telegram (фото сверху, текст в подписи)
-            if selected_item.get('image_url'):
-                print(f"Попытка отправить пост с изображением: {selected_item['image_url']}...")
+            if local_img_path:
+                print(f"Отправка локально обработанного изображения: {local_img_path}...")
+                success = send_photo_to_telegram(telegram_caption, local_img_path, bot_token, chat_id)
+                if success:
+                    print("Успешно опубликовано со стандартизированным изображением!")
+                else:
+                    print("Не удалось отправить фото-пост с обработанной картинкой. Пробуем исходную...")
+            
+            if not success and selected_item.get('image_url') and not selected_item['image_url'].startswith('./'):
+                print(f"Попытка отправить пост с оригинальным URL: {selected_item['image_url']}...")
                 success = send_photo_to_telegram(telegram_caption, selected_item['image_url'], bot_token, chat_id)
                 if success:
-                    print("Успешно опубликовано с изображением!")
-                else:
-                    print("Не удалось отправить фото-пост. Пробуем отправить только текст...")
+                    print("Успешно опубликовано с изображением по внешней ссылке!")
             
             if not success:
                 if send_to_telegram(telegram_caption, bot_token, chat_id):
