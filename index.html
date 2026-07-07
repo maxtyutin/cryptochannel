@@ -1330,9 +1330,9 @@
             // Скроллим наверх
             window.scrollTo({ top: 0, behavior: 'instant' });
 
-            // Обновляем хэш адреса для истории браузера
-            if (window.location.hash !== `#article-${index}`) {
-                window.location.hash = `article-${index}`;
+            // Обновляем хэш адреса для истории браузера на основе ID статьи
+            if (window.location.hash !== `#article-${article.id}`) {
+                window.location.hash = `article-${article.id}`;
             }
 
             lucide.createIcons();
@@ -1362,8 +1362,9 @@
         function handleRouting() {
             const hash = window.location.hash;
             if (hash.startsWith('#article-')) {
-                const index = parseInt(hash.replace('#article-', ''), 10);
-                if (!isNaN(index) && index >= 0 && index < allArticles.length) {
+                const artId = hash.replace('#article-', '');
+                const index = allArticles.findIndex(a => a.id === artId);
+                if (index !== -1) {
                     showArticle(index);
                     return;
                 }
@@ -1381,46 +1382,7 @@
 
         function formatPostText(text) {
             let cleanText = text.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
-            
-            // Разделяем на абзацы по двойному переносу строки или по меткам заголовков
-            let paragraphs = cleanText.split(/\n\n+/);
-            
-            return paragraphs.map(p => {
-                p = p.trim();
-                if (!p) return '';
-                
-                // Заголовки ###
-                if (p.startsWith('###')) {
-                    let headerText = p.replace(/^###\s*/, '');
-                    return `<h3 class="article-section-header">${headerText}</h3>`;
-                }
-                
-                // Заголовки ##
-                if (p.startsWith('##')) {
-                    let headerText = p.replace(/^##\s*/, '');
-                    return `<h2 class="article-section-header">${headerText}</h2>`;
-                }
-                
-                // Обработка списков
-                if (p.startsWith('- ') || p.startsWith('* ')) {
-                    let items = p.split(/\n[-*]\s+/);
-                    let listHtml = items.map((item, idx) => {
-                        let cleanItem = item.replace(/^[-*]\s+/, '');
-                        // Заменяем **жирный** текст внутри списков
-                        cleanItem = cleanItem.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                        return `<li>${cleanItem}</li>`;
-                    }).join('');
-                    return `<ul class="article-list">${listHtml}</ul>`;
-                }
-                
-                // Замена **жирный** на strong
-                p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                // Замена обычных переносов строк на <br> внутри абзаца
-                p = p.replace(/\n/g, '<br>');
-                
-                return `<p>${p}</p>`;
-            }).join('');
+            return cleanText;
         }
 
         // Приветственное состояние, когда новостей еще нет в базе

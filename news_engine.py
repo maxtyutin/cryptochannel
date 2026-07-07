@@ -634,6 +634,10 @@ def main():
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         
+        # Добавляем ссылку на полный обзор статьи на сайте
+        article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
+        telegram_caption += f"\n\n👉 <a href=\"{article_url}\">Читать на Crypto Analytics</a>"
+        
         print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ (TG) ===")
         print(telegram_caption)
         print("\n=== СГЕНЕРИРОВАННАЯ СТАТЬЯ (САЙТ) ===")
