@@ -298,7 +298,7 @@
 
         /* Карусель последних новостей (по 3 в ряд) */
         .carousel-slide {
-            width: calc((100% - 40px) / 3);
+            width: calc((100% - 48px) / 3);
             flex-shrink: 0;
             box-sizing: border-box;
             cursor: pointer;
@@ -320,7 +320,7 @@
 
         @media (max-width: 1024px) {
             .carousel-slide {
-                width: calc((100% - 20px) / 2);
+                width: calc((100% - 24px) / 2);
             }
         }
 
@@ -1156,7 +1156,7 @@
             </div>
             
             <div class="carousel-viewport" style="overflow: hidden; width: 100%; padding: 4px 0;">
-                <div id="related-news-carousel-track" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
+                <div id="related-news-carousel-track" style="display: flex; gap: 24px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
                     <!-- Слайды будут вставлены динамически -->
                 </div>
             </div>
@@ -1353,9 +1353,7 @@
 
         // Вспомогательный метод для рендеринга тегов категорий
         function getCategoryBadge(category) {
-            let text = 'Новость';
-            let style = 'background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8;';
-            return `<span class="category-badge" style="padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; vertical-align: middle; ${style}">${text}</span>`;
+            return '';
         }
 
         // Получение общего количества страниц по схеме: 1 страница = 31 новость (1 + 30), далее по 30 на страницу
@@ -1621,7 +1619,7 @@
             const firstSlide = track.children[0];
             if (!firstSlide) return;
             const slideWidth = firstSlide.offsetWidth;
-            const gap = 20;
+            const gap = 24;
             
             let visibleCards = 3;
             if (window.innerWidth <= 600) visibleCards = 1;
@@ -1649,7 +1647,7 @@
             const firstSlide = track.children[0];
             if (!firstSlide) return;
             const slideWidth = firstSlide.offsetWidth;
-            const gap = 20;
+            const gap = 24;
             
             currentSlideIndex = index;
             const offset = currentSlideIndex * (slideWidth + gap);
@@ -1692,7 +1690,7 @@
             
             const firstSlide = track.children[0];
             const slideWidth = firstSlide.offsetWidth;
-            const gap = 20;
+            const gap = 24;
             
             let visibleCards = 3;
             if (window.innerWidth <= 600) visibleCards = 1;
