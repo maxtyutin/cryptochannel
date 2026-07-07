@@ -732,6 +732,186 @@
                 display: none; /* Скрываем кап и объемы на мобилках */
             }
         }
+
+        /* Детальный просмотр статьи */
+        .full-article-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 24px 80px 24px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .back-to-list-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-bottom: 24px;
+        }
+
+        .back-to-list-btn:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            transform: translateX(-4px);
+        }
+
+        .article-full-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-top: 16px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .article-meta-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .article-hero-image {
+            width: 100%;
+            height: 440px;
+            border-radius: 20px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .article-full-text {
+            font-size: 1.15rem;
+            line-height: 1.85;
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        .article-full-text p {
+            margin-bottom: 26px;
+            letter-spacing: -0.005em;
+        }
+
+        .article-section-header {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 48px 0 20px 0;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            position: relative;
+        }
+
+        .article-section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .article-list {
+            margin-bottom: 28px;
+            padding-left: 20px;
+        }
+
+        .article-list li {
+            margin-bottom: 12px;
+            list-style-type: square;
+            color: #cbd5e1;
+        }
+
+        .article-navigation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 60px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-prev-btn, .nav-next-btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+            min-width: 260px;
+        }
+
+        .nav-prev-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(-4px);
+        }
+
+        .nav-next-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-prev-btn:disabled, .nav-next-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            transform: none !important;
+            border-color: rgba(255, 255, 255, 0.05);
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Адаптивность для мобилок */
+        @media (max-width: 768px) {
+            .article-full-title {
+                font-size: 1.8rem;
+            }
+            .article-hero-image {
+                height: 240px;
+                margin-bottom: 24px;
+            }
+            .article-full-text {
+                font-size: 1.05rem;
+                line-height: 1.75;
+            }
+            .nav-prev-btn, .nav-next-btn {
+                width: 100%;
+                flex: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1201,7 +1381,46 @@
 
         function formatPostText(text) {
             let cleanText = text.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
-            return cleanText;
+            
+            // Разделяем на абзацы по двойному переносу строки или по меткам заголовков
+            let paragraphs = cleanText.split(/\n\n+/);
+            
+            return paragraphs.map(p => {
+                p = p.trim();
+                if (!p) return '';
+                
+                // Заголовки ###
+                if (p.startsWith('###')) {
+                    let headerText = p.replace(/^###\s*/, '');
+                    return `<h3 class="article-section-header">${headerText}</h3>`;
+                }
+                
+                // Заголовки ##
+                if (p.startsWith('##')) {
+                    let headerText = p.replace(/^##\s*/, '');
+                    return `<h2 class="article-section-header">${headerText}</h2>`;
+                }
+                
+                // Обработка списков
+                if (p.startsWith('- ') || p.startsWith('* ')) {
+                    let items = p.split(/\n[-*]\s+/);
+                    let listHtml = items.map((item, idx) => {
+                        let cleanItem = item.replace(/^[-*]\s+/, '');
+                        // Заменяем **жирный** текст внутри списков
+                        cleanItem = cleanItem.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        return `<li>${cleanItem}</li>`;
+                    }).join('');
+                    return `<ul class="article-list">${listHtml}</ul>`;
+                }
+                
+                // Замена **жирный** на strong
+                p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Замена обычных переносов строк на <br> внутри абзаца
+                p = p.replace(/\n/g, '<br>');
+                
+                return `<p>${p}</p>`;
+            }).join('');
         }
 
         // Приветственное состояние, когда новостей еще нет в базе
