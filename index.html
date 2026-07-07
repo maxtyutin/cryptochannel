@@ -75,8 +75,7 @@
 
         /* Хедер */
         header {
-            position: sticky;
-            top: 0;
+            position: relative;
             z-index: 100;
             background: rgba(8, 12, 20, 0.8);
             backdrop-filter: var(--glass-backdrop);
@@ -295,6 +294,71 @@
         .share-toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
+        }
+
+        /* Карусель последних новостей */
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+            align-items: stretch;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .carousel-slide:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .slide-image-wrapper {
+            width: 45%;
+            min-height: 280px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .slide-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex-grow: 1;
+            padding: 8px 0;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .carousel-slide {
+                flex-direction: column !important;
+                padding: 16px !important;
+                gap: 16px !important;
+            }
+            .slide-image-wrapper {
+                width: 100% !important;
+                height: 180px !important;
+                min-height: 180px !important;
+            }
+            .slide-content-wrapper {
+                padding: 0 !important;
+            }
         }
 
         /* Основной контент */
@@ -1081,19 +1145,19 @@
                 
                 <div id="share-dropdown" class="share-dropdown">
                     <button class="share-item" onclick="shareArticle('copy', event)">
-                        <i data-lucide="copy" style="width: 16px; height: 16px; color: #a5b4fc;"></i> Скопировать ссылку
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Скопировать ссылку
                     </button>
                     <button class="share-item" onclick="shareArticle('telegram', event)">
-                        <i data-lucide="send" style="width: 16px; height: 16px; color: #38bdf8;"></i> В Telegram
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> В Telegram
                     </button>
                     <button class="share-item" onclick="shareArticle('vk', event)">
-                        <i style="width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; color: #0077ff; font-family: sans-serif;">VK</i> Во ВКонтакте
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color: #0077ff; flex-shrink: 0;"><path d="M15.09 2H8.91C3.89 2 2 3.89 2 8.91v6.18C2 20.11 3.89 22 8.91 22h6.18c5.02 0 6.91-1.89 6.91-6.91V8.91C22 3.89 20.11 2 15.09 2zm3.32 12.82c.86.84 1.76 1.63 2.51 2.54.34.4.65.83.84 1.32.22.58.01 1.09-.54 1.13-1.04.09-2.07.05-3.11.04-.84 0-1.55-.36-2.11-.98-.63-.7-1.23-1.43-1.87-2.13-.24-.26-.51-.48-.87-.39-.35.08-.47.38-.49.71-.04.81-.02 1.63-.03 2.45 0 .28-.07.35-.35.35-1.78 0-3.48-.42-5.02-1.37-1.44-.89-2.53-2.15-3.46-3.56A21.5 21.5 0 0 1 2.3 8.35c-.11-.27-.04-.35.26-.35h3.11c.23 0 .34.08.41.3.49 1.48 1.25 2.82 2.27 4 .2.23.4.47.7.53.31.06.46-.08.5-.39.11-.94.1-.11.08-1.88 0-.54-.15-.79-.69-.9-.23-.05-.2-.11-.09-.2.32-.26.89-.35 1.47-.35h1c.32 0 .42.1.45.41.11 1.07.05 2.14.19 3.2.04.28.16.51.48.51.27 0 .41-.18.55-.33.9-.97 1.55-2.11 2.09-3.32.09-.2.19-.28.43-.28h3.29c.33 0 .4.09.31.41a12.83 12.83 0 0 1-1.43 3.03c-.45.66-.4.91.13 1.44z"/></svg> Во ВКонтакте
                     </button>
                     <button class="share-item" onclick="shareArticle('x', event)">
-                        <i data-lucide="twitter" style="width: 16px; height: 16px; color: var(--text-primary);"></i> В X (Twitter)
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color: var(--text-primary); flex-shrink: 0;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> В X (Twitter)
                     </button>
                     <button class="share-item" onclick="shareArticle('facebook', event)">
-                        <i data-lucide="facebook" style="width: 16px; height: 16px; color: #1877f2;"></i> В Facebook
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="color: #1877f2; flex-shrink: 0;"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg> В Facebook
                     </button>
                 </div>
             </div>
@@ -1102,12 +1166,27 @@
         <div id="article-image" class="article-hero-image"></div>
         <div id="article-text" class="article-full-text"></div>
         
-        <!-- Блок Последние криптоновости -->
-        <div class="related-news-section" style="margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--border-glow);">
-            <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 24px; color: var(--text-primary);">Последние криптоновости</h3>
-            <div id="related-news-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-                <!-- Карточки будут добавлены динамически -->
+        <!-- Блок Последние криптоновости (Карусель на весь экран) -->
+        <div class="related-news-section" style="margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--border-glow); position: relative; width: 100%;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+                <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary); margin: 0;">Последние криптоновости</h3>
+                <div class="carousel-nav-buttons" style="display: flex; gap: 8px;">
+                    <button onclick="slideCarousel(-1)" class="carousel-nav-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glow); color: var(--text-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <button onclick="slideCarousel(1)" class="carousel-nav-btn" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glow); color: var(--text-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
             </div>
+            
+            <div class="carousel-viewport" style="overflow: hidden; width: 100%; border-radius: 20px; background: var(--bg-surface); border: 1px solid var(--border-glow); backdrop-filter: var(--glass-backdrop);">
+                <div id="related-news-carousel-track" style="display: flex; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;">
+                    <!-- Слайды будут вставлены динамически -->
+                </div>
+            </div>
+            
+            <div id="carousel-dots" style="display: flex; justify-content: center; gap: 8px; margin-top: 16px;"></div>
         </div>
         
         <!-- Тост-уведомление -->
@@ -1144,7 +1223,6 @@
     <!-- Футер -->
     <footer>
         <p>&copy; 2026 Crypto Analytics. Все права защищены.</p>
-        <p style="margin-top: 8px; font-size: 0.8rem;">Проект автоматического ИИ-вещания на базе Gemini API и GitHub Actions.</p>
     </footer>
 
     <script>
@@ -1454,59 +1532,123 @@
             }
         }
 
-        // Отрисовка блока "Последние криптоновости" (3 свежие новости) под статьей
-        function renderRelatedNews(currentId) {
-            const relatedGrid = document.getElementById('related-news-grid');
-            if (!relatedGrid) return;
+        // Переменные для карусели новостей
+        let currentSlideIndex = 0;
+        let totalSlides = 0;
+
+        window.slideCarousel = function(direction) {
+            const track = document.getElementById('related-news-carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            if (!track || totalSlides === 0) return;
             
-            // Берем первые 3 новости, исключая текущую открытую
+            currentSlideIndex = (currentSlideIndex + direction + totalSlides) % totalSlides;
+            track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+            
+            // Обновляем активную точку-индикатор
+            const dots = dotsContainer.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlideIndex) {
+                    dots[i].classList.add('active');
+                } else {
+                    dots[i].classList.remove('active');
+                }
+            }
+        };
+
+        window.setCarouselSlide = function(index) {
+            const track = document.getElementById('related-news-carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            if (!track || totalSlides === 0) return;
+            
+            currentSlideIndex = index;
+            track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+            
+            // Обновляем активную точку-индикатор
+            const dots = dotsContainer.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlideIndex) {
+                    dots[i].classList.add('active');
+                } else {
+                    dots[i].classList.remove('active');
+                }
+            }
+        };
+
+        // Отрисовка блока "Последние криптоновости" в виде горизонтального слайдера (карусели)
+        function renderRelatedNews(currentId) {
+            const track = document.getElementById('related-news-carousel-track');
+            const dotsContainer = document.getElementById('carousel-dots');
+            if (!track || !dotsContainer) return;
+            
+            // Фильтруем и берем до 5 последних новостей, кроме открытой
             const relatedArticles = allArticles
                 .filter(art => art.id !== currentId)
-                .slice(0, 3);
+                .slice(0, 5);
                 
-            relatedGrid.innerHTML = '';
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            currentSlideIndex = 0;
+            totalSlides = relatedArticles.length;
             
-            if (relatedArticles.length === 0) {
-                relatedGrid.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.95rem;">Нет других новостей.</p>';
+            if (totalSlides === 0) {
+                track.innerHTML = '<div style="padding: 32px; text-align: center; color: var(--text-secondary); width: 100%;">Нет других новостей.</div>';
                 return;
             }
             
-            relatedArticles.forEach(art => {
-                const card = document.createElement('div');
-                card.className = 'news-card';
-                card.style.cursor = 'pointer';
-                card.style.display = 'flex';
-                card.style.flexDirection = 'column';
-                card.style.height = '100%';
+            relatedArticles.forEach((art, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
                 
                 const hasImg = art.image_url;
-                const imgStyle = hasImg 
-                    ? `background-image: url('${art.image_url}'); height: 160px; background-size: cover; background-position: center; border-radius: 12px; margin-bottom: 12px;`
-                    : `display: none;`;
-                    
-                const plainText = stripHTML(art.post_text || '');
-                const excerpt = plainText.length > 90 ? plainText.substring(0, 87) + '...' : plainText;
                 
-                card.innerHTML = `
-                    ${hasImg ? `<div style="${imgStyle}"></div>` : ''}
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
-                        <i data-lucide="calendar" style="width: 10px; height: 10px;"></i> ${art.date}
+                // Очищаем текст от дублирующейся ссылки "Читать на Crypto Analytics", если она вшита в post_text
+                let cleanPostText = (art.post_text || '')
+                    .replace(/<a href="https:\/\/maxtyutin\.github\.io\/cryptochannel\/#article-[^"]+">Читать на Crypto Analytics<\/a>/gi, '')
+                    .replace(/👉\s*$/i, '')
+                    .trim();
+                
+                // Форматируем текст статьи (абзацы, списки)
+                const formattedBody = formatPostText(cleanPostText);
+                
+                slide.innerHTML = `
+                    ${hasImg ? `<div class="slide-image-wrapper" style="background-image: url('${art.image_url}');"></div>` : ''}
+                    <div class="slide-content-wrapper" style="${!hasImg ? 'width: 100%;' : ''}">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            ${art.date}
+                        </div>
+                        <h4 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; line-height: 1.4; color: var(--text-primary);">${art.title}</h4>
+                        <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+                            ${formattedBody}
+                        </div>
+                        <div style="margin-top: auto; display: flex; justify-content: flex-end;">
+                            <span class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                Читать статью 
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </span>
+                        </div>
                     </div>
-                    <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${art.title}</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: auto;">${excerpt}</p>
                 `;
                 
-                card.onclick = () => {
-                    // Переходим на выбранную новость по ее хэшу
+                slide.onclick = () => {
                     window.location.hash = `#article-${art.id}`;
-                    // Плавно скроллим вверх к началу статьи
                     document.getElementById('full-article-view').scrollIntoView({ behavior: 'smooth' });
                 };
                 
-                relatedGrid.appendChild(card);
+                track.appendChild(slide);
+                
+                // Создаем точку-индикатор
+                const dot = document.createElement('div');
+                dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    setCarouselSlide(index);
+                };
+                dotsContainer.appendChild(dot);
             });
             
-            lucide.createIcons();
+            // Сбрасываем положение карусели на начальный слайд
+            track.style.transform = 'translateX(0%)';
         }
 
         // Обработка системного роутинга (кнопки Назад/Вперед в браузере)
