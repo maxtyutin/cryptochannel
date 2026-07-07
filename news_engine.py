@@ -193,47 +193,80 @@ def fetch_rss_news():
             
     return news_items
 
+GEMINI_MODELS = [
+    "gemini-3.5-flash",
+    "gemini-3.0-flash",
+    "gemini-3-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite"
+]
+
+def call_gemini_api(prompt, gemini_key, is_json=False):
+    """Выполняет запрос к Gemini API с автоматическим переключением моделей при ошибках лимитов (429, 503)"""
+    last_err = None
+    for model in GEMINI_MODELS:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
+        
+        data = {
+            "contents": [{
+                "parts": [{
+                    "text": prompt
+                }]
+            }]
+        }
+        if is_json:
+            data["generationConfig"] = {
+                "responseMimeType": "application/json"
+            }
+            
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(data).encode('utf-8'),
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        print(f"Запрос к ИИ: Попытка через модель {model}...")
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                text_out = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                print(f"Успешный ответ получен от модели: {model}")
+                return text_out
+        except Exception as e:
+            print(f"Модель {model} выдала ошибку: {e}. Переключаемся на резервную модель...")
+            last_err = e
+            time.sleep(2)
+            
+    print(f"Все доступные ИИ-модели вернули ошибку. Последняя ошибка: {last_err}")
+    return None
+
 def generate_forklog_post(news_item, gemini_key):
-    """Генерация Telegram-поста в стиле ForkLog с помощью Gemini API"""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
-    
+    """Генерация Telegram-поста и полной статьи для сайта с помощью Gemini API"""
     prompt = f"""Ты — профессиональный крипто-журналист и редактор ForkLog. 
-Напиши подробную, развернутую и информативную новостную статью на русском языке для публикации в Telegram-канале на основе следующего текста:
+На основе следующей новости напиши две версии статьи на русском языке:
 Источник: {news_item['source']}
 Заголовок: {news_item['title']}
 Описание: {news_item['description']}
 
-Правила оформления поста:
-1. Заголовок поста должен быть коротким, капсом (в одну строку), передавать главную суть новости и содержать релевантный эмодзи в начале. Например: "📰 BLACKROCK СКУПАЕТ ETHEREUM" или "⚖️ SEC ОШТРАФОВАЛА BINANCE".
-2. Тело поста должно быть детальным и информативным, полностью раскрывать суть события, описывать предысторию, контекст, важные детали, мнения участников или цитаты (если есть в описании). Пиши в авторитетном, объективном журналистском стиле.
-3. В конце добавь раздел "Что это значит для рынка? 🤔" с развернутым выводом в 2-3 предложения (будет ли рост, падение или это локальный шум).
-4. КАТЕГОРИЧЕСКИ НЕ ИСПОЛЬЗУЙ хэштеги. В посте не должно быть никаких хэштегов (символов # с текстом).
-5. Не используй markdown-разметку, кроме жирного текста (для этого используй теги <b> и </b>) и ссылок (теги <a href="..."> и </a>), так как пост отправляется через HTML-парсинг Telegram API.
-6. Выводи ТОЛЬКО готовый текст поста, без каких-либо вводных слов вроде "Вот ваш пост" или кавычек.
-7. Общая длина всего сгенерированного ответа (заголовок + тело + вывод) должна быть СТРОГО в пределах от 650 до 950 символов (включая пробелы). Это критическое требование, чтобы весь текст гарантированно поместился в подпись под изображением в Telegram без обрезки!
+Верни результат СТРОГО в формате JSON с двумя следующими ключами:
+{{
+  "telegram_caption": "Версия для Telegram-канала (подпись к фото). Длина должна быть строго от 650 до 950 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b> и <a>.",
+  "full_article": "Полная, развернутая и максимально детальная статья для веб-сайта без каких-либо сокращений (около 1500-2500 символов). Подробно опиши предысторию события, контекст, технические детали, мнения участников рынка, развернутый вывод и последствия для индустрии. Разрешены HTML-теги <b>, <a>, <i>."
+}}
 """
-
-    data = {
-        "contents": [{
-            "parts": [{
-                "text": prompt
-            }]
-        }]
-    }
-    
-    req = urllib.request.Request(
-        url, 
-        data=json.dumps(data).encode('utf-8'),
-        headers={'Content-Type': 'application/json'}
-    )
-    
+    response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+    if not response_json:
+        return None
+        
     try:
-        with urllib.request.urlopen(req) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            post_text = result['candidates'][0]['content']['parts'][0]['text']
-            return post_text.strip()
+        parsed = json.loads(response_json)
+        return {
+            "telegram_caption": parsed.get("telegram_caption", "").strip(),
+            "full_article": parsed.get("full_article", "").strip()
+        }
     except Exception as e:
-        print(f"Ошибка вызова Gemini API: {e}")
+        print(f"Ошибка парсинга сгенерированного JSON: {e}")
         return None
 
 def send_to_telegram(post_text, bot_token, chat_id):
@@ -356,8 +389,6 @@ def check_semantic_duplicate(news_title, news_desc, gemini_key):
     if not recent_topics:
         return False
         
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
-    
     topics_list = "\n".join([f"- {t}" for t in recent_topics])
     
     prompt = f"""Ниже приведен список недавно опубликованных в Telegram-канале тем:
@@ -373,28 +404,11 @@ YES — если это дубликат / то же самое событие.
 NO — если это новая новость о другом событии.
 Выведи ТОЛЬКО это слово (YES или NO), без каких-либо дополнительных объяснений или кавычек.
 """
-    data = {
-        "contents": [{
-            "parts": [{
-                "text": prompt
-            }]
-        }]
-    }
-    
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(data).encode('utf-8'),
-        headers={'Content-Type': 'application/json'}
-    )
-    
-    try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            answer = result['candidates'][0]['content']['parts'][0]['text'].strip().upper()
-            return "YES" in answer
-    except Exception as e:
-        print(f"Ошибка проверки семантического дубликата: {e}")
+    answer = call_gemini_api(prompt, gemini_key)
+    if not answer:
         return False
+        
+    return "YES" in answer.upper()
 
 def generate_price_digest():
     """Получение курсов с CoinGecko и генерация дайджеста цен"""
@@ -628,15 +642,20 @@ def main():
         return
         
     print(f"Выбрана новость: {selected_item['title']}. Генерация поста...")
-    post = generate_forklog_post(selected_item, gemini_key)
+    post_data = generate_forklog_post(selected_item, gemini_key)
     
-    if post:
-        print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ ===")
-        print(post)
+    if post_data:
+        telegram_caption = post_data["telegram_caption"]
+        full_article = post_data["full_article"]
+        
+        print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ (TG) ===")
+        print(telegram_caption)
+        print("\n=== СГЕНЕРИРОВАННАЯ СТАТЬЯ (САЙТ) ===")
+        print(full_article)
         print("============================\n")
         
         with open(OUTPUT_FILE, 'w') as f:
-            f.write(f"# Свежая новость от ИИ-редактора\n\n{post}\n\n*Оригинальный источник: {selected_item['link']}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
+            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item['link']}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
         print(f"Пост сохранен в файл: {OUTPUT_FILE}")
         
         if bot_token and chat_id:
@@ -646,14 +665,14 @@ def main():
             # Отправка полноценного фото-поста в Telegram (фото сверху, текст в подписи)
             if selected_item.get('image_url'):
                 print(f"Попытка отправить пост с изображением: {selected_item['image_url']}...")
-                success = send_photo_to_telegram(post, selected_item['image_url'], bot_token, chat_id)
+                success = send_photo_to_telegram(telegram_caption, selected_item['image_url'], bot_token, chat_id)
                 if success:
                     print("Успешно опубликовано с изображением!")
                 else:
                     print("Не удалось отправить фото-пост. Пробуем отправить только текст...")
             
             if not success:
-                if send_to_telegram(post, bot_token, chat_id):
+                if send_to_telegram(telegram_caption, bot_token, chat_id):
                     print("Успешно опубликовано (только текст)!")
                     success = True
                 else:
@@ -662,11 +681,11 @@ def main():
             if success:
                 save_processed_id(selected_item['id'])
                 save_recent_topic(selected_item['title'])
-                save_article_to_json(selected_item, post)
+                save_article_to_json(selected_item, full_article)
         else:
             print("Параметры Telegram не настроены в .env. Пост не отправлен.")
             save_processed_id(selected_item['id'])
-            save_article_to_json(selected_item, post)
+            save_article_to_json(selected_item, full_article)
 
 if __name__ == "__main__":
     main()
