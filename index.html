@@ -303,10 +303,6 @@
             font-size: 1rem;
             line-height: 1.6;
             margin-bottom: 24px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .read-more-btn {
@@ -434,11 +430,6 @@
             line-height: 1.4;
             margin-bottom: 12px;
             color: var(--text-primary);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            height: 2.8rem;
         }
 
         .news-card-excerpt {
@@ -446,10 +437,6 @@
             font-size: 0.9rem;
             line-height: 1.5;
             margin-bottom: 20px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
             flex-grow: 1;
         }
 
@@ -754,63 +741,71 @@
                 <i data-lucide="activity"></i> Crypto Analytics
             </a>
             <div class="nav-links">
-                <a href="https://t.me/CryptoAnalitikaChannel" target="_blank" class="nav-btn">
+                <a href="https://t.me/+pEwys2wjoGdlZGNi" target="_blank" class="nav-btn">
                     <i data-lucide="send"></i> Telegram-канал
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Основной контент -->
-    <main>
-        <!-- Секция Hero: Самый свежий пост -->
-        <section class="hero-section" id="hero-section">
-            <div class="hero-card skeleton" style="height: 420px;"></div>
-        </section>
+    <!-- Основной контент (Список статей) -->
+    <div id="main-content-view">
+        <main>
+            <!-- Секция Hero: Самый свежий пост -->
+            <section class="hero-section" id="hero-section">
+                <div class="hero-card skeleton" style="height: 420px;"></div>
+            </section>
 
-        <!-- Поиск и заголовки -->
-        <div class="controls-row" id="controls-row">
-            <h2 class="section-title">
-                <i data-lucide="clock"></i> Последние новости
-            </h2>
-            <div class="search-box">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-input" placeholder="Поиск новостей и аналитики...">
+            <!-- Поиск и заголовки -->
+            <div class="controls-row" id="controls-row">
+                <h2 class="section-title">
+                    <i data-lucide="clock"></i> Последние новости
+                </h2>
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="search-input" placeholder="Поиск новостей и аналитики...">
+                </div>
             </div>
+
+            <!-- Сетка новостей -->
+            <section class="news-grid" id="news-grid">
+                <!-- Скелетоны для начальной загрузки -->
+                <div class="news-card skeleton" style="height: 450px;"></div>
+                <div class="news-card skeleton" style="height: 450px;"></div>
+                <div class="news-card skeleton" style="height: 450px;"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Детальный полностраничный просмотр статьи (вместо модалки) -->
+    <div id="full-article-view" class="full-article-container" style="display: none;">
+        <button class="back-to-list-btn" onclick="closeArticleView()">
+            <i data-lucide="arrow-left"></i> Назад к списку новостей
+        </button>
+        
+        <div class="tag-row" style="margin-bottom: 20px;">
+            <span id="article-date" class="date" style="font-size: 0.9rem;"><i data-lucide="calendar"></i></span>
         </div>
-
-        <!-- Сетка новостей -->
-        <section class="news-grid" id="news-grid">
-            <!-- Скелетоны для начальной загрузки -->
-            <div class="news-card skeleton" style="height: 450px;"></div>
-            <div class="news-card skeleton" style="height: 450px;"></div>
-            <div class="news-card skeleton" style="height: 450px;"></div>
-        </section>
-    </main>
-
-    <!-- Модальное окно просмотра новости -->
-    <div class="modal" id="news-modal">
-        <div class="modal-content">
-            <div class="modal-close" onclick="closeModal()">
-                <i data-lucide="x"></i>
-            </div>
-            <div id="modal-image" class="modal-image"></div>
-            <div class="modal-body">
-                <div class="tag-row">
-                    <span id="modal-source" class="tag"></span>
-                    <span id="modal-date" class="date"><i data-lucide="calendar"></i></span>
-                </div>
-                <h1 id="modal-title" class="modal-title"></h1>
-                <div id="modal-text" class="modal-text"></div>
-                <div class="modal-footer">
-                    <a href="" id="modal-original-link" target="_blank" class="read-more-btn">
-                        Читать первоисточник <i data-lucide="external-link"></i>
-                    </a>
-                    <a href="https://t.me/share/url?url=" id="modal-share-btn" target="_blank" class="nav-btn" style="padding: 8px 16px;">
-                        <i data-lucide="share-2"></i> Поделиться
-                    </a>
-                </div>
-            </div>
+        
+        <h1 id="article-title" class="article-full-title"></h1>
+        
+        <div class="article-meta-info">
+            <a href="" id="article-share-btn" target="_blank" class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                <i data-lucide="share-2" style="width: 14px; height: 14px;"></i> Поделиться
+            </a>
+        </div>
+        
+        <div id="article-image" class="article-hero-image"></div>
+        <div id="article-text" class="article-full-text"></div>
+        
+        <!-- Навигация: Предыдущая / Следующая статья -->
+        <div class="article-navigation-row">
+            <button class="nav-prev-btn" id="btn-prev-article" onclick="navigateArticle(1)">
+                <i data-lucide="chevron-left"></i> Предыдущая новость
+            </button>
+            <button class="nav-next-btn" id="btn-next-article" onclick="navigateArticle(-1)">
+                Следующая новость <i data-lucide="chevron-right"></i>
+            </button>
         </div>
     </div>
 
@@ -975,11 +970,13 @@
         // Загрузка статей из articles.json
         async function loadArticles() {
             try {
-                const response = await fetch('./articles.json');
+                // Добавляем кэш-бастер, чтобы браузер не кэшировал пустую базу
+                const response = await fetch('./articles.json?v=' + Date.now());
                 if (!response.ok) throw new Error('Не удалось загрузить базу новостей');
                 
                 allArticles = await response.json();
                 renderSite(allArticles);
+                handleRouting();
             } catch (error) {
                 console.error(error);
                 showErrorState();
@@ -1019,7 +1016,6 @@
                     </div>
                     <div class="hero-content">
                         <div class="tag-row">
-                            <span class="tag">${latest.source}</span>
                             <span class="date"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> ${latest.date}</span>
                         </div>
                         <h1 class="hero-title">${latest.title}</h1>
@@ -1052,7 +1048,6 @@
                         }
                         <div class="news-card-body">
                             <div class="tag-row" style="margin-bottom: 8px;">
-                                <span class="tag" style="padding: 2px 8px; font-size: 0.65rem;">${item.source}</span>
                                 <span class="date" style="font-size: 0.75rem;"><i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${item.date}</span>
                             </div>
                             <h3 class="news-card-title">${item.title}</h3>
@@ -1083,46 +1078,107 @@
             renderSite(filtered, true);
         });
 
-        // Открытие статьи в модальном окне
+        let currentArticleIndex = -1;
+
+        // Открытие статьи на отдельной полноэкранной панели (SPA-роутинг)
         function openArticle(id) {
-            const article = allArticles.find(a => a.id === id);
+            const index = allArticles.findIndex(a => a.id === id);
+            if (index !== -1) {
+                showArticle(index);
+            }
+        }
+
+        function showArticle(index) {
+            currentArticleIndex = index;
+            const article = allArticles[index];
             if (!article) return;
 
-            const modal = document.getElementById('news-modal');
-            const modalImg = document.getElementById('modal-image');
-            
+            // Заполняем поля статьи
+            document.getElementById('article-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
+            document.getElementById('article-title').textContent = article.title;
+            document.getElementById('article-text').innerHTML = formatPostText(article.post_text);
+            document.getElementById('article-share-btn').href = `https://t.me/share/url?url=${encodeURIComponent(article.link)}&text=${encodeURIComponent(article.title)}`;
+
+            // Картинка статьи
+            const imgContainer = document.getElementById('article-image');
             if (article.image_url) {
-                modalImg.style.display = 'block';
-                modalImg.style.backgroundImage = `url('${article.image_url}')`;
+                imgContainer.style.display = 'block';
+                imgContainer.style.backgroundImage = `url('${article.image_url}')`;
             } else {
-                modalImg.style.display = 'none';
+                imgContainer.style.display = 'none';
             }
 
-            document.getElementById('modal-source').textContent = article.source;
-            document.getElementById('modal-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
-            document.getElementById('modal-title').innerHTML = article.title;
-            
-            document.getElementById('modal-text').innerHTML = formatPostText(article.post_text);
-            
-            document.getElementById('modal-original-link').href = article.link;
-            document.getElementById('modal-share-btn').href = `https://t.me/share/url?url=${encodeURIComponent(article.link)}&text=${encodeURIComponent(article.title)}`;
+            // Навигация по статьям:
+            // index 0 - самая новая, index (length-1) - самая старая
+            // Предыдущая новость (более старая) находится по индексу index + 1
+            const btnPrev = document.getElementById('btn-prev-article');
+            if (index < allArticles.length - 1) {
+                btnPrev.disabled = false;
+                btnPrev.style.visibility = 'visible';
+            } else {
+                btnPrev.disabled = true;
+                btnPrev.style.visibility = 'hidden';
+            }
 
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Следующая новость (более новая) находится по индексу index - 1
+            const btnNext = document.getElementById('btn-next-article');
+            if (index > 0) {
+                btnNext.disabled = false;
+                btnNext.style.visibility = 'visible';
+            } else {
+                btnNext.disabled = true;
+                btnNext.style.visibility = 'hidden';
+            }
+
+            // Переключаем видимость экранов
+            document.getElementById('main-content-view').style.display = 'none';
+            document.getElementById('full-article-view').style.display = 'block';
+
+            // Скроллим наверх
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // Обновляем хэш адреса для истории браузера
+            if (window.location.hash !== `#article-${index}`) {
+                window.location.hash = `article-${index}`;
+            }
+
             lucide.createIcons();
         }
 
-        function closeModal() {
-            const modal = document.getElementById('news-modal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
+        // Кнопка закрытия детального просмотра
+        function closeArticleView() {
+            document.getElementById('full-article-view').style.display = 'none';
+            document.getElementById('main-content-view').style.display = 'block';
+            currentArticleIndex = -1;
+            
+            // Очищаем хэш без перезагрузки
+            if (window.location.hash) {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
         }
 
-        document.getElementById('news-modal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('news-modal')) {
-                closeModal();
+        // Переключение по кнопкам "Предыдущая" / "Следующая" новость
+        function navigateArticle(diff) {
+            const targetIndex = currentArticleIndex + diff;
+            if (targetIndex >= 0 && targetIndex < allArticles.length) {
+                showArticle(targetIndex);
             }
-        });
+        }
+
+        // Обработка системного роутинга (кнопки Назад/Вперед в браузере)
+        function handleRouting() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#article-')) {
+                const index = parseInt(hash.replace('#article-', ''), 10);
+                if (!isNaN(index) && index >= 0 && index < allArticles.length) {
+                    showArticle(index);
+                    return;
+                }
+            }
+            closeArticleView();
+        }
+
+        window.addEventListener('hashchange', handleRouting);
 
         function stripHTML(html) {
             let text = html.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');

@@ -476,50 +476,35 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
 }}
 Выведи ТОЛЬКО готовый JSON без каких-либо кавычек ```json или дополнительного текста.
 """
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
-    data = {
-        "contents": [{
-            "parts": [{
-                "text": prompt
-            }]
-        }]
-    }
-    
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(data).encode('utf-8'),
-        headers={'Content-Type': 'application/json'}
-    )
-    
     try:
-        with urllib.request.urlopen(req) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            json_text = result['candidates'][0]['content']['parts'][0]['text'].strip()
+        json_text = call_gemini_api(prompt, gemini_key, is_json=True)
+        if not json_text:
+            return False
             
-            # Очищаем от возможных ```json оберток
-            json_text = re.sub(r'^```json\s*', '', json_text)
-            json_text = re.sub(r'\s*```$', '', json_text)
-            
-            poll_data = json.loads(json_text)
-            
-            # Отправка опроса в Telegram
-            poll_url = f"https://api.telegram.org/bot{bot_token}/sendPoll"
-            tg_data = {
-                "chat_id": chat_id,
-                "question": poll_data["question"],
-                "options": json.dumps(poll_data["options"]),
-                "is_anonymous": False
-            }
-            
-            poll_req = urllib.request.Request(
-                poll_url,
-                data=json.dumps(tg_data).encode('utf-8'),
-                headers={'Content-Type': 'application/json'}
-            )
-            
-            with urllib.request.urlopen(poll_req) as r:
-                res = json.loads(r.read().decode('utf-8'))
-                return res.get("ok", False)
+        # Очищаем от возможных ```json оберток
+        json_text = re.sub(r'^```json\s*', '', json_text)
+        json_text = re.sub(r'\s*```$', '', json_text)
+        
+        poll_data = json.loads(json_text)
+        
+        # Отправка опроса в Telegram
+        poll_url = f"https://api.telegram.org/bot{bot_token}/sendPoll"
+        tg_data = {
+            "chat_id": chat_id,
+            "question": poll_data["question"],
+            "options": json.dumps(poll_data["options"]),
+            "is_anonymous": False
+        }
+        
+        poll_req = urllib.request.Request(
+            poll_url,
+            data=json.dumps(tg_data).encode('utf-8'),
+            headers={'Content-Type': 'application/json'}
+        )
+        
+        with urllib.request.urlopen(poll_req) as r:
+            res = json.loads(r.read().decode('utf-8'))
+            return res.get("ok", False)
     except Exception as e:
         print(f"Ошибка генерации или отправки опроса: {e}")
         return False

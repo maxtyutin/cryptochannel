@@ -251,3 +251,57 @@ NameError: name 'time' is not defined
 Выбрана новость: EDX Markets raises $76 million in funding round led by SBI Holdings. Генерация поста...
 Ошибка вызова Gemini API или парсинга JSON: HTTP Error 429: Too Many Requests
 
+[2026-07-07 18:20:21] Триггер: Наступила минута 20. Запуск публикации новостей.
+[2026-07-07 18:20:21] Запуск скрипта с аргументами: []
+[2026-07-07 18:20:50] ОШИБКА ВЫПОЛНЕНИЯ (код 1):
+[2026-07-07 18:20:50] Расписание crontab успешно обновлено! Добавлены задачи публикации новостей (каждые 3 часа), дайджестов цен и опросов.
+Загрузка ленты CoinDesk...
+Загрузка ленты Cointelegraph...
+Загрузка ленты Decrypt...
+Загрузка ленты Blockworks...
+Загрузка ленты CryptoSlate...
+Загрузка ленты Bitcoin Magazine...
+Предупреждение: стандартный XML-парсер не справился с Bitcoin Magazine (syntax error: line 1, column 0). Используем regex-фолбек.
+Загрузка ленты Bitcoin News...
+Загрузка ленты Crypto Briefing...
+Загрузка ленты BeInCrypto...
+Загрузка ленты NewsBTC...
+Загрузка ленты Glassnode...
+Загрузка ленты CryptoPanic (X / Socials)...
+Предупреждение: стандартный XML-парсер не справился с CryptoPanic (X / Socials) (mismatched tag: line 90, column 2). Используем regex-фолбек.
+Найдено новых новостей: 41. Ищем подходящую новость без дубликатов...
+Проверка кандидата: EDX Markets raises $76 million in funding round led by SBI Holdings...
+Запрос к ИИ: Попытка через модель gemini-3.5-flash...
+Модель gemini-3.5-flash выдала ошибку: HTTP Error 503: Service Unavailable. Переключаемся на резервную модель...
+
+[2026-07-07 18:20:50] crontab: tmp/tmp.7380: Operation not permitted
+Traceback (most recent call last):
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 231, in call_gemini_api
+    with urllib.request.urlopen(req, timeout=30) as response:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 214, in urlopen
+    return opener.open(url, data, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 523, in open
+    response = meth(req, response)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 632, in http_response
+    response = self.parent.error(
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 561, in error
+    return self._call_chain(*args)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 494, in _call_chain
+    result = func(*args)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 641, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 503: Service Unavailable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 691, in <module>
+    main()
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 632, in main
+    if check_semantic_duplicate(item['title'], item['description'], gemini_key):
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 407, in check_semantic_duplicate
+    answer = call_gemini_api(prompt, gemini_key)
+  File "/Users/maxtyutin/antigravity/TG каналы/news_engine.py", line 239, in call_gemini_api
+    time.sleep(2)
+NameError: name 'time' is not defined
+
