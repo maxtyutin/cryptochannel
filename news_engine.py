@@ -43,11 +43,27 @@ def load_env():
     return env
 
 def get_processed_ids():
-    """Получить список уже опубликованных новостей"""
+    """Получить список уже опубликованных новостей (из файла + из articles.json для надёжности)"""
+    ids = set()
+    # 1. Читаем файл processed_news.txt
     if os.path.exists(PROCESSED_FILE):
         with open(PROCESSED_FILE, 'r') as f:
-            return set(line.strip() for line in f)
-    return set()
+            for line in f:
+                stripped = line.strip()
+                if stripped:
+                    ids.add(stripped)
+    # 2. Дополнительно читаем articles.json — защита от потери processed_news.txt при ручной загрузке
+    json_path = os.path.join(BASE_DIR, "articles.json")
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                articles = json.load(f)
+            for a in articles:
+                if a.get('id'):
+                    ids.add(a['id'])
+        except Exception:
+            pass
+    return ids
 
 def save_processed_id(news_id):
     """Сохранить ID опубликованной новости"""
@@ -648,7 +664,8 @@ def save_article_to_json(news_item, post_text, russian_title=None, category="new
         "post_text": post_text,
         "category": category,
         "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
-        "timestamp": int(time.time())
+        # Используем предзаданный _timestamp (если был установлен для синхронизации с TG-ссылкой)
+        "timestamp": news_item.get('_timestamp', int(time.time()))
     }
     
     # Избегаем дублирования по ID
@@ -1243,7 +1260,11 @@ def main():
         russian_title = post_data["russian_title"]
         
         article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
-        telegram_caption += f"\n\n👉 <a href=\"{article_url}\">Читать на Crypto Analytics</a>"
+        # Генерируем timestamp заранее, чтобы использовать его и в URL и в save_article_to_json
+        article_timestamp = int(time.time())
+        selected_item['_timestamp'] = article_timestamp
+        article_clean_url = f"https://maxtyutin.github.io/cryptochannel/#article-{article_timestamp}"
+        telegram_caption += f"\n\n👉 <a href=\"{article_clean_url}\">Читать на Crypto Analytics</a>"
         
         print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ (TG) ===")
         print(telegram_caption)

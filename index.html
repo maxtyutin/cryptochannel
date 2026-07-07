@@ -1112,6 +1112,11 @@
                 <i data-lucide="clock" style="width: 14px; height: 14px; color: var(--primary);"></i>
                 <span id="reading-time-val"></span>
             </div>
+
+            <a id="article-source-link" href="#" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-glow); text-decoration: none; transition: all 0.2s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                <span id="article-source-text">Источник</span>
+            </a>
             
             <div class="share-dropdown-container">
                 <button id="article-share-btn" class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid var(--border-glow); background: rgba(99,102,241,0.06); color: var(--text-primary); transition: all 0.3s ease;">
@@ -1397,7 +1402,7 @@
                 let cleanPostText = stripHTML(latest.post_text);
                 
                 heroSection.innerHTML = `
-                    <div class="hero-card" onclick="openArticle('${latest.id}')">
+                    <div class="hero-card" onclick="openArticle(${latest.timestamp})">
                         <div class="hero-image" ${imgStyle}>
                             ${!latest.image_url ? '<div class="no-image-placeholder"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>' : ''}
                         </div>
@@ -1430,7 +1435,7 @@
             articlesToShow.forEach(item => {
                 const cardImg = item.image_url ? `style="background-image: url('${item.image_url}')"` : '';
                 const cardHtml = `
-                    <div class="news-card" onclick="openArticle('${item.id}')">
+                    <div class="news-card" onclick="openArticle(${item.timestamp})">
                         ${item.image_url 
                             ? `<div class="news-card-image" ${cardImg}></div>`
                             : `<div class="no-image-placeholder"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>`
@@ -1566,8 +1571,8 @@
         let currentArticleIndex = -1;
 
         // Открытие статьи на отдельной полноэкранной панели (SPA-роутинг)
-        function openArticle(id) {
-            const index = allArticles.findIndex(a => a.id === id);
+        function openArticle(timestamp) {
+            const index = allArticles.findIndex(a => a.timestamp == timestamp);
             if (index !== -1) {
                 showArticle(index);
             }
@@ -1587,6 +1592,27 @@
             const wordsCount = (article.post_text || '').trim().split(/\s+/).length;
             const readTime = Math.max(1, Math.ceil(wordsCount / 180));
             document.getElementById('reading-time-val').textContent = `${readTime} мин. чтения`;
+
+            // Ссылка на источник: берём id статьи (это URL), показываем домен/slug
+            const sourceLink = document.getElementById('article-source-link');
+            const sourceText = document.getElementById('article-source-text');
+            if (sourceLink && article.id && article.id.startsWith('http')) {
+                try {
+                    const url = new URL(article.id);
+                    // Убираем UTM-параметры и прочие query-параметры
+                    const cleanPath = url.pathname.replace(/\/$/, '');
+                    // Формат: домен + первые 2 сегмента пути
+                    const pathParts = cleanPath.split('/').filter(Boolean);
+                    const shortPath = pathParts.slice(0, 2).join('/');
+                    sourceText.textContent = url.hostname.replace('www.','') + (shortPath ? '/' + shortPath : '');
+                    sourceLink.href = article.id;
+                    sourceLink.style.display = 'inline-flex';
+                } catch(e) {
+                    sourceLink.style.display = 'none';
+                }
+            } else if (sourceLink) {
+                sourceLink.style.display = 'none';
+            }
 
             // Картинка статьи
             const imgContainer = document.getElementById('article-image');
@@ -1608,8 +1634,8 @@
             window.scrollTo({ top: 0, behavior: 'instant' });
 
             // Обновляем хэш адреса для истории браузера на основе ID статьи
-            if (window.location.hash !== `#article-${article.id}`) {
-                window.location.hash = `article-${article.id}`;
+            if (window.location.hash !== `#article-${article.timestamp}`) {
+                window.location.hash = `article-${article.timestamp}`;
             }
 
             lucide.createIcons();
@@ -1779,7 +1805,7 @@
                 `;
                 
                 slide.onclick = () => {
-                    window.location.hash = `#article-${art.id}`;
+                    window.location.hash = `#article-${art.timestamp}`;
                     document.getElementById('full-article-view').scrollIntoView({ behavior: 'smooth' });
                 };
                 
@@ -1806,8 +1832,8 @@
         function handleRouting() {
             const hash = window.location.hash;
             if (hash.startsWith('#article-')) {
-                const artId = hash.replace('#article-', '');
-                const index = allArticles.findIndex(a => a.id === artId);
+                const ts = hash.replace('#article-', '');
+                const index = allArticles.findIndex(a => String(a.timestamp) === String(ts));
                 if (index !== -1) {
                     showArticle(index);
                     return;
@@ -1945,7 +1971,7 @@
             if (!article) return;
             
             // Формируем прямую ссылку на конкретную статью по её хэшу ID
-            const articleUrl = `${window.location.origin}${window.location.pathname}#article-${article.id}`;
+            const articleUrl = `${window.location.origin}${window.location.pathname}#article-${article.timestamp}`;
             const articleTitle = article.title;
             
             const dropdown = document.getElementById('share-dropdown');
