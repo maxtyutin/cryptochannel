@@ -251,13 +251,15 @@ def generate_forklog_post(news_item, gemini_key):
 Описание: {news_item['description']}
 
 ПРАВИЛО: КАТЕГОРИЧЕСКИ запрещено использовать или упоминать название ForkLog. Пиши только от лица Crypto Analytics.
+ПРАВИЛО ИСТОЧНИКОВ: В качестве авторитетных источников данных, ончейн-метрик или финансирования старайся ссылаться на такие платформы как The Block и Allium (например, 'по данным отчетов Allium...', 'согласно информации The Block...').
+ПРАВИЛО ЦИТАТ: Если в новости есть прямой контекст, цитаты политиков, Белого дома или лидеров крипторынка, СТРОГО оформляй их через цитирование с помощью HTML-тегов <blockquote>Текст цитаты</blockquote>.
 ПРАВИЛО ДЛИНЫ: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
 
 Верни результат СТРОГО в формате JSON с тремя следующими ключами:
 {{
   "russian_title": "Привлекательный заголовок для веб-сайта на русском языке в стиле Crypto Analytics (без кликбейта, отражающий суть)",
-  "telegram_caption": "Краткий пересказ новости для Telegram-канала (подпись к фото). Длина должна быть не более 800 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b> и <a>.",
-  "full_article": "Полная, развернутая и максимально детальная статья для веб-сайта без каких-либо сокращений (около 1500-2500 символов). Подробно опиши предысторию события, контекст, технические детали, мнения участников рынка, развернутый вывод и последствия для индустрии. Разрешены HTML-теги <b>, <a>, <i>."
+  "telegram_caption": "Краткий пересказ новости для Telegram-канала (подпись к фото/видео). Длина должна быть не более 800 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b>, <a>, и <blockquote> (для цитат/важного контекста).",
+  "full_article": "Полная, развернутая и максимально детальная статья для веб-сайта без каких-либо сокращений (около 1500-2500 символов). Подробно опиши предысторию события, контекст, технические детали, мнения участников рынка, развернутый вывод и последствия для индустрии. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
 }}
 """
     response_json = call_gemini_api(prompt, gemini_key, is_json=True)
@@ -298,6 +300,220 @@ def send_to_telegram(post_text, bot_token, chat_id):
             return res.get("ok", False)
     except Exception as e:
         print(f"Ошибка отправки текста в Telegram: {e}")
+        return False
+
+def extract_tweet_details(title, description, gemini_key):
+    """Вытаскивает детали твита через Gemini API для последующей отрисовки"""
+    prompt = f"""Ниже приведена новость о публикации (твите) в соцсети X (Twitter).
+Новость:
+Заголовок: {title}
+Описание: {description}
+
+Выдели из этой новости данные для отрисовки оригинального твита.
+Верни результат СТРОГО в формате JSON с четырьмя ключами:
+{{
+  "author_name": "Имя автора (например: Vitalik Buterin, Elon Musk, CZ)",
+  "author_handle": "Юзернейм автора (например: @VitalikButerin, @elonmusk, @cz_binance)",
+  "tweet_text": "Текст твита на английском (или русском, если в новости цитируется русскоязычный твит), максимально близкий к оригиналу",
+  "is_verified": true или false (правда ли, что автор верифицирован/является крупной фигурой)
+}}
+"""
+    response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+    if not response_json:
+        return None
+    try:
+        return json.loads(response_json)
+    except Exception as e:
+        print(f"Ошибка парсинга JSON деталей твита: {e}")
+        return None
+
+def draw_tweet_card(details, output_path):
+    """Рисует премиальную карточку твита в стиле X Dark Mode с помощью Pillow"""
+    # Импортируем Pillow динамически
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        import subprocess
+        import sys
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        from PIL import Image, ImageDraw, ImageFont
+        
+    try:
+        # Размеры карточки
+        width, height = 800, 420
+        # X Dim Blue Theme: #15202b
+        bg_color = (21, 32, 43)
+        text_color = (255, 255, 255)
+        gray_color = (136, 153, 166)
+        accent_color = (29, 155, 240) # Twitter Blue
+        
+        img = Image.new("RGB", (width, height), bg_color)
+        draw = ImageDraw.Draw(img)
+        
+        # Пытаемся загрузить стандартные шрифты
+        font_bold = None
+        font_reg = None
+        for font_name in ["DejaVuSans-Bold.ttf", "LiberationSans-Bold.ttf", "Arial-Bold.ttf"]:
+            try:
+                font_bold = ImageFont.truetype(font_name, 22)
+                break
+            except Exception:
+                continue
+        for font_name in ["DejaVuSans.ttf", "LiberationSans.ttf", "Arial.ttf"]:
+            try:
+                font_reg = ImageFont.truetype(font_name, 18)
+                break
+            except Exception:
+                continue
+                
+        if not font_bold:
+            font_bold = ImageFont.load_default()
+        if not font_reg:
+            font_reg = ImageFont.load_default()
+            
+        # 1. Рисуем аватарку (круг с первой буквой имени)
+        avatar_color = (99, 102, 241)
+        draw.ellipse([30, 30, 90, 90], fill=avatar_color)
+        first_letter = details.get("author_name", "X")[0].upper()
+        draw.text((50, 42), first_letter, fill=(255, 255, 255), font=font_bold)
+        
+        # 2. Имя автора
+        author_name = details.get("author_name", "Crypto Player")
+        draw.text((110, 35), author_name, fill=text_color, font=font_bold)
+        
+        # Рассчитаем ширину имени для рисования галочки
+        name_width = len(author_name) * 12
+        if hasattr(draw, 'textlength'):
+            try:
+                name_width = draw.textlength(author_name, font=font_bold)
+            except Exception:
+                pass
+        
+        # Рисуем галочку верификации
+        if details.get("is_verified", True):
+            badge_x = int(110 + name_width + 8)
+            draw.ellipse([badge_x, 38, badge_x + 18, 56], fill=accent_color)
+            draw.line([badge_x + 5, 47, badge_x + 8, 51], fill=(255, 255, 255), width=2)
+            draw.line([badge_x + 8, 51, badge_x + 13, 44], fill=(255, 255, 255), width=2)
+            
+        # 3. Юзернейм
+        author_handle = details.get("author_handle", "@cryptoplayer")
+        draw.text((110, 65), author_handle, fill=gray_color, font=font_reg)
+        
+        # 4. Текст твита (с переносом строк)
+        tweet_text = details.get("tweet_text", "")
+        
+        # Перенос слов
+        words = tweet_text.split()
+        lines = []
+        current_line = []
+        for word in words:
+            current_line.append(word)
+            test_line = " ".join(current_line)
+            test_width = len(test_line) * 10
+            if hasattr(draw, 'textlength'):
+                try:
+                    test_width = draw.textlength(test_line, font=font_reg)
+                except Exception:
+                    pass
+            if test_width > 700:
+                current_line.pop()
+                lines.append(" ".join(current_line))
+                current_line = [word]
+        if current_line:
+            lines.append(" ".join(current_line))
+            
+        # Ограничиваем количество строк
+        lines = lines[:8]
+        
+        y_offset = 120
+        for line in lines:
+            draw.text((30, y_offset), line, fill=text_color, font=font_reg)
+            y_offset += 28
+            
+        # 5. Рисуем футер (разделитель и иконки активности)
+        draw.line([30, 360, 770, 360], fill=(56, 68, 77), width=1)
+        
+        # Иконки активности
+        footer_text = "💬 1.2K     🔁 4.5K     ❤️ 18K     📊 120K"
+        draw.text((30, 375), footer_text, fill=gray_color, font=font_reg)
+        
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        img.save(output_path, "JPEG")
+        print(f"Карточка твита успешно отрисована в {output_path}")
+        return True
+    except Exception as e:
+        print(f"Ошибка при генерации карточки твита: {e}")
+        return False
+
+def create_video_from_image(image_path, output_mp4_path):
+    """Конвертирует статическую картинку в 5-секундное MP4 видео с фейдами с помощью FFMPEG"""
+    import subprocess
+    cmd = [
+        "ffmpeg", "-loop", "1", "-i", image_path,
+        "-vf", "scale=1280:720,fade=t=in:st=0:d=0.5,fade=t=out:st=4.5:d=0.5",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-t", "5", "-y", output_mp4_path
+    ]
+    try:
+        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        print(f"Видео успешно сгенерировано через FFMPEG и сохранено в {output_mp4_path}")
+        return True
+    except Exception as e:
+        print(f"Ошибка при создании видео через FFMPEG: {e}")
+        return False
+
+def send_video_to_telegram(post_text, video_path, bot_token, chat_id):
+    """Отправка поста с видео в Telegram-канал"""
+    url = f"https://api.telegram.org/bot{bot_token}/sendVideo"
+    
+    # Импортируем requests динамически
+    try:
+        import requests
+    except ImportError:
+        import subprocess
+        import sys
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+        import requests
+        
+    link_pattern = r'(\n\n👉 <a href="https://maxtyutin\.github\.io/cryptochannel/#article-[^"]+">Читать на Crypto Analytics</a>)$'
+    match = re.search(link_pattern, post_text)
+    
+    caption = post_text
+    if len(caption) > 1024:
+        if match:
+            link_part = match.group(1)
+            text_part = post_text[:match.start()]
+            max_text_len = 1024 - len(link_part)
+            truncated_text = text_part[:max_text_len]
+            sentence_end_match = list(re.finditer(r'[.!?]\s', truncated_text))
+            if sentence_end_match:
+                last_end_idx = sentence_end_match[-1].end() - 1
+                caption = truncated_text[:last_end_idx].strip() + link_part
+            else:
+                space_match = list(re.finditer(r'\s', truncated_text))
+                if space_match:
+                    caption = truncated_text[:space_match[-1].start()].strip() + link_part
+                else:
+                    caption = truncated_text.strip() + link_part
+        else:
+            caption = caption[:1024]
+            
+    try:
+        with open(video_path, 'rb') as f:
+            files = {'video': f}
+            data = {
+                "chat_id": chat_id,
+                "caption": caption,
+                "parse_mode": "HTML"
+            }
+            r = requests.post(url, data=data, files=files, timeout=45)
+            if r.status_code == 200:
+                return True
+            else:
+                print(f"Ошибка Telegram Video API ({r.status_code}): {r.text}")
+                return False
+    except Exception as e:
+        print(f"Ошибка при отправке видео в Telegram: {e}")
         return False
 
 def download_and_standardize_image(image_url, article_id):
@@ -555,7 +771,7 @@ def generate_price_digest():
             'the-open-network': ('💎 TON', 'TON')
         }
         
-        lines = ["📊 <b>РЫНОЧНЫЙ ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Курсы основных криптоактивов и их изменение за 24 часа:\n"]
+        lines = ["📊 <b>КРИПТОВАЛЮТЫ: ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Курсы основных криптоактивов и их изменение за 24 часа:\n"]
         
         for coin_id, (name, symbol) in coins.items():
             if coin_id in data:
@@ -579,6 +795,71 @@ def generate_price_digest():
     except Exception as e:
         print(f"Ошибка генерации дайджеста цен: {e}")
         return None
+
+def get_stock_price(ticker):
+    """Получение цен акций и изменения за 24ч с Yahoo Finance"""
+    import urllib.request
+    import json
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode())
+            meta = data['chart']['result'][0]['meta']
+            price = meta['regularMarketPrice']
+            prev_close = meta['chartPreviousClose']
+            change = ((price - prev_close) / prev_close) * 100
+            return price, change
+    except Exception as e:
+        print(f"Ошибка получения акций {ticker}: {e}")
+        return None, None
+
+def generate_stock_digest():
+    """Генерация дайджеста цен акций ведущих криптокомпаний"""
+    tickers = {
+        'MSTR': 'MicroStrategy',
+        'COIN': 'Coinbase',
+        'MARA': 'MARA Holdings',
+        'RIOT': 'Riot Platforms'
+    }
+    lines = ["📈 <b>АКЦИИ КРИПТОКОМПАНИЙ: ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Стоимость акций ведущих компаний индустрии и их изменение за 24 часа:\n"]
+    
+    success_count = 0
+    for ticker, name in tickers.items():
+        price, change = get_stock_price(ticker)
+        if price is not None:
+            success_count += 1
+            emoji = "🟢" if change >= 0 else "🔴"
+            sign = "+" if change >= 0 else ""
+            lines.append(f"🔸 {name} ({ticker}): <b>${price:.2f}</b> ({emoji} {sign}{change:.2f}%)")
+            
+    if success_count == 0:
+        return None
+        
+    lines.append("\n#акции #фондовыйрынок #mstr #coin #mara #riot #рынок")
+    return "\n".join(lines)
+
+def generate_market_review(gemini_key, crypto_digest, stock_digest):
+    """Генерация краткого аналитического обзора рынка через Gemini API"""
+    prompt = f"""Ты — профессиональный финансовый аналитик и редактор Crypto Analytics.
+На основе следующих данных о котировках за 24 часа составь краткий аналитический обзор состояния крипторынка (не более 600 символов).
+Опиши текущий тренд, взаимосвязь криптовалют и фондового рынка, и настроения инвесторов.
+
+Курсы криптовалют:
+{crypto_digest}
+
+Акции криптокомпаний:
+{stock_digest}
+
+ПРАВИЛА:
+- Пиши только на русском языке.
+- Ограничение по длине: строго не более 600 символов.
+- Используй HTML-теги <b> для выделения ключевых выводов или цифр.
+- Никаких хэштегов внутри текста. В конце добавь хэштеги: #обзор #аналитика #рынок.
+- Никаких упоминаний ForkLog.
+"""
+    review = call_gemini_api(prompt, gemini_key, is_json=False)
+    return review.strip() if review else None
 
 def generate_and_send_poll(gemini_key, bot_token, chat_id):
     """Генерация опроса через Gemini на основе последних новостей и отправка его"""
@@ -708,19 +989,41 @@ def main():
     args = sys.argv[1:]
     
     if "--digest" in args:
-        print("Запуск генерации дайджеста цен...")
-        digest_text = generate_price_digest()
-        if digest_text:
-            print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ ===")
-            print(digest_text)
-            print("============================\n")
+        print("Запуск генерации дайджеста цен и акций...")
+        crypto_text = generate_price_digest()
+        stock_text = generate_stock_digest()
+        
+        # 1. Публикуем дайджест криптовалют
+        if crypto_text:
+            print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ КРИПТЫ ===")
+            print(crypto_text)
             if bot_token and chat_id:
-                if send_to_telegram(digest_text, bot_token, chat_id):
-                    print("Дайджест цен успешно опубликован в Telegram!")
+                if send_to_telegram(crypto_text, bot_token, chat_id):
+                    print("Дайджест цен криптовалют успешно опубликован в Telegram!")
                 else:
-                    print("Не удалось отправить дайджест в Telegram.")
-            else:
-                print("Параметры Telegram не настроены. Дайджест не отправлен.")
+                    print("Не удалось отправить дайджест криптовалют в Telegram.")
+                    
+        # 2. Публикуем дайджест акций
+        if stock_text:
+            print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ АКЦИЙ ===")
+            print(stock_text)
+            if bot_token and chat_id:
+                if send_to_telegram(stock_text, bot_token, chat_id):
+                    print("Дайджест акций криптокомпаний успешно опубликован в Telegram!")
+                else:
+                    print("Не удалось отправить дайджест акций в Telegram.")
+                    
+        # 3. Публикуем аналитический обзор рынка
+        if crypto_text and stock_text:
+            print("\n=== СГЕНЕРИРОВАННЫЙ ОБЗОР РЫНКА ===")
+            review_text = generate_market_review(gemini_key, crypto_text, stock_text)
+            if review_text:
+                print(review_text)
+                if bot_token and chat_id:
+                    if send_to_telegram(review_text, bot_token, chat_id):
+                        print("Аналитический обзор рынка успешно опубликован в Telegram!")
+                    else:
+                        print("Не удалось отправить обзор рынка в Telegram.")
         return
         
     elif "--poll" in args:
@@ -779,10 +1082,29 @@ def main():
             f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item['link']}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
         print(f"Пост сохранен в файл: {OUTPUT_FILE}")
         
-        # Скачиваем и стандартизируем изображение, если оно есть
+        # 1. Проверяем, является ли новость твитом из соцсети X (Twitter)
+        is_tweet = False
+        title_lower = selected_item['title'].lower()
+        desc_lower = selected_item.get('description', '').lower()
+        if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
+            is_tweet = True
+            
         local_img_path = None
-        if selected_item.get('image_url'):
-            print(f"Скачивание и обработка изображения: {selected_item['image_url']}...")
+        
+        if is_tweet:
+            print("Обнаружена новость о твите. Попытка генерации скриншота поста из X...")
+            tweet_details = extract_tweet_details(selected_item['title'], selected_item.get('description', ''), gemini_key)
+            if tweet_details:
+                tweet_filename = f"images/tweet_{selected_item['id']}.jpg"
+                tweet_abs_path = os.path.join(BASE_DIR, tweet_filename)
+                if draw_tweet_card(tweet_details, tweet_abs_path):
+                    local_img_path = tweet_abs_path
+                    selected_item['image_url'] = f"./{tweet_filename}"
+                    print(f"Скриншот твита успешно сгенерирован и прикреплен: {selected_item['image_url']}")
+
+        # 2. Если это не твит или скриншот не сгенерирован, скачиваем и стандартизируем стандартную картинку
+        if not local_img_path and selected_item.get('image_url'):
+            print(f"Скачивание и обработка стандартного изображения: {selected_item['image_url']}...")
             img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
             if img_result:
                 local_img_path = img_result["local_path"]
@@ -790,12 +1112,33 @@ def main():
                 selected_item['image_url'] = img_result["relative_url"]
                 print(f"Ссылка на картинку обновлена на локальную: {selected_item['image_url']}")
 
+        # 3. Проверяем, нужно ли сгенерировать видео для публикации (каждый день с 12:00 до 16:00 UTC)
+        publish_as_video = False
+        import datetime
+        current_hour = datetime.datetime.utcnow().hour
+        if 12 <= current_hour <= 16:
+            publish_as_video = True
+            
+        local_video_path = None
+        if publish_as_video and local_img_path:
+            video_filename = f"images/video_{selected_item['id']}.mp4"
+            video_abs_path = os.path.join(BASE_DIR, video_filename)
+            if create_video_from_image(local_img_path, video_abs_path):
+                local_video_path = video_abs_path
+
         if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
             
-            # Отправка полноценного фото-поста в Telegram (фото сверху, текст в подписи)
-            if local_img_path:
+            # Сначала пробуем отправить видео-пост, если он был сгенерирован
+            if local_video_path:
+                print(f"Отправка сгенерированного видео-ролика: {local_video_path}...")
+                success = send_video_to_telegram(telegram_caption, local_video_path, bot_token, chat_id)
+                if success:
+                    print("Успешно опубликовано в виде видео-поста!")
+            
+            # Если видео нет или произошла ошибка отправки видео, отправляем фото-пост
+            if not success and local_img_path:
                 print(f"Отправка локально обработанного изображения: {local_img_path}...")
                 success = send_photo_to_telegram(telegram_caption, local_img_path, bot_token, chat_id)
                 if success:
