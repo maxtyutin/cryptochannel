@@ -211,6 +211,92 @@
             box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
         }
 
+        /* Выпадающее меню Поделиться */
+        .share-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .share-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 100;
+            min-width: 220px;
+            overflow: hidden;
+            backdrop-filter: var(--glass-backdrop);
+            animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .share-dropdown.show {
+            display: block;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .share-item {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .share-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #a5b4fc;
+        }
+
+        /* Уведомление об успешном копировании */
+        .share-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: var(--glass-backdrop);
+        }
+
+        .share-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         /* Основной контент */
         main {
             max-width: 1200px;
@@ -982,23 +1068,52 @@
         
         <h1 id="article-title" class="article-full-title"></h1>
         
-        <div class="article-meta-info">
-            <a href="" id="article-share-btn" target="_blank" class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
-                <i data-lucide="share-2" style="width: 14px; height: 14px;"></i> Поделиться
-            </a>
+        <div class="article-meta-info" style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+            <div id="article-reading-time" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-glow); backdrop-filter: var(--glass-backdrop);">
+                <i data-lucide="clock" style="width: 14px; height: 14px; color: var(--primary);"></i>
+                <span id="reading-time-val"></span>
+            </div>
+            
+            <div class="share-dropdown-container">
+                <button id="article-share-btn" class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid var(--border-glow); background: rgba(99,102,241,0.06); color: var(--text-primary); transition: all 0.3s ease;">
+                    <i data-lucide="share-2" style="width: 14px; height: 14px;"></i> Поделиться
+                </button>
+                
+                <div id="share-dropdown" class="share-dropdown">
+                    <button class="share-item" onclick="shareArticle('copy', event)">
+                        <i data-lucide="copy" style="width: 16px; height: 16px; color: #a5b4fc;"></i> Скопировать ссылку
+                    </button>
+                    <button class="share-item" onclick="shareArticle('telegram', event)">
+                        <i data-lucide="send" style="width: 16px; height: 16px; color: #38bdf8;"></i> В Telegram
+                    </button>
+                    <button class="share-item" onclick="shareArticle('vk', event)">
+                        <i style="width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; color: #0077ff; font-family: sans-serif;">VK</i> Во ВКонтакте
+                    </button>
+                    <button class="share-item" onclick="shareArticle('x', event)">
+                        <i data-lucide="twitter" style="width: 16px; height: 16px; color: var(--text-primary);"></i> В X (Twitter)
+                    </button>
+                    <button class="share-item" onclick="shareArticle('facebook', event)">
+                        <i data-lucide="facebook" style="width: 16px; height: 16px; color: #1877f2;"></i> В Facebook
+                    </button>
+                </div>
+            </div>
         </div>
         
         <div id="article-image" class="article-hero-image"></div>
         <div id="article-text" class="article-full-text"></div>
         
-        <!-- Навигация: Предыдущая / Следующая статья -->
-        <div class="article-navigation-row">
-            <button class="nav-prev-btn" id="btn-prev-article" onclick="navigateArticle(1)">
-                <i data-lucide="chevron-left"></i> Предыдущая новость
-            </button>
-            <button class="nav-next-btn" id="btn-next-article" onclick="navigateArticle(-1)">
-                Следующая новость <i data-lucide="chevron-right"></i>
-            </button>
+        <!-- Блок Последние криптоновости -->
+        <div class="related-news-section" style="margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--border-glow);">
+            <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 24px; color: var(--text-primary);">Последние криптоновости</h3>
+            <div id="related-news-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                <!-- Карточки будут добавлены динамически -->
+            </div>
+        </div>
+        
+        <!-- Тост-уведомление -->
+        <div id="share-toast" class="share-toast">
+            <i data-lucide="check" style="color: #4ade80; width: 18px; height: 18px;"></i>
+            <span id="share-toast-text">Ссылка скопирована!</span>
         </div>
     </div>
 
@@ -1294,7 +1409,11 @@
             document.getElementById('article-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
             document.getElementById('article-title').textContent = article.title;
             document.getElementById('article-text').innerHTML = formatPostText(article.post_text);
-            document.getElementById('article-share-btn').href = `https://t.me/share/url?url=${encodeURIComponent(article.link)}&text=${encodeURIComponent(article.title)}`;
+            
+            // Рассчитываем динамическое время чтения (средняя скорость — 180 слов в минуту)
+            const wordsCount = (article.post_text || '').trim().split(/\s+/).length;
+            const readTime = Math.max(1, Math.ceil(wordsCount / 180));
+            document.getElementById('reading-time-val').textContent = `${readTime} мин. чтения`;
 
             // Картинка статьи
             const imgContainer = document.getElementById('article-image');
@@ -1305,27 +1424,8 @@
                 imgContainer.style.display = 'none';
             }
 
-            // Навигация по статьям:
-            // index 0 - самая новая, index (length-1) - самая старая
-            // Предыдущая новость (более старая) находится по индексу index + 1
-            const btnPrev = document.getElementById('btn-prev-article');
-            if (index < allArticles.length - 1) {
-                btnPrev.disabled = false;
-                btnPrev.style.visibility = 'visible';
-            } else {
-                btnPrev.disabled = true;
-                btnPrev.style.visibility = 'hidden';
-            }
-
-            // Следующая новость (более новая) находится по индексу index - 1
-            const btnNext = document.getElementById('btn-next-article');
-            if (index > 0) {
-                btnNext.disabled = false;
-                btnNext.style.visibility = 'visible';
-            } else {
-                btnNext.disabled = true;
-                btnNext.style.visibility = 'hidden';
-            }
+            // Отрисовка блока "Последние криптоновости"
+            renderRelatedNews(article.id);
 
             // Переключаем видимость экранов
             document.getElementById('main-content-view').style.display = 'none';
@@ -1354,12 +1454,59 @@
             }
         }
 
-        // Переключение по кнопкам "Предыдущая" / "Следующая" новость
-        function navigateArticle(diff) {
-            const targetIndex = currentArticleIndex + diff;
-            if (targetIndex >= 0 && targetIndex < allArticles.length) {
-                showArticle(targetIndex);
+        // Отрисовка блока "Последние криптоновости" (3 свежие новости) под статьей
+        function renderRelatedNews(currentId) {
+            const relatedGrid = document.getElementById('related-news-grid');
+            if (!relatedGrid) return;
+            
+            // Берем первые 3 новости, исключая текущую открытую
+            const relatedArticles = allArticles
+                .filter(art => art.id !== currentId)
+                .slice(0, 3);
+                
+            relatedGrid.innerHTML = '';
+            
+            if (relatedArticles.length === 0) {
+                relatedGrid.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.95rem;">Нет других новостей.</p>';
+                return;
             }
+            
+            relatedArticles.forEach(art => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.style.cursor = 'pointer';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                card.style.height = '100%';
+                
+                const hasImg = art.image_url;
+                const imgStyle = hasImg 
+                    ? `background-image: url('${art.image_url}'); height: 160px; background-size: cover; background-position: center; border-radius: 12px; margin-bottom: 12px;`
+                    : `display: none;`;
+                    
+                const plainText = stripHTML(art.post_text || '');
+                const excerpt = plainText.length > 90 ? plainText.substring(0, 87) + '...' : plainText;
+                
+                card.innerHTML = `
+                    ${hasImg ? `<div style="${imgStyle}"></div>` : ''}
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="calendar" style="width: 10px; height: 10px;"></i> ${art.date}
+                    </div>
+                    <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 8px; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${art.title}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: auto;">${excerpt}</p>
+                `;
+                
+                card.onclick = () => {
+                    // Переходим на выбранную новость по ее хэшу
+                    window.location.hash = `#article-${art.id}`;
+                    // Плавно скроллим вверх к началу статьи
+                    document.getElementById('full-article-view').scrollIntoView({ behavior: 'smooth' });
+                };
+                
+                relatedGrid.appendChild(card);
+            });
+            
+            lucide.createIcons();
         }
 
         // Обработка системного роутинга (кнопки Назад/Вперед в браузере)
@@ -1385,8 +1532,60 @@
         }
 
         function formatPostText(text) {
-            let cleanText = text.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
-            return cleanText;
+            if (!text) return '';
+            
+            // 1. Очищаем скрытые ссылки Telegram (заглушки)
+            let formatted = text.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
+            
+            // 2. Преобразуем заголовки Markdown (#, ##, ###)
+            formatted = formatted.replace(/^### +(.*?)$/gim, '<h3 class="article-subtitle" style="font-size: 1.3rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px; color: var(--text-primary);">$1</h3>');
+            formatted = formatted.replace(/^## +(.*?)$/gim, '<h2 class="article-section-title" style="font-size: 1.5rem; font-weight: 800; margin-top: 28px; margin-bottom: 16px; color: var(--text-primary);">$1</h2>');
+            formatted = formatted.replace(/^# +(.*?)$/gim, '<h1 class="article-main-title" style="font-size: 1.8rem; font-weight: 800; margin-top: 32px; margin-bottom: 20px; color: var(--text-primary);">$1</h1>');
+            
+            // 3. Преобразуем жирный текст **текст** в <b>текст</b>
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            
+            // 4. Преобразуем списки: строки, начинающиеся с "* " или "- ", оборачиваем в <li>
+            let lines = formatted.split('\n');
+            let inList = false;
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (line.startsWith('* ') || line.startsWith('- ')) {
+                    let content = line.substring(2).trim();
+                    if (!inList) {
+                        lines[i] = '<ul style="margin-left: 20px; margin-bottom: 16px; list-style-type: disc;">\n<li style="margin-bottom: 8px; line-height: 1.6; color: var(--text-secondary);">' + content + '</li>';
+                        inList = true;
+                    } else {
+                        lines[i] = '<li style="margin-bottom: 8px; line-height: 1.6; color: var(--text-secondary);">' + content + '</li>';
+                    }
+                } else {
+                    if (inList) {
+                        lines[i] = '</ul>\n' + lines[i];
+                        inList = false;
+                    }
+                }
+            }
+            if (inList) {
+                lines.push('</ul>');
+            }
+            formatted = lines.join('\n');
+            
+            // 5. Разделяем текст на абзацы по двойному переносу строки (\n\n)
+            let paragraphs = formatted.split(/\n\s*\n/);
+            for (let i = 0; i < paragraphs.length; i++) {
+                let p = paragraphs[i].trim();
+                if (!p) continue;
+                
+                // Если абзац уже начинается с блочного тега (h1-h3, ul, li), оставляем как есть
+                if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<li') || p.startsWith('</ul')) {
+                    paragraphs[i] = p;
+                } else {
+                    // Иначе оборачиваем в абзац с отступами и красивой высотой строки для чтения
+                    paragraphs[i] = `<p style="margin-bottom: 16px; line-height: 1.7; color: var(--text-secondary); font-size: 1.05rem;">${p.replace(/\n/g, '<br>')}</p>`;
+                }
+            }
+            
+            return paragraphs.join('\n');
         }
 
         // Приветственное состояние, когда новостей еще нет в базе
@@ -1446,10 +1645,74 @@
             lucide.createIcons();
         }
 
+        // Функции шаринга статьи в соцсети
+        function shareArticle(platform, event) {
+            if (event) event.stopPropagation();
+            const article = allArticles[currentArticleIndex];
+            if (!article) return;
+            
+            // Формируем прямую ссылку на конкретную статью по её хэшу ID
+            const articleUrl = `${window.location.origin}${window.location.pathname}#article-${article.id}`;
+            const articleTitle = article.title;
+            
+            const dropdown = document.getElementById('share-dropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            
+            if (platform === 'copy') {
+                navigator.clipboard.writeText(articleUrl).then(() => {
+                    showToast('Ссылка скопирована в буфер!');
+                }).catch(err => {
+                    console.error('Ошибка копирования:', err);
+                });
+            } else if (platform === 'telegram') {
+                const url = `https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(articleTitle)}`;
+                window.open(url, '_blank');
+            } else if (platform === 'vk') {
+                const url = `https://vk.com/share.php?url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(articleTitle)}`;
+                window.open(url, '_blank');
+            } else if (platform === 'x') {
+                const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(articleTitle)}`;
+                window.open(url, '_blank');
+            } else if (platform === 'facebook') {
+                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`;
+                window.open(url, '_blank');
+            }
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('share-toast');
+            const toastText = document.getElementById('share-toast-text');
+            if (toast && toastText) {
+                toastText.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
         // Инициализация при загрузке
         window.addEventListener('DOMContentLoaded', () => {
             fetchPrices();
             loadArticles();
+            
+            // Обработчик клика по кнопке Поделиться
+            const shareBtn = document.getElementById('article-share-btn');
+            const shareDropdown = document.getElementById('share-dropdown');
+            if (shareBtn && shareDropdown) {
+                shareBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    shareDropdown.classList.toggle('show');
+                });
+            }
+            
+            // Закрытие выпадающего списка по клику вовне
+            document.addEventListener('click', () => {
+                if (shareDropdown) {
+                    shareDropdown.classList.remove('show');
+                }
+            });
+            
             // Обновляем котировки раз в 2 минуты
             setInterval(fetchPrices, 120000);
         });
