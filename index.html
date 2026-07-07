@@ -461,6 +461,30 @@
             gap: 10px;
         }
 
+        .category-tab {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glow);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-tab:hover {
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+        }
+
         .search-box {
             position: relative;
             flex-grow: 1;
@@ -1073,9 +1097,18 @@
 
             <!-- Поиск и заголовки -->
             <div class="controls-row" id="controls-row">
-                <h2 class="section-title">
-                    <i data-lucide="clock"></i> Последние новости
-                </h2>
+                <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+                    <h2 class="section-title" style="margin: 0;">
+                        <i data-lucide="clock"></i> Лента
+                    </h2>
+                    <div class="category-tabs" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="category-tab active" id="tab-all" onclick="filterCategory('all')">Все</button>
+                        <button class="category-tab" id="tab-news" onclick="filterCategory('news')">Новости</button>
+                        <button class="category-tab" id="tab-memes" onclick="filterCategory('memes')">Мемы</button>
+                        <button class="category-tab" id="tab-guides" onclick="filterCategory('guides')">Гайды</button>
+                        <button class="category-tab" id="tab-signals" onclick="filterCategory('signals')">Сигналы</button>
+                    </div>
+                </div>
                 <div class="search-box">
                     <i data-lucide="search"></i>
                     <input type="text" id="search-input" placeholder="Поиск новостей и аналитики...">
@@ -1351,6 +1384,26 @@
         let currentPage = 1;
         let currentArticlesList = [];
 
+        // Вспомогательный метод для рендеринга тегов категорий
+        function getCategoryBadge(category) {
+            const cat = category || 'news';
+            let text = 'Новость';
+            let style = 'background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8;';
+            
+            if (cat === 'memes') {
+                text = 'Мем';
+                style = 'background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24;';
+            } else if (cat === 'guides') {
+                text = 'Гайд';
+                style = 'background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399;';
+            } else if (cat === 'signals') {
+                text = 'Сигнал';
+                style = 'background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;';
+            }
+            
+            return `<span class="category-badge" style="padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; vertical-align: middle; ${style}">${text}</span>`;
+        }
+
         // Получение общего количества страниц по схеме: 1 страница = 31 новость (1 + 30), далее по 30 на страницу
         function getTotalPages() {
             const N = currentArticlesList.length;
@@ -1390,11 +1443,12 @@
                             ${!latest.image_url ? '<div class="no-image-placeholder"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>' : ''}
                         </div>
                         <div class="hero-content">
-                            <div class="tag-row">
+                            <div class="tag-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <span class="date">
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px; color: var(--primary);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                     ${latest.date}
                                 </span>
+                                ${getCategoryBadge(latest.category)}
                             </div>
                             <h1 class="hero-title">${latest.title}</h1>
                             <p class="hero-excerpt">${cleanPostText}</p>
@@ -1423,11 +1477,12 @@
                             : `<div class="no-image-placeholder"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>`
                         }
                         <div class="news-card-body">
-                            <div class="tag-row" style="margin-bottom: 8px;">
+                            <div class="tag-row" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                                 <span class="date" style="font-size: 0.75rem;">
                                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                     ${item.date}
                                 </span>
+                                ${getCategoryBadge(item.category)}
                             </div>
                             <h3 class="news-card-title">${item.title}</h3>
                             <p class="news-card-excerpt">${stripHTML(item.post_text)}</p>
@@ -1535,17 +1590,51 @@
             displayPage(1);
         }
 
+        let activeCategory = 'all';
+
+        // Получение отфильтрованного списка статей на основе категории и поиска
+        function getFilteredArticles() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            let filtered = allArticles;
+            
+            // Фильтр по категории
+            if (activeCategory !== 'all') {
+                filtered = filtered.filter(art => {
+                    const artCat = art.category || 'news';
+                    return artCat === activeCategory;
+                });
+            }
+            
+            // Фильтр по поисковому запросу
+            if (query) {
+                filtered = filtered.filter(art => 
+                    art.title.toLowerCase().includes(query) || 
+                    art.post_text.toLowerCase().includes(query)
+                );
+            }
+            
+            return filtered;
+        }
+
+        // Фильтрация по категории с подсветкой вкладки
+        function filterCategory(cat) {
+            activeCategory = cat;
+            
+            // Переключаем активную вкладку
+            document.querySelectorAll('.category-tab').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`tab-${cat}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            // Сбрасываем поле поиска для удобства пользователя при смене раздела
+            document.getElementById('search-input').value = '';
+            
+            const filtered = getFilteredArticles();
+            renderSite(filtered, false);
+        }
+
         // Поиск новостей
         document.getElementById('search-input').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) {
-                renderSite(allArticles, false);
-                return;
-            }
-            const filtered = allArticles.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.post_text.toLowerCase().includes(query)
-            );
+            const filtered = getFilteredArticles();
             renderSite(filtered, true);
         });
 
@@ -1743,11 +1832,12 @@
                             : `<div class="no-image-placeholder"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>`
                         }
                         <div class="news-card-body" style="display: flex; flex-direction: column; flex-grow: 1;">
-                            <div class="tag-row" style="margin-bottom: 8px;">
+                            <div class="tag-row" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                                 <span class="date" style="font-size: 0.75rem;">
                                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                     ${art.date}
                                 </span>
+                                ${getCategoryBadge(art.category)}
                             </div>
                             <h3 class="news-card-title">${art.title}</h3>
                             <p class="news-card-excerpt">
