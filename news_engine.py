@@ -115,7 +115,66 @@ def extract_image_url(item, raw_item_xml):
                 
     return None
 
+def fetch_article_images(article_url, primary_image_url=None):
+    """Скачивает страницу источника и извлекает все дополнительные изображения статьи.
+    Возвращает список URL картинок (без дублей, без логотипов/иконок).
+    """
+    if not article_url or not article_url.startswith('http'):
+        return []
+
+    SKIP_KEYWORDS = ['logo', 'avatar', 'icon', 'badge', 'sprite', 'banner-ad',
+                     'tracking', 'subscribe', 'newsletter', 'author', 'profile', 'gravatar']
+    try:
+        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+        req = urllib.request.Request(article_url, headers={'User-Agent': ua})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            page_html = resp.read().decode('utf-8', errors='ignore')
+    except Exception as e:
+        print(f"Не удалось скачать страницу для поиска доп. изображений: {e}")
+        return []
+
+    found_urls = []
+    seen = set()
+    if primary_image_url:
+        seen.add(primary_image_url.split('?')[0])
+
+    def add_url(u):
+        u = u.strip().split('?')[0]
+        if not u.startswith('http'):
+            return
+        if u in seen:
+            return
+        u_lower = u.lower()
+        if any(kw in u_lower for kw in SKIP_KEYWORDS):
+            return
+        has_ext = any(u_lower.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp'])
+        has_keyword = any(kw in u_lower for kw in ['image', 'photo', 'img', 'media', 'upload'])
+        if not has_ext and not has_keyword:
+            return
+        seen.add(u)
+        found_urls.append(u)
+
+    # 1. og:image meta-тег
+    for m in re.finditer(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.IGNORECASE):
+        add_url(html.unescape(m.group(1)))
+    for m in re.finditer(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']', page_html, re.IGNORECASE):
+        add_url(html.unescape(m.group(1)))
+
+    # 2. <img> внутри article/main блоков
+    blocks = re.findall(r'<(?:article|main)[^>]*>(.*?)</(?:article|main)>', page_html, re.DOTALL | re.IGNORECASE)
+    if not blocks:
+        blocks = [page_html]
+    for block in blocks:
+        for m in re.finditer(r'<img[^>]+(?:src|data-src)=["\']([^"\']+)["\']', block, re.IGNORECASE):
+            add_url(html.unescape(m.group(1)))
+        for m in re.finditer(r'srcset=["\']([^"\']+)', block, re.IGNORECASE):
+            first = m.group(1).split(',')[0].strip().split()[0]
+            add_url(html.unescape(first))
+
+    return found_urls[:4]
+
 def fetch_rss_news():
+
     """Загрузка и парсинг последних новостей из RSS-лент"""
     news_items = []
     processed_ids = get_processed_ids()
@@ -661,6 +720,7 @@ def save_article_to_json(news_item, post_text, russian_title=None, category="new
         "source": news_item['source'],
         "link": news_item['link'],
         "image_url": news_item.get('image_url', ''),
+        "extra_images": news_item.get('extra_images', []),
         "post_text": post_text,
         "category": category,
         "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
@@ -1251,7 +1311,15 @@ def main():
         print("Все новые новости оказались семантическими дубликатами.")
         return
         
-    print(f"Выбрана новость: {selected_item['title']}. Генерация поста...")
+    print(f"Выбрана новость: {selected_item['title']}. Ищем дополнительные изображения из источника...")
+    extra_images = fetch_article_images(selected_item.get('link', ''), selected_item.get('image_url'))
+    if extra_images:
+        print(f"Найдено доп. изображений: {len(extra_images)}")
+        selected_item['extra_images'] = extra_images
+    else:
+        selected_item['extra_images'] = []
+
+    print(f"Генерация поста...")
     post_data = generate_forklog_post(selected_item, gemini_key)
 
     if post_data and selected_item:

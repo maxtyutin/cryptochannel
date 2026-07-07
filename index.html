@@ -1113,11 +1113,6 @@
                 <span id="reading-time-val"></span>
             </div>
 
-            <a id="article-source-link" href="#" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-glow); text-decoration: none; transition: all 0.2s;">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                <span id="article-source-text">Источник</span>
-            </a>
-            
             <div class="share-dropdown-container">
                 <button id="article-share-btn" class="nav-btn" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid var(--border-glow); background: rgba(99,102,241,0.06); color: var(--text-primary); transition: all 0.3s ease;">
                     <i data-lucide="share-2" style="width: 14px; height: 14px;"></i> Поделиться
@@ -1145,6 +1140,9 @@
         
         <div id="article-image" class="article-hero-image"></div>
         <div id="article-text" class="article-full-text"></div>
+
+        <!-- Дополнительные изображения из источника (заполняются динамически) -->
+        <div id="article-extra-images" style="margin-top: 8px;"></div>
         
         <!-- Блок Последние криптоновости (Карусель на весь экран) -->
         <div class="related-news-section" style="margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--border-glow); position: relative; width: 100%;">
@@ -1593,27 +1591,6 @@
             const readTime = Math.max(1, Math.ceil(wordsCount / 180));
             document.getElementById('reading-time-val').textContent = `${readTime} мин. чтения`;
 
-            // Ссылка на источник: берём id статьи (это URL), показываем домен/slug
-            const sourceLink = document.getElementById('article-source-link');
-            const sourceText = document.getElementById('article-source-text');
-            if (sourceLink && article.id && article.id.startsWith('http')) {
-                try {
-                    const url = new URL(article.id);
-                    // Убираем UTM-параметры и прочие query-параметры
-                    const cleanPath = url.pathname.replace(/\/$/, '');
-                    // Формат: домен + первые 2 сегмента пути
-                    const pathParts = cleanPath.split('/').filter(Boolean);
-                    const shortPath = pathParts.slice(0, 2).join('/');
-                    sourceText.textContent = url.hostname.replace('www.','') + (shortPath ? '/' + shortPath : '');
-                    sourceLink.href = article.id;
-                    sourceLink.style.display = 'inline-flex';
-                } catch(e) {
-                    sourceLink.style.display = 'none';
-                }
-            } else if (sourceLink) {
-                sourceLink.style.display = 'none';
-            }
-
             // Картинка статьи
             const imgContainer = document.getElementById('article-image');
             if (article.image_url) {
@@ -1621,6 +1598,25 @@
                 imgContainer.style.backgroundImage = `url('${article.image_url}')`;
             } else {
                 imgContainer.style.display = 'none';
+            }
+
+            // Дополнительные изображения из источника — вставляем после текста статьи
+            const extraImgsContainer = document.getElementById('article-extra-images');
+            if (extraImgsContainer) {
+                extraImgsContainer.innerHTML = '';
+                const extras = article.extra_images || [];
+                extras.forEach(imgUrl => {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.cssText = 'margin: 24px 0; border-radius: 16px; overflow: hidden;';
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    img.alt = '';
+                    img.loading = 'lazy';
+                    img.style.cssText = 'width: 100%; max-height: 480px; object-fit: cover; display: block; border-radius: 16px;';
+                    img.onerror = function() { this.parentElement.style.display = 'none'; };
+                    wrapper.appendChild(img);
+                    extraImgsContainer.appendChild(wrapper);
+                });
             }
 
             // Отрисовка блока "Последние криптоновости"
