@@ -313,6 +313,43 @@ def save_recent_topic(topic):
     except Exception as e:
         print(f"Ошибка сохранения темы: {e}")
 
+def save_article_to_json(news_item, post_text):
+    """Сохраняет опубликованную новость в файл articles.json для веб-сайта"""
+    json_path = os.path.join(BASE_DIR, "articles.json")
+    articles = []
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                articles = json.load(f)
+        except Exception:
+            articles = []
+            
+    # Формируем структуру новости для сайта
+    article_data = {
+        "id": news_item['id'],
+        "title": news_item['title'],
+        "source": news_item['source'],
+        "link": news_item['link'],
+        "image_url": news_item.get('image_url', ''),
+        "post_text": post_text,
+        "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
+        "timestamp": int(time.time())
+    }
+    
+    # Избегаем дублирования по ID
+    if any(a['id'] == news_item['id'] for a in articles):
+        return
+        
+    articles.insert(0, article_data)
+    articles = articles[:100]  # Храним последние 100 новостей
+    
+    try:
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(articles, f, ensure_ascii=False, indent=2)
+        print("Статья сохранена в articles.json для сайта!")
+    except Exception as e:
+        print(f"Ошибка сохранения статьи в JSON: {e}")
+
 def check_semantic_duplicate(news_title, news_desc, gemini_key):
     """Семантическая проверка на дубликаты через Gemini API"""
     recent_topics = get_recent_topics()
@@ -625,9 +662,11 @@ def main():
             if success:
                 save_processed_id(selected_item['id'])
                 save_recent_topic(selected_item['title'])
+                save_article_to_json(selected_item, post)
         else:
             print("Параметры Telegram не настроены в .env. Пост не отправлен.")
             save_processed_id(selected_item['id'])
+            save_article_to_json(selected_item, post)
 
 if __name__ == "__main__":
     main()

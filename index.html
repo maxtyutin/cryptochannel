@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Analytics — Главные криптоновости и ончейн-аналитика</title>
+    <meta name="description" content="Информационный портал Crypto Analytics: оперативные новости о Биткоине, Ethereum, DeFi, NFT и Web3 с ИИ-аналитикой рынка.">
+    <!-- Подключаем современный шрифт Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Подключаем иконки Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* CSS Переменные для дизайн-системы */
+        :root {
+            --bg-base: #080c14;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --bg-card: rgba(30, 41, 59, 0.45);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --border-hover: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.15);
+            --success: #10b981;
+            --danger: #ef4444;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --glass-backdrop: blur(16px);
+        }
+
+        /* Общие стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg-base);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-card);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Хедер */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 12, 20, 0.8);
+            backdrop-filter: var(--glass-backdrop);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Бегущая строка котировок */
+        .ticker-wrap {
+            width: 100%;
+            background: rgba(99, 102, 241, 0.08);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 6px 0;
+        }
+
+        .ticker {
+            display: inline-flex;
+            animation: ticker-animation 30s linear infinite;
+            padding-left: 100%;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .ticker-item span.coin {
+            color: var(--text-primary);
+            margin-right: 6px;
+        }
+
+        .ticker-item span.price {
+            color: var(--text-primary);
+            margin-right: 6px;
+        }
+
+        .ticker-item span.change {
+            font-size: 0.75rem;
+        }
+
+        .ticker-item.up .change { color: var(--success); }
+        .ticker-item.down .change { color: var(--danger); }
+
+        @keyframes ticker-animation {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Навигация */
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Основной контент */
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        /* Секция Hero (Закрепленная последняя новость) */
+        .hero-section {
+            margin-bottom: 48px;
+        }
+
+        .hero-card {
+            background: var(--bg-surface);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            min-height: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hero-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 15px 35px rgba(168, 85, 247, 0.15);
+        }
+
+        .hero-image {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 300px;
+        }
+
+        .hero-image::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, transparent 60%, var(--bg-surface) 100%);
+        }
+
+        .hero-content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tag-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .hero-excerpt {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .read-more-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: gap 0.2s ease, color 0.2s;
+        }
+
+        .hero-card:hover .read-more-btn {
+            color: var(--accent);
+            gap: 10px;
+        }
+
+        /* Панель фильтров и поиска */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 12px 16px 12px 44px;
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 1.1rem;
+        }
+
+        /* Сетка постов */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .news-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .news-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.12);
+        }
+
+        .news-card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Заглушка, если нет картинки */
+        .no-image-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(168,85,247,0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .news-card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .news-card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.8rem;
+        }
+
+        .news-card-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .news-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 16px;
+            margin-top: auto;
+        }
+
+        /* Модальное окно просмотра статьи */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 200;
+            background: rgba(8, 12, 20, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 28px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            height: 380px;
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .modal-image::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 100px;
+            background: linear-gradient(to top, #0f172a, transparent);
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .modal-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .modal-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            white-space: pre-line; /* Сохраняет абзацы */
+        }
+
+        /* Заголовки внутри текста (убираем сырые теги) */
+        .modal-text b {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Скелетоны для загрузки */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, rgba(99,102,241,0.08) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: loading-skeleton 1.5s infinite;
+        }
+
+        @keyframes loading-skeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Футер */
+        footer {
+            margin-top: 80px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: #06090f;
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Медиа-запросы */
+        @media(max-width: 900px) {
+            .hero-card {
+                grid-template-columns: 1fr;
+            }
+            .hero-image::after {
+                background: linear-gradient(to top, var(--bg-surface) 10%, transparent 100%);
+            }
+            .hero-content {
+                padding: 30px;
+            }
+            .modal-image {
+                height: 250px;
+            }
+            .modal-body {
+                padding: 24px;
+            }
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Бегущая строка котировок -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker">
+            <div class="ticker-item"><span class="coin">BTC</span><span class="price">Загрузка...</span></div>
+            <div class="ticker-item"><span class="coin">ETH</span><span class="price">Загрузка...</span></div>
+            <div class="ticker-item"><span class="coin">BNB</span><span class="price">...</span></div>
+            <div class="ticker-item"><span class="coin">SOL</span><span class="price">...</span></div>
+            <div class="ticker-item"><span class="coin">TON</span><span class="price">...</span></div>
+        </div>
+    </div>
+
+    <!-- Шапка сайта -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i data-lucide="activity"></i> Crypto Analytics
+            </a>
+            <div class="nav-links">
+                <a href="https://t.me/CryptoAnalitikaChannel" target="_blank" class="nav-btn">
+                    <i data-lucide="send"></i> Telegram-канал
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main>
+        <!-- Секция Hero: Самый свежий пост -->
+        <section class="hero-section" id="hero-section">
+            <div class="hero-card skeleton" style="height: 420px;"></div>
+        </section>
+
+        <!-- Поиск и заголовки -->
+        <div class="controls-row">
+            <h2 class="section-title">
+                <i data-lucide="clock"></i> Последние новости
+            </h2>
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="search-input" placeholder="Поиск новостей и аналитики...">
+            </div>
+        </div>
+
+        <!-- Сетка новостей -->
+        <section class="news-grid" id="news-grid">
+            <!-- Скелетоны для начальной загрузки -->
+            <div class="news-card skeleton" style="height: 450px;"></div>
+            <div class="news-card skeleton" style="height: 450px;"></div>
+            <div class="news-card skeleton" style="height: 450px;"></div>
+        </section>
+    </main>
+
+    <!-- Модальное окно просмотра новости -->
+    <div class="modal" id="news-modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">
+                <i data-lucide="x"></i>
+            </div>
+            <div id="modal-image" class="modal-image"></div>
+            <div class="modal-body">
+                <div class="tag-row">
+                    <span id="modal-source" class="tag"></span>
+                    <span id="modal-date" class="date"><i data-lucide="calendar"></i></span>
+                </div>
+                <h1 id="modal-title" class="modal-title"></h1>
+                <div id="modal-text" class="modal-text"></div>
+                <div class="modal-footer">
+                    <a href="" id="modal-original-link" target="_blank" class="read-more-btn">
+                        Читать первоисточник <i data-lucide="external-link"></i>
+                    </a>
+                    <a href="https://t.me/share/url?url=" id="modal-share-btn" target="_blank" class="nav-btn" style="padding: 8px 16px;">
+                        <i data-lucide="share-2"></i> Поделиться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer>
+        <p>&copy; 2026 Crypto Analytics. Все права защищены.</p>
+        <p style="margin-top: 8px; font-size: 0.8rem;">Проект автоматического ИИ-вещания на базе Gemini API и GitHub Actions.</p>
+    </footer>
+
+    <script>
+        // Инициализация Lucide иконок
+        lucide.createIcons();
+
+        let allArticles = [];
+
+        // Получение курсов с CoinGecko API в реальном времени
+        async function fetchPrices() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,solana,the-open-network&vs_currencies=usd&include_24hr_change=true');
+                const data = await response.json();
+                
+                const coins = [
+                    { id: 'bitcoin', symbol: 'BTC', name: '🪙 BTC' },
+                    { id: 'ethereum', symbol: 'ETH', name: '💎 ETH' },
+                    { id: 'binancecoin', symbol: 'BNB', name: '🔸 BNB' },
+                    { id: 'solana', symbol: 'SOL', name: '☀️ SOL' },
+                    { id: 'the-open-network', symbol: 'TON', name: '💎 TON' }
+                ];
+
+                const tickerEl = document.getElementById('ticker');
+                tickerEl.innerHTML = ''; // Очищаем
+
+                // Удваиваем список для бесшовной прокрутки в marquee
+                const doubleCoins = [...coins, ...coins, ...coins];
+
+                doubleCoins.forEach(coin => {
+                    if (data[coin.id]) {
+                        const price = data[coin.id].usd;
+                        const change = data[coin.id].usd_24h_change || 0;
+                        const sign = change >= 0 ? '+' : '';
+                        const stateClass = change >= 0 ? 'up' : 'down';
+                        const emoji = change >= 0 ? '▲' : '▼';
+                        
+                        const itemHtml = `
+                            <div class="ticker-item ${stateClass}">
+                                <span class="coin">${coin.name}</span>
+                                <span class="price">$${price.toLocaleString()}</span>
+                                <span class="change">${emoji} ${sign}${change.toFixed(2)}%</span>
+                            </div>
+                        `;
+                        tickerEl.innerHTML += itemHtml;
+                    }
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки цен котировок:', error);
+            }
+        }
+
+        // Загрузка статей из articles.json
+        async function loadArticles() {
+            try {
+                // Пытаемся считать файл articles.json
+                const response = await fetch('./articles.json');
+                if (!response.ok) throw new Error('Не удалось загрузить базу новостей');
+                
+                allArticles = await response.json();
+                renderSite(allArticles);
+            } catch (error) {
+                console.error(error);
+                showErrorState();
+            }
+        }
+
+        // Отрисовка главной страницы
+        function renderSite(articles) {
+            if (articles.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            // 1. Отрисовываем Hero-карточку (самая свежая новость)
+            const latest = articles[0];
+            const heroSection = document.getElementById('hero-section');
+            const imgStyle = latest.image_url ? `style="background-image: url('${latest.image_url}')"` : '';
+            
+            let cleanPostText = stripHTML(latest.post_text);
+            
+            heroSection.innerHTML = `
+                <div class="hero-card" onclick="openArticle('${latest.id}')">
+                    <div class="hero-image" ${imgStyle}>
+                        ${!latest.image_url ? '<div class="no-image-placeholder"><i data-lucide="image" style="width: 48px; height: 48px;"></i></div>' : ''}
+                    </div>
+                    <div class="hero-content">
+                        <div class="tag-row">
+                            <span class="tag">${latest.source}</span>
+                            <span class="date"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> ${latest.date}</span>
+                        </div>
+                        <h1 class="hero-title">${latest.title}</h1>
+                        <p class="hero-excerpt">${cleanPostText}</p>
+                        <span class="read-more-btn">Читать полный обзор <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i></span>
+                    </div>
+                </div>
+            `;
+
+            // 2. Отрисовываем остальные новости в сетке
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '';
+            
+            const remaining = articles.slice(1);
+            if (remaining.length === 0) {
+                // Если была всего одна новость
+                grid.style.display = 'none';
+                document.querySelector('.controls-row').style.display = 'none';
+                return;
+            }
+            grid.style.display = 'grid';
+
+            remaining.forEach(item => {
+                const cardImg = item.image_url ? `style="background-image: url('${item.image_url}')"` : '';
+                const cardHtml = `
+                    <div class="news-card" onclick="openArticle('${item.id}')">
+                        ${item.image_url 
+                            ? `<div class="news-card-image" ${cardImg}></div>`
+                            : `<div class="no-image-placeholder"><i data-lucide="image"></i></div>`
+                        }
+                        <div class="news-card-body">
+                            <div class="tag-row" style="margin-bottom: 8px;">
+                                <span class="tag" style="padding: 2px 8px; font-size: 0.65rem;">${item.source}</span>
+                                <span class="date" style="font-size: 0.75rem;"><i data-lucide="calendar" style="width: 12px; height: 12px;"></i> ${item.date}</span>
+                            </div>
+                            <h3 class="news-card-title">${item.title}</h3>
+                            <p class="news-card-excerpt">${stripHTML(item.post_text)}</p>
+                            <div class="news-card-footer">
+                                <span class="read-more-btn" style="font-size: 0.85rem;">Читать обзор <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            });
+
+            // Восстанавливаем иконки для динамического контента
+            lucide.createIcons();
+        }
+
+        // Поиск новостей
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderSite(allArticles);
+                return;
+            }
+            const filtered = allArticles.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.post_text.toLowerCase().includes(query)
+            );
+            renderSite(filtered);
+        });
+
+        // Открытие статьи в модальном окне
+        function openArticle(id) {
+            const article = allArticles.find(a => a.id === id);
+            if (!article) return;
+
+            const modal = document.getElementById('news-modal');
+            const modalImg = document.getElementById('modal-image');
+            
+            if (article.image_url) {
+                modalImg.style.display = 'block';
+                modalImg.style.backgroundImage = `url('${article.image_url}')`;
+            } else {
+                modalImg.style.display = 'none';
+            }
+
+            document.getElementById('modal-source').textContent = article.source;
+            document.getElementById('modal-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
+            document.getElementById('modal-title').innerHTML = article.title;
+            
+            // Сохраняем абзацы и форматирование жирным тегом
+            document.getElementById('modal-text').innerHTML = formatPostText(article.post_text);
+            
+            document.getElementById('modal-original-link').href = article.link;
+            document.getElementById('modal-share-btn').href = `https://t.me/share/url?url=${encodeURIComponent(article.link)}&text=${encodeURIComponent(article.title)}`;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Запрет прокрутки задника
+            lucide.createIcons();
+        }
+
+        // Закрытие модального окна
+        function closeModal() {
+            const modal = document.getElementById('news-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Закрытие при клике вне карточки модального окна
+        document.getElementById('news-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('news-modal')) {
+                closeModal();
+            }
+        });
+
+        // Утилита очистки HTML для анонсов
+        function stripHTML(html) {
+            // Удаляем тег картинки с нулевым пробелом, если остался
+            let text = html.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
+            // Удаляем все HTML теги
+            text = text.replace(/<[^>]*>/g, '');
+            return text;
+        }
+
+        // Утилита форматирования текста для отображения в модальном окне
+        function formatPostText(text) {
+            // Убираем скрытую HTML ссылку на картинку, если она есть в начале текста
+            let cleanText = text.replace(/<a href="[^"]*">&#8203;<\/a>/gi, '');
+            return cleanText;
+        }
+
+        // Состояние ошибки
+        function showErrorState() {
+            const heroSection = document.getElementById('hero-section');
+            const grid = document.getElementById('news-grid');
+            
+            heroSection.style.display = 'none';
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                    <i data-lucide="alert-triangle" style="width: 48px; height: 48px; color: var(--danger); margin-bottom: 16px;"></i>
+                    <h3>База новостей пуста или еще не создана.</h3>
+                    <p style="margin-top: 10px; color: var(--text-muted);">База обновится автоматически при первом запуске публикации новостей в Telegram.</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Состояние пустого поиска
+        function showEmptyState() {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                    <i data-lucide="search-code" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                    <h3>По вашему запросу ничего не найдено</h3>
+                    <p style="margin-top: 10px; color: var(--text-muted);">Попробуйте поискать по другим ключевым словам.</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchPrices();
+            loadArticles();
+            // Обновляем котировки раз в 2 минуты
+            setInterval(fetchPrices, 120000);
+        });
+    </script>
+</body>
+</html>
