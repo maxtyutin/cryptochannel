@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Подключаем иконки Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Подключаем графики TradingView -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         /* CSS Переменные для дизайн-системы */
         :root {
@@ -208,6 +210,40 @@
         .nav-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Стили таблицы рынков и карточек бирж */
+        .market-table-row {
+            transition: background 0.2s ease;
+        }
+        .market-table-row:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+        .buy-btn-style {
+            transition: all 0.2s ease !important;
+        }
+        .buy-btn-style:hover {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4) !important;
+            transform: scale(1.05);
+        }
+        .exchange-link-card {
+            border: 1px solid var(--border-glow);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.2s ease;
+        }
+        .exchange-link-card:hover {
+            border-color: var(--border-hover) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.08);
+        }
+
+        @media (max-width: 900px) {
+            .coin-detail-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
 
         /* Выпадающее меню Поделиться */
@@ -1182,25 +1218,84 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО КОТИРОВОК МОНЕТ (СТРАНИЦА РЫНКА) -->
-    <div class="modal" id="markets-modal">
-        <div class="modal-content markets-modal-content">
-            <div class="modal-close" onclick="closeMarketsModal()">
-                <i data-lucide="x"></i>
-            </div>
-            <div class="modal-body" style="padding: 32px;">
-                <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 8px;">
-                    <i data-lucide="trending-up" style="color: var(--primary);"></i> Обзор крипторынка
-                </h2>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px;">Данные обновляются в реальном времени с CoinGecko.</p>
-                
-                <!-- Таблица рынка -->
-                <div class="markets-grid" id="markets-grid">
+    <!-- ОБЗОР РЫНКА (СПИСОК ТОП-50) -->
+    <div id="markets-list-view" class="full-article-container" style="display: none; max-width: 1200px; margin: 0 auto; padding: 24px;">
+        <button class="back-to-list-btn" onclick="closeMarketsListView()" style="margin-bottom: 24px;">
+            <i data-lucide="arrow-left"></i> Назад на главную
+        </button>
+        
+        <h2 class="section-title" style="font-size: 2rem; margin-bottom: 8px;">
+            <i data-lucide="trending-up" style="color: var(--primary); width: 28px; height: 28px;"></i> Обзор крипторынка
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 32px;">Данные о топ-50 криптовалютах в реальном времени с CoinGecko.</p>
+        
+        <div style="overflow-x: auto; background: var(--bg-card); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border-glow); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 1100px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-glow); color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <th style="padding: 16px 20px; width: 50px;">#</th>
+                        <th style="padding: 16px 20px; min-width: 240px;">Монета</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 140px;">Цена</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 160px;">Капитализация</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 160px;">Объем (24ч)</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 90px;">24ч</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 90px;">7д</th>
+                        <th style="padding: 16px 20px; text-align: right; width: 90px;">30д</th>
+                        <th style="padding: 16px 20px; text-align: center; width: 160px;">Последние 7 дней</th>
+                    </tr>
+                </thead>
+                <tbody id="markets-table-body">
                     <!-- Загрузка котировок -->
-                    <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
-                        <i data-lucide="loader-2" class="animate-spin" style="width: 32px; height: 32px; margin-bottom: 12px; display: inline-block;"></i>
-                        <p>Загрузка подробных данных о рынках...</p>
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 60px 0; color: var(--text-muted);">
+                            <i data-lucide="loader-2" class="animate-spin" style="width: 32px; height: 32px; margin-bottom: 12px; display: inline-block;"></i>
+                            <p>Загрузка подробных данных о рынках (Топ-50)...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ДЕТАЛЬНЫЙ ПРОСМОТР МОНЕТЫ -->
+    <div id="market-detail-view" class="full-article-container" style="display: none; max-width: 1200px; margin: 0 auto; padding: 24px;">
+        <button class="back-to-list-btn" onclick="closeMarketDetailView()" style="margin-bottom: 24px;">
+            <i data-lucide="arrow-left"></i> Назад к списку котировок
+        </button>
+        
+        <!-- Верхняя карточка с быстрыми данными -->
+        <div id="coin-detail-header-card" style="background: var(--bg-card); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border-glow); border-radius: 20px; padding: 32px; margin-bottom: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px;">
+            <!-- Будет заполнено динамически -->
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2.2fr 1.2fr; gap: 32px; margin-bottom: 32px;" class="coin-detail-grid">
+            <!-- Левая колонка: График и Описание -->
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                <!-- График TradingView -->
+                <div style="background: var(--bg-card); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border-glow); border-radius: 20px; padding: 24px;">
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="line-chart" style="color: var(--primary);"></i> Интерактивный график
+                    </h3>
+                    <div style="height: 480px; width: 100%; border-radius: 12px; overflow: hidden; background: #131722;" id="tradingview-container">
+                        <!-- Сюда встраивается TradingView Widget -->
                     </div>
+                </div>
+
+                <!-- Описание монеты -->
+                <div style="background: var(--bg-card); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border-glow); border-radius: 20px; padding: 32px;">
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="info" style="color: var(--primary);"></i> Описание монеты
+                    </h3>
+                    <div id="coin-description-text" style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+                        <!-- Загрузка описания -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка: Где купить (Топ биржи) -->
+            <div style="display: flex; flex-direction: column; gap: 32px;">
+                <div style="background: var(--bg-card); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--border-glow); border-radius: 20px; padding: 28px;" id="buy-exchanges-container">
+                    <!-- Будет заполнено динамически -->
                 </div>
             </div>
         </div>
@@ -1260,76 +1355,315 @@
             }
         }
 
-        // Загрузка подробных котировок для модального окна рынков
-        async function loadDetailedMarkets() {
-            const grid = document.getElementById('markets-grid');
+        let top50CoinsData = [];
+
+        // Рисование спарклайна
+        function drawSparkline(canvasId, prices, isPositive) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            if (!prices || prices.length === 0) return;
+            
+            const min = Math.min(...prices);
+            const max = Math.max(...prices);
+            const range = max - min || 1;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = isPositive ? '#10b981' : '#ef4444';
+            ctx.lineWidth = 1.8;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            
+            for (let i = 0; i < prices.length; i++) {
+                const x = (i / (prices.length - 1)) * width;
+                const y = 3 + (height - 6) - ((prices[i] - min) / range) * (height - 6);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Фоновый градиент под линией
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0, 0, 0, height);
+            grad.addColorStop(0, isPositive ? 'rgba(16, 185, 129, 0.06)' : 'rgba(239, 68, 68, 0.06)');
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+        }
+
+        // Загрузка Top-50 рынков
+        async function loadTop50Markets() {
+            const tbody = document.getElementById('markets-table-body');
             try {
-                const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,the-open-network&price_change_percentage=24h');
+                const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d,30d';
+                const response = await fetch(url);
                 const data = await response.json();
+                top50CoinsData = data;
                 
-                grid.innerHTML = '';
+                tbody.innerHTML = '';
                 
-                data.forEach(coin => {
-                    const change = coin.price_change_percentage_24h || 0;
-                    const changeSign = change >= 0 ? '+' : '';
-                    const stateClass = change >= 0 ? 'up' : 'down';
+                data.forEach((coin, i) => {
+                    const rank = coin.market_cap_rank || (i + 1);
+                    const price = coin.current_price;
+                    const change_24h = coin.price_change_percentage_24h_in_currency || coin.price_change_percentage_24h || 0;
+                    const change_7d = coin.price_change_percentage_7d_in_currency || 0;
+                    const change_30d = coin.price_change_percentage_30d_in_currency || 0;
                     
-                    const rowHtml = `
-                        <div class="market-row">
-                            <div class="coin-meta">
-                                <div class="coin-icon">
-                                    <img src="${coin.image}" alt="${coin.name}">
+                    const price_str = price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: price < 1 ? 6 : 2});
+                    const market_cap_str = formatLargeNumber(coin.market_cap || 0);
+                    const volume_str = formatLargeNumber(coin.total_volume || 0);
+                    
+                    const color_24h = change_24h >= 0 ? '#10b981' : '#ef4444';
+                    const color_7d = change_7d >= 0 ? '#10b981' : '#ef4444';
+                    const color_30d = change_30d >= 0 ? '#10b981' : '#ef4444';
+                    
+                    const sign_24h = change_24h >= 0 ? '+' : '';
+                    const sign_7d = change_7d >= 0 ? '+' : '';
+                    const sign_30d = change_30d >= 0 ? '+' : '';
+                    
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.05)';
+                    tr.style.cursor = 'pointer';
+                    tr.className = 'market-table-row';
+                    tr.onclick = () => openMarketDetail(coin.id, coin.symbol, coin.name);
+                    
+                    tr.innerHTML = `
+                        <td style="padding: 16px 20px; color: var(--text-secondary); font-weight: 600;">${rank}</td>
+                        <td style="padding: 16px 20px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="${coin.image}" alt="${coin.name}" style="width: 32px; height: 32px; border-radius: 50%;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="color: var(--text-primary); font-weight: 700; font-size: 0.95rem;">${coin.name}</span>
+                                    <span style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">${coin.symbol}</span>
                                 </div>
-                                <div class="coin-name-wrap">
-                                    <span class="coin-full-name">${coin.name}</span>
-                                    <span class="coin-sym">${coin.symbol}</span>
-                                </div>
+                                <button onclick="event.stopPropagation(); openMarketDetail('${coin.id}', '${coin.symbol}', '${coin.name}', true)" style="margin-left: auto; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border-glow); background: rgba(99, 102, 241, 0.1); color: var(--text-primary); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;" class="buy-btn-style">Buy</button>
                             </div>
-                            <div class="coin-stats">
-                                <div class="stat-group">
-                                    <span class="stat-label">Текущий курс</span>
-                                    <span class="stat-value">$${coin.current_price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</span>
-                                </div>
-                                <div class="stat-group">
-                                    <span class="stat-label">24ч изм.</span>
-                                    <span class="stat-value ${stateClass}">${changeSign}${change.toFixed(2)}%</span>
-                                </div>
-                                <div class="stat-group">
-                                    <span class="stat-label">Диапазон 24ч</span>
-                                    <span class="stat-value" style="font-size: 0.85rem; font-weight: 500;">
-                                        $${coin.low_24h.toLocaleString()} - $${coin.high_24h.toLocaleString()}
-                                    </span>
-                                </div>
-                                <div class="stat-group">
-                                    <span class="stat-label">Капитализация</span>
-                                    <span class="stat-value">$${Math.round(coin.market_cap).toLocaleString()}</span>
-                                </div>
-                            </div>
-                        </div>
+                        </td>
+                        <td style="padding: 16px 20px; text-align: right; color: var(--text-primary); font-weight: 700; font-family: monospace; font-size: 0.95rem;">$${price_str}</td>
+                        <td style="padding: 16px 20px; text-align: right; color: var(--text-secondary); font-family: monospace;">$${market_cap_str}</td>
+                        <td style="padding: 16px 20px; text-align: right; color: var(--text-secondary); font-family: monospace;">$${volume_str}</td>
+                        <td style="padding: 16px 20px; text-align: right; color: ${color_24h}; font-weight: 600; font-family: monospace;">${sign_24h}${change_24h.toFixed(2)}%</td>
+                        <td style="padding: 16px 20px; text-align: right; color: ${color_7d}; font-weight: 600; font-family: monospace;">${sign_7d}${change_7d.toFixed(2)}%</td>
+                        <td style="padding: 16px 20px; text-align: right; color: ${color_30d}; font-weight: 600; font-family: monospace;">${sign_30d}${change_30d.toFixed(2)}%</td>
+                        <td style="padding: 16px 20px; text-align: center; position: relative;">
+                            <canvas id="sparkline-${coin.id}" width="140" height="40" style="display: block; margin: 0 auto;"></canvas>
+                        </td>
                     `;
-                    grid.innerHTML += rowHtml;
+                    tbody.appendChild(tr);
+                    
+                    setTimeout(() => {
+                        const prices = coin.sparkline_in_7d ? coin.sparkline_in_7d.price : [];
+                        drawSparkline(`sparkline-${coin.id}`, prices, change_24h >= 0);
+                    }, 50);
                 });
             } catch (error) {
-                grid.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--danger);">
-                        <i data-lucide="alert-triangle" style="width: 32px; height: 32px; margin-bottom: 12px; display: inline-block;"></i>
-                        <p>Не удалось загрузить данные о рынках. Проверьте подключение к сети.</p>
-                    </div>
+                console.error(error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 60px 0; color: var(--danger);">
+                            <p>Не удалось получить данные с CoinGecko. Пожалуйста, попробуйте позже.</p>
+                        </td>
+                    </tr>
                 `;
-                lucide.createIcons();
             }
         }
 
-        // Открыть панель рынков
-        function openMarketsModal() {
-            document.getElementById('markets-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            loadDetailedMarkets();
+        function formatLargeNumber(num) {
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            return num.toLocaleString();
         }
 
-        function closeMarketsModal() {
-            document.getElementById('markets-modal').classList.remove('active');
-            document.body.style.overflow = '';
+        // SPA-навигация для котировок
+        function openMarketsListView() {
+            if (window.location.hash !== '#markets') {
+                window.location.hash = 'markets';
+            }
+            document.getElementById('main-content-view').style.display = 'none';
+            document.getElementById('full-article-view').style.display = 'none';
+            document.getElementById('market-detail-view').style.display = 'none';
+            
+            document.getElementById('markets-list-view').style.display = 'block';
+            document.getElementById('markets-list-view').scrollIntoView({ behavior: 'smooth' });
+            loadTop50Markets();
+        }
+
+        function closeMarketsListView() {
+            document.getElementById('markets-list-view').style.display = 'none';
+            document.getElementById('main-content-view').style.display = 'block';
+            if (window.location.hash === '#markets') {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.openMarketsModal = openMarketsListView;
+
+        async function openMarketDetail(coinId, symbol, coinName, scrollToBuy = false) {
+            const coinHash = `#coin-${coinId}-${symbol.toLowerCase()}-${encodeURIComponent(coinName)}`;
+            if (window.location.hash !== coinHash) {
+                window.location.hash = `coin-${coinId}-${symbol.toLowerCase()}-${encodeURIComponent(coinName)}`;
+            }
+            
+            document.getElementById('main-content-view').style.display = 'none';
+            document.getElementById('markets-list-view').style.display = 'none';
+            document.getElementById('full-article-view').style.display = 'none';
+            document.getElementById('market-detail-view').style.display = 'block';
+            
+            const headerCard = document.getElementById('coin-detail-header-card');
+            const coinData = top50CoinsData.find(c => c.id === coinId);
+            
+            if (coinData) {
+                const change = coinData.price_change_percentage_24h || 0;
+                const changeColor = change >= 0 ? '#10b981' : '#ef4444';
+                const sign = change >= 0 ? '+' : '';
+                headerCard.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <img src="${coinData.image}" alt="${coinName}" style="width: 56px; height: 56px; border-radius: 50%;">
+                        <div>
+                            <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 10px;">
+                                ${coinName} <span style="font-size: 1.1rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">(${symbol})</span>
+                            </h1>
+                            <div style="margin-top: 6px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                <span style="background: rgba(99, 102, 241, 0.15); border: 1px solid var(--border-glow); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">Rank #${coinData.market_cap_rank}</span>
+                                <span style="color: var(--text-secondary); font-size: 0.85rem;">Капитализация: <b>$${coinData.market_cap.toLocaleString()}</b></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary); font-family: monospace;">
+                            $${coinData.current_price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: coinData.current_price < 1 ? 6 : 2})}
+                        </div>
+                        <div style="color: ${changeColor}; font-weight: 700; font-size: 1.05rem; margin-top: 4px; font-family: monospace;">
+                            ${sign}${change.toFixed(2)}% (24ч)
+                        </div>
+                    </div>
+                `;
+            } else {
+                headerCard.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div>
+                            <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-primary); margin: 0; text-transform: uppercase;">
+                                ${coinName} (${symbol})
+                            </h1>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const tvContainer = document.getElementById('tradingview-container');
+            tvContainer.innerHTML = `<div id="tradingview_chart" style="width: 100%; height: 100%;"></div>`;
+            
+            let tvSymbol = `BINANCE:${symbol.toUpperCase()}USDT`;
+            if (symbol.toLowerCase() === 'usdc') tvSymbol = 'BINANCE:USDCUSDT';
+            
+            setTimeout(() => {
+                if (typeof TradingView !== 'undefined') {
+                    new TradingView.widget({
+                        "width": "100%",
+                        "height": "100%",
+                        "symbol": tvSymbol,
+                        "interval": "D",
+                        "timezone": "Etc/UTC",
+                        "theme": "dark",
+                        "style": "1",
+                        "locale": "ru",
+                        "toolbar_bg": "#131722",
+                        "enable_publishing": false,
+                        "hide_side_toolbar": false,
+                        "allow_symbol_change": true,
+                        "container_id": "tradingview_chart"
+                    });
+                } else {
+                    document.getElementById('tradingview_chart').innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+                            Не удалось загрузить скрипт графиков TradingView.
+                        </div>
+                    `;
+                }
+            }, 100);
+
+            const descText = document.getElementById('coin-description-text');
+            descText.innerHTML = `
+                <div style="text-align: center; padding: 24px 0; color: var(--text-muted);">
+                    <svg viewBox="0 0 24 24" width="24" height="24" class="animate-spin" style="margin-bottom: 8px; display: inline-block; color: var(--primary);"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+                    <p>Загрузка описания монеты...</p>
+                </div>
+            `;
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`);
+                const fullCoinData = await response.json();
+                let desc = fullCoinData.description ? fullCoinData.description.ru || fullCoinData.description.en || "" : "";
+                
+                desc = desc.replace(/<a [^>]*>([\s\S]*?)<\/a>/gi, '$1');
+                if (!desc) {
+                    desc = `Подробное описание для монеты ${coinName} временно недоступно. Воспользуйтесь графиками или перейдите по ссылкам покупки.`;
+                }
+                descText.innerHTML = `<div style="max-height: 400px; overflow-y: auto; padding-right: 8px;">${desc}</div>`;
+            } catch (err) {
+                console.error(err);
+                descText.innerHTML = `<p>Не удалось загрузить подробное описание.</p>`;
+            }
+
+            const exchangeContainer = document.getElementById('buy-exchanges-container');
+            const symUpper = symbol.toUpperCase();
+            const symLower = symbol.toLowerCase();
+            
+            const exchanges = [
+                { name: 'Bybit', fallbackLogoText: 'BY', color: '#f5a623', url: `https://www.bybit.com/ru-RU/trade/spot/${symUpper}/USDT` },
+                { name: 'Binance', fallbackLogoText: 'BN', color: '#f3ba2f', url: `https://www.binance.com/ru/trade/${symUpper}_USDT` },
+                { name: 'OKX', fallbackLogoText: 'OK', color: '#ffffff', url: `https://www.okx.com/ru/trade-spot/${symLower}-usdt` },
+                { name: 'Gate.io', fallbackLogoText: 'GT', color: '#e01e5a', url: `https://www.gate.io/ru/trade/${symUpper}_USDT` },
+                { name: 'KuCoin', fallbackLogoText: 'KC', color: '#24ae8f', url: `https://www.kucoin.com/ru/trade/${symUpper}-USDT` }
+            ];
+
+            exchangeContainer.innerHTML = `
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-top: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="shopping-cart" style="color: var(--primary);"></i> Купить ${symUpper}
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 24px;">Топ-5 надежных бирж для покупки спот-пары ${symUpper}/USDT:</p>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    ${exchanges.map(ex => `
+                        <a href="${ex.url}" target="_blank" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border-glow); background: rgba(255,255,255,0.02); border-radius: 12px; text-decoration: none; transition: all 0.2s;" class="exchange-link-card">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99,102,241,0.2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: ${ex.color};">
+                                    ${ex.fallbackLogoText}
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${ex.name}</span>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${symUpper}/USDT</span>
+                                </div>
+                            </div>
+                            <span style="padding: 6px 14px; border-radius: 6px; background: var(--primary); color: white; font-weight: 700; font-size: 0.8rem;">Купить</span>
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+            lucide.createIcons();
+            
+            if (scrollToBuy) {
+                setTimeout(() => {
+                    exchangeContainer.scrollIntoView({ behavior: 'smooth' });
+                }, 200);
+            } else {
+                document.getElementById('market-detail-view').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function closeMarketDetailView() {
+            document.getElementById('market-detail-view').style.display = 'none';
+            document.getElementById('markets-list-view').style.display = 'block';
+            window.location.hash = 'markets';
         }
 
         // Закрытие рынков по клику на задник
@@ -1816,7 +2150,31 @@
                     showArticle(index);
                     return;
                 }
+            } else if (hash === '#markets') {
+                document.getElementById('main-content-view').style.display = 'none';
+                document.getElementById('full-article-view').style.display = 'none';
+                document.getElementById('market-detail-view').style.display = 'none';
+                document.getElementById('markets-list-view').style.display = 'block';
+                document.getElementById('markets-list-view').scrollIntoView({ behavior: 'smooth' });
+                loadTop50Markets();
+                return;
+            } else if (hash.startsWith('#coin-')) {
+                const parts = hash.replace('#coin-', '').split('-');
+                const coinId = parts[0];
+                const symbol = parts[1] || '';
+                const name = parts[2] || '';
+                
+                document.getElementById('main-content-view').style.display = 'none';
+                document.getElementById('markets-list-view').style.display = 'none';
+                document.getElementById('full-article-view').style.display = 'none';
+                document.getElementById('market-detail-view').style.display = 'block';
+                
+                openMarketDetail(coinId, symbol, decodeURIComponent(name), false, false);
+                return;
             }
+            
+            document.getElementById('markets-list-view').style.display = 'none';
+            document.getElementById('market-detail-view').style.display = 'none';
             closeArticleView();
         }
 
