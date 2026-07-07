@@ -446,76 +446,6 @@ def draw_tweet_card(details, output_path):
         print(f"Ошибка при генерации карточки твита: {e}")
         return False
 
-def create_video_from_image(image_path, output_mp4_path):
-    """Конвертирует статическую картинку в 5-секундное MP4 видео с фейдами с помощью FFMPEG"""
-    import subprocess
-    cmd = [
-        "ffmpeg", "-loop", "1", "-i", image_path,
-        "-vf", "scale=1280:720,fade=t=in:st=0:d=0.5,fade=t=out:st=4.5:d=0.5",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-t", "5", "-y", output_mp4_path
-    ]
-    try:
-        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-        print(f"Видео успешно сгенерировано через FFMPEG и сохранено в {output_mp4_path}")
-        return True
-    except Exception as e:
-        print(f"Ошибка при создании видео через FFMPEG: {e}")
-        return False
-
-def send_video_to_telegram(post_text, video_path, bot_token, chat_id):
-    """Отправка поста с видео в Telegram-канал"""
-    url = f"https://api.telegram.org/bot{bot_token}/sendVideo"
-    
-    # Импортируем requests динамически
-    try:
-        import requests
-    except ImportError:
-        import subprocess
-        import sys
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
-        import requests
-        
-    link_pattern = r'(\n\n👉 <a href="https://maxtyutin\.github\.io/cryptochannel/#article-[^"]+">Читать на Crypto Analytics</a>)$'
-    match = re.search(link_pattern, post_text)
-    
-    caption = post_text
-    if len(caption) > 1024:
-        if match:
-            link_part = match.group(1)
-            text_part = post_text[:match.start()]
-            max_text_len = 1024 - len(link_part)
-            truncated_text = text_part[:max_text_len]
-            sentence_end_match = list(re.finditer(r'[.!?]\s', truncated_text))
-            if sentence_end_match:
-                last_end_idx = sentence_end_match[-1].end() - 1
-                caption = truncated_text[:last_end_idx].strip() + link_part
-            else:
-                space_match = list(re.finditer(r'\s', truncated_text))
-                if space_match:
-                    caption = truncated_text[:space_match[-1].start()].strip() + link_part
-                else:
-                    caption = truncated_text.strip() + link_part
-        else:
-            caption = caption[:1024]
-            
-    try:
-        with open(video_path, 'rb') as f:
-            files = {'video': f}
-            data = {
-                "chat_id": chat_id,
-                "caption": caption,
-                "parse_mode": "HTML"
-            }
-            r = requests.post(url, data=data, files=files, timeout=45)
-            if r.status_code == 200:
-                return True
-            else:
-                print(f"Ошибка Telegram Video API ({r.status_code}): {r.text}")
-                return False
-    except Exception as e:
-        print(f"Ошибка при отправке видео в Telegram: {e}")
-        return False
-
 def download_and_standardize_image(image_url, article_id):
     """Скачивает изображение, приводит его к стандарту 16:9 (1200x675) и сохраняет локально"""
     import urllib.request
@@ -530,22 +460,28 @@ def download_and_standardize_image(image_url, article_id):
         from PIL import Image
     
     os.makedirs(os.path.join(BASE_DIR, "images"), exist_ok=True)
-    local_filename = f"article_{article_id}.jpg"
+    import re
+    safe_id = re.sub(r'[^\w\-_\.]', '_', article_id)
+    local_filename = f"article_{safe_id}.jpg"
     temp_path = os.path.join(BASE_DIR, "images", f"temp_{local_filename}")
     final_path = os.path.join(BASE_DIR, "images", local_filename)
     relative_path = f"./images/{local_filename}"
     
     # 1. Скачиваем оригинальную картинку во временный файл
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-        req = urllib.request.Request(image_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=15) as response:
-            with open(temp_path, 'wb') as out_file:
-                out_file.write(response.read())
+        import subprocess
+        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        cmd = ['curl', '-s', '-L', '-A', ua, '-o', temp_path, image_url]
+        res = subprocess.run(cmd, timeout=15)
+        if res.returncode != 0 or not os.path.exists(temp_path) or os.path.getsize(temp_path) == 0:
+            raise Exception("curl returned error or empty file")
     except Exception as e:
         print(f"Не удалось скачать изображение по ссылке {image_url}: {e}")
         if os.path.exists(temp_path):
-            os.remove(temp_path)
+            try:
+                os.remove(temp_path)
+            except Exception:
+                pass
         return None
         
     # 2. Обрабатываем изображение с помощью Pillow
@@ -691,7 +627,7 @@ def save_recent_topic(topic):
     except Exception as e:
         print(f"Ошибка сохранения темы: {e}")
 
-def save_article_to_json(news_item, post_text, russian_title=None):
+def save_article_to_json(news_item, post_text, russian_title=None, category="news"):
     """Сохраняет опубликованную новость в файл articles.json для веб-сайта"""
     json_path = os.path.join(BASE_DIR, "articles.json")
     articles = []
@@ -710,6 +646,7 @@ def save_article_to_json(news_item, post_text, russian_title=None):
         "link": news_item['link'],
         "image_url": news_item.get('image_url', ''),
         "post_text": post_text,
+        "category": category,
         "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
         "timestamp": int(time.time())
     }
@@ -724,7 +661,7 @@ def save_article_to_json(news_item, post_text, russian_title=None):
     try:
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(articles, f, ensure_ascii=False, indent=2)
-        print("Статья сохранена в articles.json для сайта!")
+        print(f"Статья категории '{category}' сохранена в articles.json для сайта!")
     except Exception as e:
         print(f"Ошибка сохранения статьи в JSON: {e}")
 
@@ -754,6 +691,255 @@ NO — если это новая новость о другом событии.
         return False
         
     return "YES" in answer.upper()
+
+def fetch_reddit_memes():
+    """Получает свежие мемы с сабреддита /r/cryptocurrencymemes через RSS"""
+    url = "https://www.reddit.com/r/cryptocurrencymemes/.rss"
+    headers = {'User-Agent': 'CryptoAnalyticsFeedBot/1.0 (contact: support@cryptoanalytics.com)'}
+    req = urllib.request.Request(url, headers=headers)
+    processed_ids = get_processed_ids()
+    memes = []
+    try:
+        # Разрешаем обход ssl-сертификатов на случай локальных проблем
+        import ssl
+        context = ssl._create_unverified_context()
+        with urllib.request.urlopen(req, timeout=10, context=context) as response:
+            xml_data = response.read().decode('utf-8', errors='ignore')
+        
+        # Поиск записей entry
+        entries = re.findall(r'<entry>(.*?)</entry>', xml_data, re.DOTALL)
+        for entry in entries[:10]:
+            title_match = re.search(r'<title>(.*?)</title>', entry, re.DOTALL)
+            link_match = re.search(r'<link href="(.*?)"', entry)
+            
+            title = title_match.group(1).strip() if title_match else ""
+            link = link_match.group(1).strip() if link_match else ""
+            
+            # Поиск любых прямых ссылок на изображения в записи
+            imgs = re.findall(r'(https://[^\s"<>]+?\.(?:jpg|jpeg|png|webp|gif))', entry)
+            imgs = [img for img in imgs if 'redditstatic.com' not in img]
+            
+            img_url = imgs[0] if imgs else None
+            if img_url:
+                img_url = img_url.replace("preview.redd.it", "i.redd.it")
+            else:
+                continue
+                
+            # Парсим ID поста
+            meme_id = f"meme_{link.split('/')[-2]}" if '/' in link else f"meme_{hash(title)}"
+            if meme_id not in processed_ids:
+                memes.append({
+                    "id": meme_id,
+                    "source": "Reddit",
+                    "title": title,
+                    "description": "Свежий крипто-мем",
+                    "link": link,
+                    "image_url": img_url
+                })
+        return memes
+    except Exception as e:
+        print(f"Ошибка получения мемов с Reddit: {e}")
+        return []
+
+def generate_meme_post(meme_item, gemini_key):
+    """Переводит заголовок мема и генерирует забавный текст подписи с помощью Gemini"""
+    prompt = f"""Ты — редактор юмористического раздела в Crypto Analytics.
+Ниже приведен популярный мем с Reddit (заголовок на английском).
+Заголовок: {meme_item['title']}
+
+Твоя задача:
+1. Переведи заголовок на русский язык, сохранив оригинальный юмор и крипто-сленг.
+2. Придумай краткое забавное описание для поста в Telegram-канале (до 300 символов), которое поясняет шутку или добавляет иронии о текущей ситуации на рынке.
+3. Категорически запрещено использовать слово ForkLog. Пиши только от лица Crypto Analytics.
+4. Разрешены только HTML-теги <b>, <a>, <i>. Хэштеги КАТЕГОРИЧЕСКИ запрещены.
+
+Верни ответ СТРОГО в формате JSON с тремя следующими ключами:
+{{
+  "russian_title": "Переведенный заголовок мема на русский язык",
+  "telegram_caption": "Смешная подпись к картинке в Telegram (до 300 символов) с эмодзи. Должно содержать заголовок капсом с эмодзи в начале.",
+  "full_article": "Краткое описание мема и юмористический комментарий для сайта (около 400-800 символов)."
+}}
+"""
+    response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+    if not response_json:
+        return None
+    try:
+        parsed = json.loads(response_json)
+        return {
+            "russian_title": parsed.get("russian_title", "").strip() or meme_item['title'],
+            "telegram_caption": parsed.get("telegram_caption", "").strip(),
+            "full_article": parsed.get("full_article", "").strip()
+        }
+    except Exception as e:
+        print(f"Ошибка парсинга мема через Gemini: {e}")
+        return None
+
+def generate_guide_post(gemini_key, env):
+    """Генерирует полезный криптогайд с реферальными ссылками на биржи"""
+    bybit_link = env.get("BYBIT_REF_LINK", "https://partner.bybit.com/b/crypto_analytics")
+    binance_link = env.get("BINANCE_REF_LINK", "https://accounts.binance.com/register?ref=crypto_analytics")
+    okx_link = env.get("OKX_REF_LINK", "https://www.okx.com/join/crypto_analytics")
+    
+    themes = [
+        "Как начать торговать на Bybit новичку с нуля",
+        "Безопасность криптовалюты: правила хранения активов на кошельке",
+        "Что такое стейкинг и как зарабатывать пассивный доход",
+        "Гид по P2P-торговле: как покупать крипту без рисков блокировки карт",
+        "Разница между горячими и холодными кошельками: что выбрать"
+    ]
+    import random
+    selected_theme = random.choice(themes)
+    
+    prompt = f"""Ты — ведущий финансовый аналитик и автор обучающих программ Crypto Analytics.
+Напиши понятный и полезный криптогайд для новичков на тему: "{selected_theme}".
+
+ПРАВИЛА ОФОРМЛЕНИЯ ССЫЛОК:
+Интегрируй в текст следующие партнерские реферальные ссылки для регистрации на биржах (используй HTML-теги <a href="...">Имя биржи</a>):
+- Регистрация на Bybit: {bybit_link}
+- Регистрация на OKX: {okx_link}
+- Регистрация на Binance: {binance_link}
+
+ПРАВИЛО ДЛИНЫ: telegram_caption (краткая версия для Telegram) должна быть не более 800 символов (включая пробелы) и содержать ключевые шаги/лайфхаки и призыв к действию с реферальной ссылкой.
+full_article (полная версия для сайта) должна быть детальной (1500-2500 символов) с пошаговыми инструкциями, примерами и реферальными ссылками.
+
+Категорически запрещено упоминать ForkLog.
+
+Верни результат строго в формате JSON:
+{{
+  "russian_title": "Заголовок гайда (например: ГИД: Как безопасно покупать криптовалюту)",
+  "telegram_caption": "Краткая версия гайда с шагами и реферальными ссылками бирж (до 800 символов). Должна содержать заголовок капсом с эмодзи в начале.",
+  "full_article": "Полный текст гайда с HTML-разметкой <b>, <a>, <i>, <blockquote> для веб-сайта."
+}}
+"""
+    response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+    if not response_json:
+        return None
+    try:
+        parsed = json.loads(response_json)
+        guide_id = f"guide_{int(time.time())}"
+        return {
+            "id": guide_id,
+            "title": parsed.get("russian_title", "").strip() or selected_theme,
+            "telegram_caption": parsed.get("telegram_caption", "").strip(),
+            "full_article": parsed.get("full_article", "").strip(),
+            "source": "Crypto Analytics",
+            "link": "https://maxtyutin.github.io/cryptochannel/",
+            "image_url": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200&auto=format&fit=crop"
+        }
+    except Exception as e:
+        print(f"Ошибка генерации гайда: {e}")
+        return None
+
+def check_price_signals(bot_token, chat_id, gemini_key):
+    """Проверяет резкие скачки цен BTC/ETH и публикует срочные сигналы в ТГ и на сайт"""
+    prices_path = os.path.join(BASE_DIR, "last_prices.json")
+    current_prices = {}
+    
+    # 1. Получаем текущие цены
+    url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd'
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode())
+            current_prices = {
+                "btc": data['bitcoin']['usd'],
+                "eth": data['ethereum']['usd'],
+                "timestamp": int(time.time())
+            }
+    except Exception as e:
+        print(f"Ошибка получения цен для сигналов: {e}")
+        return
+        
+    # 2. Если файла нет, просто создаем его и выходим
+    if not os.path.exists(prices_path):
+        try:
+            with open(prices_path, 'w') as f:
+                json.dump(current_prices, f)
+        except Exception:
+            pass
+        return
+        
+    # 3. Загружаем предыдущие цены
+    try:
+        with open(prices_path, 'r') as f:
+            last_data = json.load(f)
+    except Exception:
+        return
+        
+    last_btc = last_data.get("btc")
+    last_eth = last_data.get("eth")
+    last_signal_time = last_data.get("last_signal_time", 0)
+    
+    if not last_btc or not last_eth:
+        return
+        
+    # Проверяем лимит 4 часа между сигналами, чтобы не спамить
+    if time.time() - last_signal_time < 14400:
+        return
+        
+    # Вычисляем изменения в %
+    btc_change = ((current_prices['btc'] - last_btc) / last_btc) * 100
+    eth_change = ((current_prices['eth'] - last_eth) / last_eth) * 100
+    
+    alert_coin = None
+    alert_change = 0.0
+    alert_price = 0.0
+    
+    if abs(btc_change) >= 2.5:
+        alert_coin = "Bitcoin (BTC)"
+        alert_change = btc_change
+        alert_price = current_prices['btc']
+    elif abs(eth_change) >= 2.5:
+        alert_coin = "Ethereum (ETH)"
+        alert_change = eth_change
+        alert_price = current_prices['eth']
+        
+    if alert_coin:
+        print(f"🚨 Фиксация резкого изменения: {alert_coin} на {alert_change:.2f}%")
+        direction = "вырос" if alert_change > 0 else "упал"
+        emoji = "🟢" if alert_change > 0 else "🔴"
+        sign = "+" if alert_change > 0 else ""
+        
+        prompt = f"""Ты — ведущий трейдер и технический аналитик Crypto Analytics.
+Срочное оповещение: курс {alert_coin} резко {direction} на {sign}{alert_change:.2f}% и сейчас составляет ${alert_price:,.2f}.
+Напиши краткое срочное предупреждение для инвесторов (до 400 символов).
+Объясни возможные технические причины (ликвидация шортов/лонгов, пробой уровня поддержки/сопротивления, новости) и напиши краткий вывод 'Что делать? 🎯'.
+
+ПРАВИЛА:
+- Язык: русский.
+- Ограничение: до 400 символов.
+- Используй HTML-теги <b> для акцентов.
+- В конце добавь хэштеги: #сигналы #рынок #{alert_coin.split()[0].lower()} #срочно.
+- Никаких упоминаний ForkLog.
+"""
+        signal_text = call_gemini_api(prompt, gemini_key, is_json=False)
+        if signal_text:
+            full_signal_text = f"🚨 <b>СРОЧНЫЙ СИГНАЛ CRYPTO ANALYTICS</b>\n\n{signal_text.strip()}"
+            
+            # Отправляем в Telegram
+            if bot_token and chat_id:
+                send_to_telegram(full_signal_text, bot_token, chat_id)
+                
+            # Сохраняем на сайт
+            signal_item = {
+                "id": f"signal_{int(time.time())}",
+                "title": f"Срочный сигнал: Резкое движение {alert_coin}!",
+                "source": "Crypto Analytics",
+                "link": "https://maxtyutin.github.io/cryptochannel/",
+                "image_url": "https://images.unsplash.com/photo-1618042164219-62c820f10723?q=80&w=1200&auto=format&fit=crop"
+            }
+            save_article_to_json(signal_item, full_signal_text, signal_item['title'], category="signals")
+            
+            current_prices["last_signal_time"] = int(time.time())
+            
+    if "last_signal_time" not in current_prices:
+        current_prices["last_signal_time"] = last_signal_time
+        
+    try:
+        with open(prices_path, 'w') as f:
+            json.dump(current_prices, f)
+    except Exception:
+        pass
 
 def generate_price_digest():
     """Получение курсов с CoinGecko и генерация дайджеста цен"""
@@ -893,7 +1079,6 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
         if not json_text:
             return False
             
-        # Очищаем от возможных ```json оберток
         json_text = re.sub(r'^```json\s*', '', json_text)
         json_text = re.sub(r'\s*```$', '', json_text)
         
@@ -945,19 +1130,15 @@ def setup_cron():
     cron_lines = [line.strip() for line in current_cron.splitlines() if line.strip()]
     
     for job in jobs:
-        # Проверяем, есть ли уже такая задача в crontab
         target_marker = job.split(' /usr/bin/python3 ')[1].split(' >> ')[0]
         if not any(target_marker in line for line in cron_lines):
-            # Если передаются аргументы, ищем точное совпадение аргумента
             arg_marker = "--digest" if "--digest" in job else ("--poll" if "--poll" in job else "")
             if arg_marker:
                 if not any(target_marker in line and arg_marker in line for line in cron_lines):
                     cron_lines.append(job)
                     updated = True
             else:
-                # Для базового вызова проверяем, чтобы в строке не было других аргументов
                 if not any(target_marker in line and ("--digest" in line or "--poll" in line) for line in cron_lines):
-                    # Но убеждаемся, что самого базового вызова нет
                     if not any(target_marker in line and "--digest" not in line and "--poll" not in line for line in cron_lines):
                         cron_lines.append(job)
                         updated = True
@@ -982,10 +1163,7 @@ def main():
         print("Ошибка: В файле .env не задан GEMINI_API_KEY. Пожалуйста, укажите его.")
         return
         
-    # Автоматически настраиваем планировщик crontab при запуске
     setup_cron()
-    
-    # Разбор аргументов командной строки
     args = sys.argv[1:]
     
     if "--digest" in args:
@@ -993,7 +1171,6 @@ def main():
         crypto_text = generate_price_digest()
         stock_text = generate_stock_digest()
         
-        # 1. Публикуем дайджест криптовалют
         if crypto_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ КРИПТЫ ===")
             print(crypto_text)
@@ -1003,7 +1180,6 @@ def main():
                 else:
                     print("Не удалось отправить дайджест криптовалют в Telegram.")
                     
-        # 2. Публикуем дайджест акций
         if stock_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ АКЦИЙ ===")
             print(stock_text)
@@ -1013,7 +1189,6 @@ def main():
                 else:
                     print("Не удалось отправить дайджест акций в Telegram.")
                     
-        # 3. Публикуем аналитический обзор рынка
         if crypto_text and stock_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ОБЗОР РЫНКА ===")
             review_text = generate_market_review(gemini_key, crypto_text, stock_text)
@@ -1037,38 +1212,36 @@ def main():
             print("Параметры Telegram не настроены. Опрос не отправлен.")
         return
         
-    # Обычный режим работы — публикация новости
+    # Только новости
+    category = "news"
     news_list = fetch_rss_news()
     if not news_list:
         print("Новых новостей в лентах не найдено.")
         return
         
     print(f"Найдено новых новостей: {len(news_list)}. Ищем подходящую новость без дубликатов...")
-    
     selected_item = None
     for item in news_list:
         print(f"Проверка кандидата: {item['title']}...")
         if check_semantic_duplicate(item['title'], item['description'], gemini_key):
             print("Новость определена как семантический дубликат. Пропускаем.")
-            save_processed_id(item['id']) # Помечаем как обработанную, чтобы больше не проверять
+            save_processed_id(item['id'])
             continue
-        
         selected_item = item
         break
         
     if not selected_item:
-        print("Все новые новости оказались семантическими дубликатами недавних публикаций.")
+        print("Все новые новости оказались семантическими дубликатами.")
         return
         
     print(f"Выбрана новость: {selected_item['title']}. Генерация поста...")
     post_data = generate_forklog_post(selected_item, gemini_key)
-    
-    if post_data:
+
+    if post_data and selected_item:
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         russian_title = post_data["russian_title"]
         
-        # Добавляем ссылку на полный обзор статьи на сайте
         article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
         telegram_caption += f"\n\n👉 <a href=\"{article_url}\">Читать на Crypto Analytics</a>"
         
@@ -1079,79 +1252,54 @@ def main():
         print("============================\n")
         
         with open(OUTPUT_FILE, 'w') as f:
-            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item['link']}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
-        print(f"Пост сохранен в файл: {OUTPUT_FILE}")
-        
-        # 1. Проверяем, является ли новость твитом из соцсети X (Twitter)
-        is_tweet = False
-        title_lower = selected_item['title'].lower()
-        desc_lower = selected_item.get('description', '').lower()
-        if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
-            is_tweet = True
+            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item.get('link', 'Crypto Analytics')}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
             
         local_img_path = None
-        
-        if is_tweet:
-            print("Обнаружена новость о твите. Попытка генерации скриншота поста из X...")
-            tweet_details = extract_tweet_details(selected_item['title'], selected_item.get('description', ''), gemini_key)
-            if tweet_details:
-                tweet_filename = f"images/tweet_{selected_item['id']}.jpg"
-                tweet_abs_path = os.path.join(BASE_DIR, tweet_filename)
-                if draw_tweet_card(tweet_details, tweet_abs_path):
-                    local_img_path = tweet_abs_path
-                    selected_item['image_url'] = f"./{tweet_filename}"
-                    print(f"Скриншот твита успешно сгенерирован и прикреплен: {selected_item['image_url']}")
-
-        # 2. Если это не твит или скриншот не сгенерирован, скачиваем и стандартизируем стандартную картинку
-        if not local_img_path and selected_item.get('image_url'):
-            print(f"Скачивание и обработка стандартного изображения: {selected_item['image_url']}...")
-            img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
-            if img_result:
-                local_img_path = img_result["local_path"]
-                # Обновляем ссылку в объекте новости для сайта, чтобы вела на локальную версию
-                selected_item['image_url'] = img_result["relative_url"]
-                print(f"Ссылка на картинку обновлена на локальную: {selected_item['image_url']}")
-
-        # 3. Проверяем, нужно ли сгенерировать видео для публикации (каждый день с 12:00 до 16:00 UTC)
-        publish_as_video = False
-        import datetime
-        current_hour = datetime.datetime.utcnow().hour
-        if 12 <= current_hour <= 16:
-            publish_as_video = True
-            
-        local_video_path = None
-        if publish_as_video and local_img_path:
-            video_filename = f"images/video_{selected_item['id']}.mp4"
-            video_abs_path = os.path.join(BASE_DIR, video_filename)
-            if create_video_from_image(local_img_path, video_abs_path):
-                local_video_path = video_abs_path
-
+        if selected_item.get('image_url'):
+            if selected_item['image_url'].startswith('http'):
+                is_tweet = False
+                title_lower = selected_item['title'].lower()
+                desc_lower = selected_item.get('description', '').lower()
+                if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
+                    is_tweet = True
+                    
+                if is_tweet:
+                    print("Обнаружена новость о твите. Попытка генерации скриншота поста из X...")
+                    tweet_details = extract_tweet_details(selected_item['title'], selected_item.get('description', ''), gemini_key)
+                    if tweet_details:
+                        safe_id = re.sub(r'[^\w\-_\.]', '_', selected_item['id'])
+                        tweet_filename = f"images/tweet_{safe_id}.jpg"
+                        tweet_abs_path = os.path.join(BASE_DIR, tweet_filename)
+                        if draw_tweet_card(tweet_details, tweet_abs_path):
+                            local_img_path = tweet_abs_path
+                            selected_item['image_url'] = f"./{tweet_filename}"
+                            print(f"Скриншот твита успешно сгенерирован: {selected_item['image_url']}")
+                            
+                if not local_img_path:
+                    print(f"Скачивание и обработка изображения: {selected_item['image_url']}...")
+                    img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
+                    if img_result:
+                        local_img_path = img_result["local_path"]
+                        selected_item['image_url'] = img_result["relative_url"]
+            else:
+                local_img_path = os.path.join(BASE_DIR, selected_item['image_url'].replace('./', ''))
+                
         if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
             
-            # Сначала пробуем отправить видео-пост, если он был сгенерирован
-            if local_video_path:
-                print(f"Отправка сгенерированного видео-ролика: {local_video_path}...")
-                success = send_video_to_telegram(telegram_caption, local_video_path, bot_token, chat_id)
-                if success:
-                    print("Успешно опубликовано в виде видео-поста!")
-            
-            # Если видео нет или произошла ошибка отправки видео, отправляем фото-пост
-            if not success and local_img_path:
+            if local_img_path:
                 print(f"Отправка локально обработанного изображения: {local_img_path}...")
                 success = send_photo_to_telegram(telegram_caption, local_img_path, bot_token, chat_id)
                 if success:
                     print("Успешно опубликовано со стандартизированным изображением!")
-                else:
-                    print("Не удалось отправить фото-пост с обработанной картинкой. Пробуем исходную...")
-            
-            if not success and selected_item.get('image_url') and not selected_item['image_url'].startswith('./'):
+                    
+            if not success and selected_item.get('image_url') and selected_item['image_url'].startswith('http'):
                 print(f"Попытка отправить пост с оригинальным URL: {selected_item['image_url']}...")
                 success = send_photo_to_telegram(telegram_caption, selected_item['image_url'], bot_token, chat_id)
                 if success:
                     print("Успешно опубликовано с изображением по внешней ссылке!")
-            
+                    
             if not success:
                 if send_to_telegram(telegram_caption, bot_token, chat_id):
                     print("Успешно опубликовано (только текст)!")
@@ -1162,11 +1310,11 @@ def main():
             if success:
                 save_processed_id(selected_item['id'])
                 save_recent_topic(selected_item['title'])
-                save_article_to_json(selected_item, full_article, russian_title)
+                save_article_to_json(selected_item, full_article, russian_title, category=category)
         else:
             print("Параметры Telegram не настроены в .env. Пост не отправлен.")
             save_processed_id(selected_item['id'])
-            save_article_to_json(selected_item, full_article, russian_title)
+            save_article_to_json(selected_item, full_article, russian_title, category=category)
 
 if __name__ == "__main__":
     main()
