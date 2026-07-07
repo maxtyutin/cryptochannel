@@ -1351,11 +1351,11 @@
         let currentPage = 1;
         let currentArticlesList = [];
 
-        // Получение общего количества страниц по схеме: 1 страница = 11 новостей (1 + 10), далее по 30 на страницу
+        // Получение общего количества страниц по схеме: 1 страница = 31 новость (1 + 30), далее по 30 на страницу
         function getTotalPages() {
             const N = currentArticlesList.length;
-            if (N <= 11) return 1;
-            return 1 + Math.ceil((N - 11) / 30);
+            if (N <= 31) return 1;
+            return 1 + Math.ceil((N - 31) / 30);
         }
 
         // Отрисовка конкретной страницы списка новостей
@@ -1377,7 +1377,7 @@
             let articlesToShow = [];
             
             if (currentPage === 1) {
-                // Страница 1: 1 главный баннер (Hero) + 10 карточек в сетку
+                // Страница 1: 1 главный баннер (Hero) + 30 карточек в сетку (10 рядов по 3 новости)
                 heroSection.style.display = 'block';
                 
                 const latest = currentArticlesList[0];
@@ -1403,12 +1403,12 @@
                     </div>
                 `;
                 
-                articlesToShow = currentArticlesList.slice(1, 11);
+                articlesToShow = currentArticlesList.slice(1, 31);
             } else {
-                // Страница > 1: Главного баннера нет, сетка из 30 карточек
+                // Страница > 1: Главного баннера нет, сетка из 30 карточек (10 рядов по 3 новости)
                 heroSection.style.display = 'none';
                 
-                const startIndex = 11 + (currentPage - 2) * 30;
+                const startIndex = 31 + (currentPage - 2) * 30;
                 const endIndex = startIndex + 30;
                 articlesToShow = currentArticlesList.slice(startIndex, endIndex);
             }
@@ -1711,7 +1711,7 @@
             
             // Фильтруем и берем до 8 новостей, кроме текущей, для прокрутки
             const relatedArticles = allArticles
-                .filter(art => art.id !== currentId)
+                .filter(art => String(art.id) !== String(currentId))
                 .slice(0, 8);
                 
             track.innerHTML = '';
@@ -1750,7 +1750,7 @@
                                 </span>
                             </div>
                             <h3 class="news-card-title">${art.title}</h3>
-                            <p class="news-card-excerpt" style="display: block; overflow: visible; -webkit-line-clamp: none; height: auto; margin-bottom: 16px;">
+                            <p class="news-card-excerpt">
                                 ${stripHTML(cleanPostText)}
                             </p>
                             <div class="news-card-footer" style="margin-top: auto;">
