@@ -8,7 +8,18 @@ on:
     - cron: '15 6,18 * * *'
     # 3. Интерактивный опрос в 11:00 UTC (соответствует 14:00 по МСК)
     - cron: '0 11 * * *'
-  workflow_dispatch: # Позволяет запускать вручную
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Режим ручного запуска'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - news
+          - digest
+          - poll
 
 jobs:
   publish:
@@ -30,16 +41,29 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          HOUR=$(date -u +%H)
-          if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ]; then
-            echo "Запуск дайджеста цен..."
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "$MODE" = "news" ]; then
+            echo "Ручной запуск: Публикация новости..."
+            python news_engine.py
+          elif [ "$MODE" = "digest" ]; then
+            echo "Ручной запуск: Публикация дайджеста цен..."
             python news_engine.py --digest
-          elif [ "$HOUR" = "11" ]; then
-            echo "Запуск интерактивного опроса..."
+          elif [ "$MODE" = "poll" ]; then
+            echo "Ручной запуск: Публикация опроса..."
             python news_engine.py --poll
           else
-            echo "Запуск публикации обычных новостей..."
-            python news_engine.py
+            # Автоматический режим (по времени UTC)
+            HOUR=$(date -u +%H)
+            if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ]; then
+              echo "Авто-режим: Запуск дайджеста цен..."
+              python news_engine.py --digest
+            elif [ "$HOUR" = "11" ]; then
+              echo "Авто-режим: Запуск интерактивного опроса..."
+              python news_engine.py --poll
+            else
+              echo "Авто-режим: Запуск обычных новостей..."
+              python news_engine.py
+            fi
           fi
 
       - name: Commit and Push Database updates
