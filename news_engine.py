@@ -1079,7 +1079,6 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
         if not json_text:
             return False
             
-        # Очищаем от возможных ```json оберток
         json_text = re.sub(r'^```json\s*', '', json_text)
         json_text = re.sub(r'\s*```$', '', json_text)
         
@@ -1131,19 +1130,15 @@ def setup_cron():
     cron_lines = [line.strip() for line in current_cron.splitlines() if line.strip()]
     
     for job in jobs:
-        # Проверяем, есть ли уже такая задача в crontab
         target_marker = job.split(' /usr/bin/python3 ')[1].split(' >> ')[0]
         if not any(target_marker in line for line in cron_lines):
-            # Если передаются аргументы, ищем точное совпадение аргумента
             arg_marker = "--digest" if "--digest" in job else ("--poll" if "--poll" in job else "")
             if arg_marker:
                 if not any(target_marker in line and arg_marker in line for line in cron_lines):
                     cron_lines.append(job)
                     updated = True
             else:
-                # Для базового вызова проверяем, чтобы в строке не было других аргументов
                 if not any(target_marker in line and ("--digest" in line or "--poll" in line) for line in cron_lines):
-                    # Но убеждаемся, что самого базового вызова нет
                     if not any(target_marker in line and "--digest" not in line and "--poll" not in line for line in cron_lines):
                         cron_lines.append(job)
                         updated = True
@@ -1168,10 +1163,7 @@ def main():
         print("Ошибка: В файле .env не задан GEMINI_API_KEY. Пожалуйста, укажите его.")
         return
         
-    # Автоматически настраиваем планировщик crontab при запуске
     setup_cron()
-    
-    # Разбор аргументов командной строки
     args = sys.argv[1:]
     
     if "--digest" in args:
@@ -1179,7 +1171,6 @@ def main():
         crypto_text = generate_price_digest()
         stock_text = generate_stock_digest()
         
-        # 1. Публикуем дайджест криптовалют
         if crypto_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ КРИПТЫ ===")
             print(crypto_text)
@@ -1189,7 +1180,6 @@ def main():
                 else:
                     print("Не удалось отправить дайджест криптовалют в Telegram.")
                     
-        # 2. Публикуем дайджест акций
         if stock_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ АКЦИЙ ===")
             print(stock_text)
@@ -1199,7 +1189,6 @@ def main():
                 else:
                     print("Не удалось отправить дайджест акций в Telegram.")
                     
-        # 3. Публикуем аналитический обзор рынка
         if crypto_text and stock_text:
             print("\n=== СГЕНЕРИРОВАННЫЙ ОБЗОР РЫНКА ===")
             review_text = generate_market_review(gemini_key, crypto_text, stock_text)
@@ -1223,87 +1212,36 @@ def main():
             print("Параметры Telegram не настроены. Опрос не отправлен.")
         return
         
-    # Сначала всегда проверяем резкие движения цены (сигналы)
-    if "--digest" not in args and "--poll" not in args:
-        check_price_signals(bot_token, chat_id, gemini_key)
-        
-    # Разбираем специальные тестовые флаги для разработки
-    forced_mode = None
-    if "--test-meme" in args:
-        forced_mode = "meme"
-    elif "--test-guide" in args:
-        forced_mode = "guide"
-        
-    # Определяем категорию контента
-    import random
-    mode = forced_mode if forced_mode else random.choices(["news", "meme", "guide"], weights=[70, 15, 15], k=1)[0]
-    print(f"Выбран режим публикации: {mode}")
-    
-    selected_item = None
-    post_data = None
+    # Только новости
     category = "news"
-    
-    if mode == "meme":
-        category = "memes"
-        print("Получение мемов...")
-        memes = fetch_reddit_memes()
-        if memes:
-            for m in memes:
-                if not check_semantic_duplicate(m['title'], m['description'], gemini_key):
-                    selected_item = m
-                    break
-            if selected_item:
-                print(f"Выбран мем: {selected_item['title']}. Генерация юмористического описания...")
-                post_data = generate_meme_post(selected_item, gemini_key)
+    news_list = fetch_rss_news()
+    if not news_list:
+        print("Новых новостей в лентах не найдено.")
+        return
         
-        if not post_data:
-            print("Не удалось получить мемы или сгенерировать пост. Возврат к стандартным новостям...")
-            mode = "news"
-            
-    if mode == "guide":
-        category = "guides"
-        print("Генерация обучающего криптогайда...")
-        selected_item = generate_guide_post(gemini_key, env)
-        if selected_item:
-            post_data = {
-                "russian_title": selected_item["title"],
-                "telegram_caption": selected_item["telegram_caption"],
-                "full_article": selected_item["full_article"]
-            }
-        else:
-            print("Не удалось сгенерировать гайд. Возврат к стандартным новостям...")
-            mode = "news"
-            
-    if mode == "news":
-        category = "news"
-        news_list = fetch_rss_news()
-        if not news_list:
-            print("Новых новостей в лентах не найдено.")
-            return
-            
-        print(f"Найдено новых новостей: {len(news_list)}. Ищем подходящую новость без дубликатов...")
-        for item in news_list:
-            print(f"Проверка кандидата: {item['title']}...")
-            if check_semantic_duplicate(item['title'], item['description'], gemini_key):
-                print("Новость определена как семантический дубликат. Пропускаем.")
-                save_processed_id(item['id'])
-                continue
-            selected_item = item
-            break
-            
-        if not selected_item:
-            print("Все новые новости оказались семантическими дубликатами.")
-            return
-            
-        print(f"Выбрана новость: {selected_item['title']}. Генерация поста...")
-        post_data = generate_forklog_post(selected_item, gemini_key)
+    print(f"Найдено новых новостей: {len(news_list)}. Ищем подходящую новость без дубликатов...")
+    selected_item = None
+    for item in news_list:
+        print(f"Проверка кандидата: {item['title']}...")
+        if check_semantic_duplicate(item['title'], item['description'], gemini_key):
+            print("Новость определена как семантический дубликат. Пропускаем.")
+            save_processed_id(item['id'])
+            continue
+        selected_item = item
+        break
+        
+    if not selected_item:
+        print("Все новые новости оказались семантическими дубликатами.")
+        return
+        
+    print(f"Выбрана новость: {selected_item['title']}. Генерация поста...")
+    post_data = generate_forklog_post(selected_item, gemini_key)
 
     if post_data and selected_item:
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         russian_title = post_data["russian_title"]
         
-        # Добавляем ссылку на полный обзор на сайте (для новостей, мемов, гайдов)
         article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
         telegram_caption += f"\n\n👉 <a href=\"{article_url}\">Читать на Crypto Analytics</a>"
         
@@ -1314,20 +1252,17 @@ def main():
         print("============================\n")
         
         with open(OUTPUT_FILE, 'w') as f:
-            f.write(f"# Свежий контент от ИИ-редактора [{category}]\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item.get('link', 'Crypto Analytics')}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
+            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item.get('link', 'Crypto Analytics')}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
             
-        # Скачиваем и стандартизируем изображение
         local_img_path = None
         if selected_item.get('image_url'):
             if selected_item['image_url'].startswith('http'):
-                # Проверяем, является ли это твитом в X (только для обычных новостей)
                 is_tweet = False
-                if mode == "news":
-                    title_lower = selected_item['title'].lower()
-                    desc_lower = selected_item.get('description', '').lower()
-                    if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
-                        is_tweet = True
-                        
+                title_lower = selected_item['title'].lower()
+                desc_lower = selected_item.get('description', '').lower()
+                if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
+                    is_tweet = True
+                    
                 if is_tweet:
                     print("Обнаружена новость о твите. Попытка генерации скриншота поста из X...")
                     tweet_details = extract_tweet_details(selected_item['title'], selected_item.get('description', ''), gemini_key)
@@ -1341,14 +1276,12 @@ def main():
                             print(f"Скриншот твита успешно сгенерирован: {selected_item['image_url']}")
                             
                 if not local_img_path:
-                    # Стандартная картинка или мем с Reddit
                     print(f"Скачивание и обработка изображения: {selected_item['image_url']}...")
                     img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
                     if img_result:
                         local_img_path = img_result["local_path"]
                         selected_item['image_url'] = img_result["relative_url"]
             else:
-                # Если картинка локальная
                 local_img_path = os.path.join(BASE_DIR, selected_item['image_url'].replace('./', ''))
                 
         if bot_token and chat_id:
