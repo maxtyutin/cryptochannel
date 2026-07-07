@@ -1168,6 +1168,10 @@
                 if (!response.ok) throw new Error('Не удалось загрузить базу новостей');
                 
                 allArticles = await response.json();
+                
+                // Гарантируем, что самые свежие посты (по timestamp) всегда будут первыми
+                allArticles.sort((a, b) => b.timestamp - a.timestamp);
+                
                 renderSite(allArticles);
                 handleRouting();
             } catch (error) {

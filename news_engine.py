@@ -244,15 +244,19 @@ def call_gemini_api(prompt, gemini_key, is_json=False):
 
 def generate_forklog_post(news_item, gemini_key):
     """Генерация Telegram-поста и полной статьи для сайта с помощью Gemini API"""
-    prompt = f"""Ты — профессиональный крипто-журналист и редактор ForkLog. 
-На основе следующей новости напиши две версии статьи на русском языке:
+    prompt = f"""Ты — профессиональный крипто-журналист и редактор Crypto Analytics. 
+На основе следующей новости напиши заголовок и две версии статьи на русском языке:
 Источник: {news_item['source']}
 Заголовок: {news_item['title']}
 Описание: {news_item['description']}
 
-Верни результат СТРОГО в формате JSON с двумя следующими ключами:
+ПРАВИЛО: КАТЕГОРИЧЕСКИ запрещено использовать или упоминать название ForkLog. Пиши только от лица Crypto Analytics.
+ПРАВИЛО ДЛИНЫ: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
+
+Верни результат СТРОГО в формате JSON с тремя следующими ключами:
 {{
-  "telegram_caption": "Версия для Telegram-канала (подпись к фото). Длина должна быть строго от 650 до 950 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b> и <a>.",
+  "russian_title": "Привлекательный заголовок для веб-сайта на русском языке в стиле Crypto Analytics (без кликбейта, отражающий суть)",
+  "telegram_caption": "Краткий пересказ новости для Telegram-канала (подпись к фото). Длина должна быть не более 800 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b> и <a>.",
   "full_article": "Полная, развернутая и максимально детальная статья для веб-сайта без каких-либо сокращений (около 1500-2500 символов). Подробно опиши предысторию события, контекст, технические детали, мнения участников рынка, развернутый вывод и последствия для индустрии. Разрешены HTML-теги <b>, <a>, <i>."
 }}
 """
@@ -263,6 +267,7 @@ def generate_forklog_post(news_item, gemini_key):
     try:
         parsed = json.loads(response_json)
         return {
+            "russian_title": parsed.get("russian_title", "").strip() or news_item['title'],
             "telegram_caption": parsed.get("telegram_caption", "").strip(),
             "full_article": parsed.get("full_article", "").strip()
         }
@@ -277,7 +282,8 @@ def send_to_telegram(post_text, bot_token, chat_id):
         "chat_id": chat_id,
         "text": post_text,
         "parse_mode": "HTML",
-        "disable_web_page_preview": False
+        "disable_web_page_preview": True,
+        "link_preview_options": {"is_disabled": True}
     }
     
     req = urllib.request.Request(
@@ -298,16 +304,43 @@ def send_photo_to_telegram(post_text, image_url, bot_token, chat_id):
     """Отправка поста с изображением по ссылке в Telegram-канал"""
     url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
     
-    # Ограничение Telegram на длину подписи к фото - 1024 символа
+    # Регулярное выражение для поиска нашей ссылки в конце текста
+    link_pattern = r'(\n\n👉 <a href="https://maxtyutin\.github\.io/cryptochannel/#article-[^"]+">Читать на Crypto Analytics</a>)$'
+    match = re.search(link_pattern, post_text)
+    
     caption = post_text
-    if len(caption) > 1020:
-        caption = caption[:1017] + "..."
-        
+    # Лимит Telegram на подпись к фотографии - 1024 символа
+    if len(caption) > 1024:
+        if match:
+            link_part = match.group(1)
+            text_part = post_text[:match.start()]
+            
+            # Рассчитываем размер текста так, чтобы влезла ссылка
+            max_text_len = 1024 - len(link_part)
+            truncated_text = text_part[:max_text_len]
+            
+            # Находим последнюю законченную фразу (точку, восклицательный или вопросительный знак)
+            sentence_end_match = list(re.finditer(r'[.!?]\s', truncated_text))
+            if sentence_end_match:
+                # Обрезаем по концу последнего предложения
+                last_end_idx = sentence_end_match[-1].end() - 1
+                caption = truncated_text[:last_end_idx].strip() + link_part
+            else:
+                # Если предложений нет, обрезаем по последнему пробелу, чтобы не ломать слово
+                space_match = list(re.finditer(r'\s', truncated_text))
+                if space_match:
+                    caption = truncated_text[:space_match[-1].start()].strip() + link_part
+                else:
+                    caption = truncated_text.strip() + link_part
+        else:
+            caption = caption[:1024]
+            
     data = {
         "chat_id": chat_id,
         "photo": image_url,
         "caption": caption,
-        "parse_mode": "HTML"
+        "parse_mode": "HTML",
+        "link_preview_options": {"is_disabled": True}
     }
     
     req = urllib.request.Request(
@@ -347,7 +380,7 @@ def save_recent_topic(topic):
     except Exception as e:
         print(f"Ошибка сохранения темы: {e}")
 
-def save_article_to_json(news_item, post_text):
+def save_article_to_json(news_item, post_text, russian_title=None):
     """Сохраняет опубликованную новость в файл articles.json для веб-сайта"""
     json_path = os.path.join(BASE_DIR, "articles.json")
     articles = []
@@ -361,7 +394,7 @@ def save_article_to_json(news_item, post_text):
     # Формируем структуру новости для сайта
     article_data = {
         "id": news_item['id'],
-        "title": news_item['title'],
+        "title": russian_title if russian_title else news_item['title'],
         "source": news_item['source'],
         "link": news_item['link'],
         "image_url": news_item.get('image_url', ''),
@@ -427,7 +460,7 @@ def generate_price_digest():
             'the-open-network': ('💎 TON', 'TON')
         }
         
-        lines = ["📊 <b>РЫНОЧНЫЙ ДАЙДЖЕСТ FORKLOG STYLE</b>\n", "Курсы основных криптоактивов и их изменение за 24 часа:\n"]
+        lines = ["📊 <b>РЫНОЧНЫЙ ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Курсы основных криптоактивов и их изменение за 24 часа:\n"]
         
         for coin_id, (name, symbol) in coins.items():
             if coin_id in data:
@@ -461,9 +494,11 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
         
     titles = "\n".join([f"- {n['title']}" for n in news_list[:5]])
     
-    prompt = f"""Ты — редактор ForkLog. На основе последних новостей крипторынка придумай интересный опрос для Telegram-канала.
+    prompt = f"""Ты — редактор Crypto Analytics. На основе последних новостей крипторынка придумай интересный опрос для Telegram-канала.
 Новости:
 {titles}
+
+ПРАВИЛО: КАТЕГОРИЧЕСКИ запрещено использовать или упоминать название ForkLog. Пиши только от лица Crypto Analytics.
 
 Опрос должен быть на тему актуального рыночного тренда или горячего спора в крипте.
 Верни ответ строго в формате JSON со следующей структурой:
@@ -633,6 +668,7 @@ def main():
     if post_data:
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
+        russian_title = post_data["russian_title"]
         
         # Добавляем ссылку на полный обзор статьи на сайте
         article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
@@ -671,11 +707,11 @@ def main():
             if success:
                 save_processed_id(selected_item['id'])
                 save_recent_topic(selected_item['title'])
-                save_article_to_json(selected_item, full_article)
+                save_article_to_json(selected_item, full_article, russian_title)
         else:
             print("Параметры Telegram не настроены в .env. Пост не отправлен.")
             save_processed_id(selected_item['id'])
-            save_article_to_json(selected_item, full_article)
+            save_article_to_json(selected_item, full_article, russian_title)
 
 if __name__ == "__main__":
     main()
