@@ -1326,14 +1326,37 @@ def main():
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         russian_title = post_data["russian_title"]
-        
+
+        # --- Защита от пустого текста поста ---
+        MIN_CAPTION_LEN = 80  # минимум осмысленного текста
+        if len(telegram_caption) < MIN_CAPTION_LEN:
+            print(f"ПРЕДУПРЕЖДЕНИЕ: telegram_caption слишком короткий ({len(telegram_caption)} симв.). Повторная попытка генерации...")
+            retry_data = generate_forklog_post(selected_item, gemini_key)
+            if retry_data and len(retry_data.get("telegram_caption", "")) >= MIN_CAPTION_LEN:
+                telegram_caption = retry_data["telegram_caption"]
+                full_article = retry_data.get("full_article", full_article)
+                russian_title = retry_data.get("russian_title", russian_title)
+                print("Повторная генерация успешна.")
+            else:
+                # Финальный fallback: собираем текст из заголовка и описания вручную
+                fallback_title = russian_title or selected_item['title']
+                fallback_desc = selected_item.get('description', '')[:600]
+                telegram_caption = f"<b>{fallback_title.upper()}</b>\n\n{fallback_desc}"
+                print(f"Использован fallback-текст из заголовка и описания ({len(telegram_caption)} симв.).")
+
+        if len(telegram_caption.strip()) < 10:
+            print("ОШИБКА: telegram_caption пуст даже после повторной попытки. Публикация пропущена.")
+            save_processed_id(selected_item['id'])
+            return
+        # --- Конец защиты ---
+
         article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
         # Генерируем timestamp заранее, чтобы использовать его и в URL и в save_article_to_json
         article_timestamp = int(time.time())
         selected_item['_timestamp'] = article_timestamp
         article_clean_url = f"https://maxtyutin.github.io/cryptochannel/#article-{article_timestamp}"
         telegram_caption += f"\n\n👉 <a href=\"{article_clean_url}\">Читать на Crypto Analytics</a>"
-        
+
         print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ (TG) ===")
         print(telegram_caption)
         print("\n=== СГЕНЕРИРОВАННАЯ СТАТЬЯ (САЙТ) ===")
