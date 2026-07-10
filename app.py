@@ -37,6 +37,9 @@ def push_to_github():
     subprocess.run(["git", "config", "user.name", "Render Bot"])
     subprocess.run(["git", "config", "user.email", "render-bot@example.com"])
     
+    # Переключаемся на ветку main (на случай если мы в detached HEAD)
+    subprocess.run(["git", "checkout", "main"])
+    
     # Проверяем, есть ли изменения
     status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
     if not status.stdout.strip():
@@ -50,7 +53,8 @@ def push_to_github():
     print(f"[Render] Git Commit output:\nSTDOUT:\n{commit.stdout}\nSTDERR:\n{commit.stderr}")
     
     if commit.returncode == 0:
-        push = subprocess.run(["git", "push", "origin", "main"], capture_output=True, text=True)
+        # Пушим текущую ветку HEAD напрямую в main на GitHub
+        push = subprocess.run(["git", "push", "origin", "HEAD:main"], capture_output=True, text=True)
         print(f"[Render] Git Push output:\nSTDOUT:\n{push.stdout}\nSTDERR:\n{push.stderr}")
         if push.returncode == 0:
             print("[Render] Successfully pushed updates to GitHub.")
@@ -75,7 +79,8 @@ def background_worker():
                 repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
                 setup_git_remote(repo_url)
             
-            # Сбрасываем локальное состояние к origin/main, чтобы избежать конфликтов слияния
+            # Принудительно переключаемся на main и сбрасываем локальное состояние к origin/main
+            subprocess.run(["git", "checkout", "main"])
             subprocess.run(["git", "reset", "--hard", "origin/main"])
             subprocess.run(["git", "pull", "--rebase", "origin", "main"])
             
