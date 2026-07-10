@@ -37,50 +37,58 @@ def push_to_github():
         
     subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json"])
     subprocess.run(["git", "add", "images/"])
-    commit = subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"])
+    
+    commit = subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"], capture_output=True, text=True)
+    print(f"[Render] Git Commit output:\nSTDOUT:\n{commit.stdout}\nSTDERR:\n{commit.stderr}")
+    
     if commit.returncode == 0:
-        push = subprocess.run(["git", "push", "origin", "main"])
+        push = subprocess.run(["git", "push", "origin", "main"], capture_output=True, text=True)
+        print(f"[Render] Git Push output:\nSTDOUT:\n{push.stdout}\nSTDERR:\n{push.stderr}")
         if push.returncode == 0:
             print("[Render] Successfully pushed updates to GitHub.")
         else:
             print("[Render] Git push failed.")
+    else:
+        print("[Render] Git commit failed or nothing to commit.")
 
 def background_worker():
     print("[Render] Background worker thread started.")
     last_digest_hour = -1
     last_poll_hour = -1
     
+    # Ждем 30 секунд при первом запуске, чтобы дать контейнеру полностью инициализироваться
+    time.sleep(30)
+    
     while True:
         try:
             print("[Render] Starting cycle...")
-            # 1. Сначала делаем pull, чтобы подтянуть возможные изменения
             pat = os.environ.get("GITHUB_PAT")
             if pat:
                 repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
                 subprocess.run(["git", "remote", "set-url", "origin", repo_url])
+            
+            # Сбрасываем локальное состояние к origin/main, чтобы избежать конфликтов слияния
+            subprocess.run(["git", "reset", "--hard", "origin/main"])
             subprocess.run(["git", "pull", "--rebase", "origin", "main"])
             
-            # 2. Определяем текущее время UTC
+            # Определяем текущее время UTC
             now_utc = datetime.datetime.utcnow()
             hour_utc = now_utc.hour
             
-            # 3. Запускаем нужный режим
-            # Дайджест цен: в 06:00 и 18:00 UTC
+            # Запускаем нужный режим
             if hour_utc in [6, 18] and hour_utc != last_digest_hour:
                 print(f"[Render] Time is {now_utc.isoformat()} UTC. Triggering digest...")
                 subprocess.run(["python3", "news_engine.py", "--digest"])
                 last_digest_hour = hour_utc
-            # Опрос: в 11:00 UTC
             elif hour_utc == 11 and hour_utc != last_poll_hour:
                 print(f"[Render] Time is {now_utc.isoformat()} UTC. Triggering poll...")
                 subprocess.run(["python3", "news_engine.py", "--poll"])
                 last_poll_hour = hour_utc
-            # Обычные новости: каждые 15 минут
             else:
                 print(f"[Render] Time is {now_utc.isoformat()} UTC. Triggering regular news search...")
                 subprocess.run(["python3", "news_engine.py"])
                 
-            # 4. Отправляем результаты на GitHub Pages
+            # Отправляем результаты на GitHub Pages
             push_to_github()
             
         except Exception as e:
