@@ -2,11 +2,11 @@ name: Publish Crypto News
 
 on:
   schedule:
-    # 1. Новости каждые 10 минут
-    - cron: '*/10 * * * *'
-    # 2. Дайджест цен в 06:15 и 18:15 UTC (соответствует 09:15 и 21:15 по МСК)
+    # 1. Новости каждые 30 минут (~1440 мин/мес — укладывается в лимиты)
+    - cron: '*/30 * * * *'
+    # 2. Дайджест цен в 06:15 и 18:15 UTC (09:15 и 21:15 по МСК)
     - cron: '15 6,18 * * *'
-    # 3. Интерактивный опрос в 11:00 UTC (соответствует 14:00 по МСК)
+    # 3. Интерактивный опрос в 11:00 UTC (14:00 по МСК)
     - cron: '0 11 * * *'
   workflow_dispatch:
     inputs:
@@ -44,36 +44,40 @@ jobs:
           MODE="${{ github.event.inputs.mode }}"
           if [ "$MODE" = "news" ]; then
             echo "Ручной запуск: Публикация новости..."
-            python news_engine.py
+            python news_engine.py > actions_run.log 2>&1
           elif [ "$MODE" = "digest" ]; then
             echo "Ручной запуск: Публикация дайджеста цен..."
-            python news_engine.py --digest
+            python news_engine.py --digest > actions_run.log 2>&1
           elif [ "$MODE" = "poll" ]; then
             echo "Ручной запуск: Публикация опроса..."
-            python news_engine.py --poll
+            python news_engine.py --poll > actions_run.log 2>&1
           else
             # Автоматический режим (по времени UTC)
             HOUR=$(date -u +%H)
             if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ]; then
               echo "Авто-режим: Запуск дайджеста цен..."
-              python news_engine.py --digest
+              python news_engine.py --digest > actions_run.log 2>&1
             elif [ "$HOUR" = "11" ]; then
               echo "Авто-режим: Запуск интерактивного опроса..."
-              python news_engine.py --poll
+              python news_engine.py --poll > actions_run.log 2>&1
             else
               echo "Авто-режим: Запуск обычных новостей..."
-              python news_engine.py
+              python news_engine.py > actions_run.log 2>&1
             fi
           fi
+          cat actions_run.log
 
       - name: Commit and Push Database updates
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add processed_news.txt published_topics.txt || true
+          # Добавляем лог выполнения actions_run.log, чтобы мы могли читать его удаленно
+          git add processed_news.txt published_topics.txt articles.json images/ actions_run.log || true
           if git diff --cached --quiet; then
             echo "Нет изменений."
           else
-            git commit -m "Автоматическое обновление базы данных новостей [skip ci]"
-            git push
+            git commit -m "Автоматическое обновление базы данных новостей и изображений [skip ci]"
+            # Предотвращаем конфликты с другими коммитами
+            git pull --rebase origin main || git pull --rebase origin master || true
+            git push origin HEAD || git push --force-with-lease origin HEAD
           fi
