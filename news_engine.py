@@ -1232,12 +1232,12 @@ def setup_cron():
 
 def main():
     env = load_env()
-    gemini_key = env.get("GEMINI_API_KEY")
-    bot_token = env.get("TELEGRAM_BOT_TOKEN")
-    chat_id = env.get("TELEGRAM_CHAT_ID")
+    gemini_key = env.get("GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
+    bot_token = env.get("TELEGRAM_BOT_TOKEN") or os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = env.get("TELEGRAM_CHAT_ID") or os.environ.get("TELEGRAM_CHAT_ID")
     
     if not gemini_key:
-        print("Ошибка: В файле .env не задан GEMINI_API_KEY. Пожалуйста, укажите его.")
+        print("Ошибка: GEMINI_API_KEY не задан ни в .env, ни в переменных окружения. Пожалуйста, укажите его.")
         return
         
     setup_cron()
