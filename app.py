@@ -17,6 +17,14 @@ def read_root():
 def ping():
     return "pong"
 
+def setup_git_remote(repo_url):
+    """Проверяет наличие remote 'origin'. Если есть — обновляет URL, если нет — добавляет."""
+    remotes = subprocess.run(["git", "remote"], capture_output=True, text=True)
+    if "origin" in remotes.stdout:
+        subprocess.run(["git", "remote", "set-url", "origin", repo_url])
+    else:
+        subprocess.run(["git", "remote", "add", "origin", repo_url])
+
 def push_to_github():
     pat = os.environ.get("GITHUB_PAT")
     if not pat:
@@ -24,8 +32,8 @@ def push_to_github():
         return
     repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
     
-    # Конфигурируем репозиторий для отправки изменений
-    subprocess.run(["git", "remote", "set-url", "origin", repo_url])
+    # Настраиваем удаленный репозиторий и данные пользователя
+    setup_git_remote(repo_url)
     subprocess.run(["git", "config", "user.name", "Render Bot"])
     subprocess.run(["git", "config", "user.email", "render-bot@example.com"])
     
@@ -65,7 +73,7 @@ def background_worker():
             pat = os.environ.get("GITHUB_PAT")
             if pat:
                 repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
-                subprocess.run(["git", "remote", "set-url", "origin", repo_url])
+                setup_git_remote(repo_url)
             
             # Сбрасываем локальное состояние к origin/main, чтобы избежать конфликтов слияния
             subprocess.run(["git", "reset", "--hard", "origin/main"])
