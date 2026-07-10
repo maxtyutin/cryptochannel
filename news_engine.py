@@ -10,7 +10,7 @@ import datetime
 import time
 
 # Пути к файлам в рабочем пространстве
-BASE_DIR = "/Users/maxtyutin/antigravity/TG каналы"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROCESSED_FILE = os.path.join(BASE_DIR, "processed_news.txt")
 ENV_FILE = os.path.join(BASE_DIR, ".env")
 OUTPUT_FILE = os.path.join(BASE_DIR, "Свежие_новости.md")
