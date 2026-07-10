@@ -613,6 +613,156 @@ def draw_tweet_card(details, output_path):
         print(f"Ошибка при генерации карточки твита: {e}")
         return False
 
+def generate_title_card(title, output_path, gemini_key=None):
+    """Генерирует обложку для статьи с помощью Imagen (Gemini API) с автоматическими фолбеками (Pollinations AI, Unsplash Scraper, Curated Pool) для обхода блокировок РКН"""
+    if not gemini_key:
+        env = load_env()
+        gemini_key = env.get("GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
+
+    if not gemini_key:
+        print("[news_engine] GEMINI_API_KEY отсутствует. Невозможно сгенерировать промт для картинки.")
+        return False
+
+    prompt = f"""Write a detailed, high-quality prompt in English for an AI image generator (like Stable Diffusion) based on the following article title.
+Also, provide 2-3 simple English keywords that represent the core topic of the article for a photo search engine.
+
+ARTICLE TITLE: {title}
+
+Return the result strictly in JSON format with two keys:
+{{
+  "image_prompt": "English prompt for AI image generator (1-2 sentences, technological, abstract, no text)",
+  "search_keywords": "2-3 search keywords in English (e.g., 'bitcoin security', 'artificial intelligence', 'ethereum')"
+}}"""
+
+    print(f"[news_engine] Запрос к Gemini для составления промта и ключевых слов...")
+    image_prompt = "futuristic cryptocurrency blockchain tech background, highly detailed, 3d render"
+    search_keywords = "cryptocurrency blockchain"
+    
+    try:
+        response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+        if response_json:
+            parsed = json.loads(response_json)
+            image_prompt = parsed.get("image_prompt", image_prompt).strip().replace('"', '').replace("'", "")
+            search_keywords = parsed.get("search_keywords", search_keywords).strip()
+    except Exception as e:
+        print(f"[news_engine] Ошибка получения промта от Gemini: {e}")
+
+    print(f"[news_engine] Итоговый промт: {image_prompt}")
+    print(f"[news_engine] Ключевые слова для поиска: {search_keywords}")
+
+    # --- Вариант 1: Официальный Google Gemini API (Imagen 4.0 / 3.0) ---
+    import base64
+    for model in ["imagen-4.0-generate-001", "imagen-3.0-generate-002"]:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:predict?key={gemini_key}"
+        payload = {
+            "instances": [{"prompt": image_prompt}],
+            "parameters": {
+                "sampleCount": 1,
+                "aspectRatio": "16:9",
+                "outputMimeType": "image/jpeg"
+            }
+        }
+        
+        print(f"[news_engine] Вариант 1: Попытка генерации через Gemini Imagen ({model})...")
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode('utf-8'),
+                headers={'Content-Type': 'application/json'}
+            )
+            with urllib.request.urlopen(req, timeout=20) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                if 'predictions' in result and len(result['predictions']) > 0:
+                    b64_data = result['predictions'][0]['bytesBase64Encoded']
+                    image_bytes = base64.b64decode(b64_data)
+                    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                    with open(output_path, 'wb') as f:
+                        f.write(image_bytes)
+                    print(f"[news_engine] Успешно сгенерировано изображение через Gemini Imagen ({model})!")
+                    return True
+        except Exception as e:
+            print(f"[news_engine] Ошибка Imagen {model}: {e}")
+
+    # --- Вариант 2: Бесплатный Pollinations AI с зеркалами для обхода блокировок РКН ---
+    import urllib.parse
+    encoded_prompt = urllib.parse.quote(image_prompt)
+    
+    # Список зеркал Pollinations AI (основной домен и резервные адреса)
+    pollinations_mirrors = [
+        f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1200&height=675&nologo=true&private=true",
+        f"https://pollinations.ai/p/{encoded_prompt}?width=1200&height=675&nologo=true",
+        f"https://www.pollinations.ai/p/{encoded_prompt}?width=1200&height=675&nologo=true"
+    ]
+    
+    for i, p_url in enumerate(pollinations_mirrors):
+        print(f"[news_engine] Вариант 2 (Зеркало {i+1}): Попытка генерации через Pollinations AI...")
+        try:
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            req = urllib.request.Request(p_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=20) as response:
+                with open(output_path, 'wb') as f:
+                    f.write(response.read())
+            print(f"[news_engine] Успешно сгенерировано изображение через Pollinations AI (Зеркало {i+1})!")
+            return True
+        except Exception as e:
+            print(f"[news_engine] Ошибка зеркала Pollinations {i+1}: {e}")
+
+    # --- Вариант 3: Динамический парсинг Unsplash без ключей по ключевым словам (РКН не блокирует) ---
+    print(f"[news_engine] Вариант 3: Поиск релевантного фото на Unsplash по запросу '{search_keywords}'...")
+    try:
+        encoded_keywords = urllib.parse.quote(search_keywords)
+        unsplash_search_url = f"https://unsplash.com/s/photos/{encoded_keywords}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        req = urllib.request.Request(unsplash_search_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as response:
+            html_content = response.read().decode('utf-8', errors='ignore')
+            # Регулярным выражением вытаскиваем ссылки на фотографии Unsplash
+            matches = re.findall(r'https://images\.unsplash\.com/photo-[a-zA-Z0-9\-_]+', html_content)
+            if matches:
+                unique_urls = list(dict.fromkeys(matches))
+                for img_url in unique_urls:
+                    if "profile" not in img_url and "avatar" not in img_url:
+                        target_img_url = f"{img_url}?q=80&w=1200&auto=format&fit=crop&h=675"
+                        print(f"[news_engine] Найдено релевантное фото на Unsplash: {target_img_url}")
+                        req_img = urllib.request.Request(target_img_url, headers=headers)
+                        with urllib.request.urlopen(req_img, timeout=15) as img_resp:
+                            with open(output_path, 'wb') as f:
+                                f.write(img_resp.read())
+                        print("[news_engine] Успешно загружено динамическое фото с Unsplash!")
+                        return True
+    except Exception as e:
+        print(f"[news_engine] Ошибка поиска фото на Unsplash: {e}")
+
+    # --- Вариант 4: Премиальный отобранный список Unsplash-обложек (Резервный пул) ---
+    print("[news_engine] Вариант 4: Использование обложки из резервного пула...")
+    curated_urls = [
+        "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1618042164219-62c820f10723?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1621761191319-c6fb62004040?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1642104704074-907c0698cbd9?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1622630998477-20aa696ecb05?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1639762681057-408e52192e55?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1644024312658-3951417522dd?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?q=80&w=1200&auto=format&fit=crop&h=675",
+        "https://images.unsplash.com/photo-1634973357973-f2ed255753e1?q=80&w=1200&auto=format&fit=crop&h=675"
+    ]
+    import random
+    selected_curated_url = random.choice(curated_urls)
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        req = urllib.request.Request(selected_curated_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as response:
+            with open(output_path, 'wb') as f:
+                f.write(response.read())
+        print(f"[news_engine] Успешно загружена резервная обложка из пула: {selected_curated_url}")
+        return True
+    except Exception as e:
+        print(f"[news_engine] Ошибка загрузки резервной обложки: {e}")
+        
+    return False
+
 def download_and_standardize_image(image_url, article_id):
     """Скачивает изображение, приводит его к стандарту 16:9 (1200x675) и сохраняет локально"""
     import urllib.request
@@ -1507,27 +1657,47 @@ def main():
             else:
                 local_img_path = os.path.join(BASE_DIR, selected_item['image_url'].replace('./', ''))
                 
-        if "--no-tg" in args:
-            print("[news_engine] Режим --no-tg активен. Сохраняем пост для отложенной отправки...")
-            pending_data = {
-                "telegram_caption": telegram_caption,
-                "local_img_path": local_img_path,
-                "image_url": selected_item.get('image_url', ''),
-                "id": selected_item['id'],
-                "title": selected_item['title'],
-                "category": category
-            }
+        # Если изображение отсутствует или не загрузилось, генерируем красивую фирменную обложку
+        if not local_img_path:
+            print("[news_engine] Изображение отсутствует или не загрузилось. Генерируем фирменную обложку...")
+            safe_id = re.sub(r'[^\w\-_\.]', '_', selected_item['id'])
+            fallback_filename = f"images/fallback_{safe_id}.jpg"
+            fallback_abs_path = os.path.join(BASE_DIR, fallback_filename)
+            if generate_title_card(selected_item['title'], fallback_abs_path):
+                local_img_path = fallback_abs_path
+                selected_item['image_url'] = f"./{fallback_filename}"
+
+        # 1. Сохраняем статью в базу данных и отмечаем как обработанную
+        save_processed_id(selected_item['id'])
+        save_recent_topic(selected_item['title'])
+        save_article_to_json(selected_item, full_article, russian_title, category=category)
+        print("[news_engine] Статья успешно сохранена в базу данных (articles.json).")
+
+        # 2. Выполняем авто-пуш на GitHub, чтобы запустить сборку сайта
+        pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
+        if pat:
+            print("[news_engine] Обнаружен GITHUB_PAT, отправляем изменения на GitHub...")
+            import subprocess
+            import time
+            repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
             try:
-                with open(os.path.join(BASE_DIR, "pending_tg_post.json"), 'w', encoding='utf-8') as f:
-                    json.dump(pending_data, f, ensure_ascii=False, indent=2)
-                print("[news_engine] Данные поста успешно сохранены в pending_tg_post.json")
-            except Exception as e:
-                print(f"[news_engine] Ошибка сохранения отложенного поста: {e}")
+                subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=False)
+                subprocess.run(["git", "config", "user.name", "Render Bot"], check=False)
+                subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=False)
+                subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json", "images/"], check=False)
+                # Обязательно используем [skip ci] или [skip render], чтобы Render не перезагружал контейнер
+                subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"], check=False)
+                subprocess.run(["git", "push", "origin", "HEAD:main"], check=False)
                 
-            save_processed_id(selected_item['id'])
-            save_recent_topic(selected_item['title'])
-            save_article_to_json(selected_item, full_article, russian_title, category=category)
-        elif bot_token and chat_id:
+                print("[news_engine] Изменения успешно отправлены на GitHub! Ожидание 90 секунд для публикации сайта...")
+                time.sleep(90)
+            except Exception as e:
+                print(f"[news_engine] Ошибка при отправке на GitHub: {e}")
+        else:
+            print("[news_engine] GITHUB_PAT не задан, пропуск отправки на GitHub.")
+
+        # 3. После паузы (и публикации сайта) отправляем пост в Telegram
+        if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
             
@@ -1544,20 +1714,14 @@ def main():
                     print("Успешно опубликовано с изображением по внешней ссылке!")
                     
             if not success:
-                if send_to_telegram(telegram_caption, bot_token, chat_id):
-                    print("Успешно опубликовано (только текст)!")
-                    success = True
+                print("Не удалось отправить изображение. Отправка текстом в качестве последнего резерва...")
+                success = send_to_telegram(telegram_caption, bot_token, chat_id)
+                if success:
+                    print("Пост успешно опубликован в Telegram (текстом без изображения)!")
                 else:
-                    print("Не удалось отправить текстовый пост в Telegram. Проверьте токен и права бота.")
-            
-            if success:
-                save_processed_id(selected_item['id'])
-                save_recent_topic(selected_item['title'])
-                save_article_to_json(selected_item, full_article, russian_title, category=category)
+                    print("Критическая ошибка: не удалось отправить пост в Telegram ни одним из способов.")
         else:
-            print("Параметры Telegram не настроены в .env. Пост не отправлен.")
-            save_processed_id(selected_item['id'])
-            save_article_to_json(selected_item, full_article, russian_title, category=category)
+            print("TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не установлены в окружении. Пропуск публикации в Telegram.")
 
 if __name__ == "__main__":
     main()
