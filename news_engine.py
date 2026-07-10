@@ -123,7 +123,10 @@ def fetch_article_images(article_url, primary_image_url=None):
         return []
 
     SKIP_KEYWORDS = ['logo', 'avatar', 'icon', 'badge', 'sprite', 'banner-ad',
-                     'tracking', 'subscribe', 'newsletter', 'author', 'profile', 'gravatar']
+                     'tracking', 'subscribe', 'newsletter', 'author', 'profile', 'gravatar',
+                     'recommend', 'sidebar', 'widget', 'advertis', 'promo', 'social', 'telegram',
+                     'twitter', 'facebook', 'instagram', 'youtube', 'linkedin', 'ad-', 'ads-',
+                     'footer', 'header', 'nav-', 'button', 'pixel']
     try:
         ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         req = urllib.request.Request(article_url, headers={'User-Agent': ua})
@@ -154,22 +157,34 @@ def fetch_article_images(article_url, primary_image_url=None):
         seen.add(u)
         found_urls.append(u)
 
-    # 1. og:image meta-тег
-    for m in re.finditer(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.IGNORECASE):
-        add_url(html.unescape(m.group(1)))
-    for m in re.finditer(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']', page_html, re.IGNORECASE):
-        add_url(html.unescape(m.group(1)))
+    # Сначала пытаемся вырезать блок основного контента статьи (без сайдбаров и подвалов)
+    content_block = None
+    content_patterns = [
+        r'<div[^>]+class=["\'][^"\']*(?:post-content|post-body|entry-content|article-body|article__body|post-content-wrap)[^"\']*["\'][^>]*>(.*?)</div>',
+        r'<article[^>]*>(.*?)</article>',
+        r'<main[^>]*>(.*?)</main>'
+    ]
+    
+    for pat in content_patterns:
+        match = re.search(pat, page_html, re.DOTALL | re.IGNORECASE)
+        if match:
+            if len(match.group(1).strip()) > 300:
+                content_block = match.group(1)
+                break
+                
+    if not content_block:
+        content_block = page_html
 
-    # 2. <img> внутри article/main блоков
-    blocks = re.findall(r'<(?:article|main)[^>]*>(.*?)</(?:article|main)>', page_html, re.DOTALL | re.IGNORECASE)
-    if not blocks:
-        blocks = [page_html]
-    for block in blocks:
-        for m in re.finditer(r'<img[^>]+(?:src|data-src)=["\']([^"\']+)["\']', block, re.IGNORECASE):
-            add_url(html.unescape(m.group(1)))
-        for m in re.finditer(r'srcset=["\']([^"\']+)', block, re.IGNORECASE):
-            first = m.group(1).split(',')[0].strip().split()[0]
-            add_url(html.unescape(first))
+    # Очищаем контент от блоков рекомендаций, "Читайте также", промо-ссылок и врезок, встроенных в текст
+    content_block = re.sub(r'<div[^>]+class=["\'][^"\']*(?:related|read-more|read-also|promo|recommend|widget)[^"\']*["\'][^>]*>.*?</div>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
+    content_block = re.sub(r'<aside[^>]*>.*?</aside>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
+
+    # Ищем теги <img> только внутри выделенного контента статьи
+    for m in re.finditer(r'<img[^>]+(?:src|data-src)=["\']([^"\']+)["\']', content_block, re.IGNORECASE):
+        add_url(html.unescape(m.group(1)))
+    for m in re.finditer(r'srcset=["\']([^"\']+)', content_block, re.IGNORECASE):
+        first = m.group(1).split(',')[0].strip().split()[0]
+        add_url(html.unescape(first))
 
     return found_urls[:4]
 
@@ -317,24 +332,101 @@ def call_gemini_api(prompt, gemini_key, is_json=False):
     print(f"Все доступные ИИ-модели вернули ошибку. Последняя ошибка: {last_err}")
     return None
 
+def fetch_og_image(article_url):
+    """Скачивает страницу статьи и находит в ней мета-тег og:image для обложки."""
+    if not article_url or not article_url.startswith('http'):
+        return None
+    try:
+        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        req = urllib.request.Request(article_url, headers={'User-Agent': ua})
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            page_html = resp.read().decode('utf-8', errors='ignore')
+    except Exception as e:
+        print(f"[news_engine] Не удалось скачать страницу для поиска og:image: {e}")
+        return None
+        
+    # Ищем og:image meta-тег
+    for m in re.finditer(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', page_html, re.IGNORECASE):
+        url = html.unescape(m.group(1)).strip()
+        if url.startswith('http'):
+            return url
+    for m in re.finditer(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']', page_html, re.IGNORECASE):
+        url = html.unescape(m.group(1)).strip()
+        if url.startswith('http'):
+            return url
+    return None
+
+def fetch_article_text(article_url):
+    """Скачивает страницу источника и извлекает чистый текст статьи из основного блока контента."""
+    if not article_url or not article_url.startswith('http'):
+        return ""
+    try:
+        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        req = urllib.request.Request(article_url, headers={'User-Agent': ua})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            page_html = resp.read().decode('utf-8', errors='ignore')
+    except Exception as e:
+        print(f"[news_engine] Не удалось скачать страницу для извлечения текста: {e}")
+        return ""
+        
+    # Ищем блок основного контента статьи
+    content_block = None
+    content_patterns = [
+        r'<div[^>]+class=["\'][^"\']*(?:post-content|post-body|entry-content|article-body|article__body|post-content-wrap)[^"\']*["\'][^>]*>(.*?)</div>',
+        r'<article[^>]*>(.*?)</article>',
+        r'<main[^>]*>(.*?)</main>'
+    ]
+    
+    for pat in content_patterns:
+        match = re.search(pat, page_html, re.DOTALL | re.IGNORECASE)
+        if match:
+            if len(match.group(1).strip()) > 300:
+                content_block = match.group(1)
+                break
+                
+    if not content_block:
+        content_block = page_html
+        
+    # Очищаем HTML-теги, скрипты, стили
+    text = re.sub(r'<script[^>]*>.*?</script>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'<[^>]+>', ' ', text) # Удаляем теги
+    text = html.unescape(text) # Декодируем HTML-сущности
+    text = re.sub(r'\s+', ' ', text).strip() # Схлопываем пробелы
+    
+    return text[:6000] # Ограничиваем длину текста для Gemini
+
 def generate_forklog_post(news_item, gemini_key):
     """Генерация Telegram-поста и полной статьи для сайта с помощью Gemini API"""
-    prompt = f"""Ты — профессиональный крипто-журналист и редактор Crypto Analytics. 
-На основе следующей новости напиши заголовок и две версии статьи на русском языке:
-Источник: {news_item['source']}
-Заголовок: {news_item['title']}
-Описание: {news_item['description']}
+    
+    # Пытаемся получить полный текст статьи с оригинального сайта
+    source_text = fetch_article_text(news_item.get('link', ''))
+    if not source_text:
+        # Если не удалось скачать, используем описание из RSS как резерв
+        source_text = news_item.get('description', '')
+        print("[news_engine] Используется описание из RSS в качестве источника текста.")
+    else:
+        print(f"[news_engine] Успешно скачан оригинальный текст статьи ({len(source_text)} символов).")
 
+    prompt = f"""Ты — профессиональный крипто-журналист и редактор Crypto Analytics. 
+На основе оригинального текста статьи напиши качественный перевод-адаптацию на русский язык и краткий Telegram-пост.
+
+ИНФОРМАЦИЯ О СТАТЬЕ:
+Источник: {news_item['source']}
+Оригинальный заголовок: {news_item['title']}
+Оригинальный текст статьи: {source_text}
+
+ПРАВИЛО ПЕРЕВОДА: Твоя статья для сайта должна строго опираться на факты из оригинального текста. Не выдумывай вымышленных цитат, новых участников или не описанных в оригинале технических деталей. Сделай качественный, структурированный, читаемый перевод-адаптацию.
 ПРАВИЛО: КАТЕГОРИЧЕСКИ запрещено использовать или упоминать название ForkLog. Пиши только от лица Crypto Analytics.
 ПРАВИЛО ИСТОЧНИКОВ: В качестве авторитетных источников данных, ончейн-метрик или финансирования старайся ссылаться на такие платформы как The Block и Allium (например, 'по данным отчетов Allium...', 'согласно информации The Block...').
-ПРАВИЛО ЦИТАТ: Если в новости есть прямой контекст, цитаты политиков, Белого дома или лидеров крипторынка, СТРОГО оформляй их через цитирование с помощью HTML-тегов <blockquote>Текст цитаты</blockquote>.
-ПРАВИЛО ДЛИНЫ: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
+ПРАВИЛО ЦИТАТ: Если в оригинальном тексте есть прямой контекст или цитаты участников рынка, СТРОГО оформляй их через цитирование с помощью HTML-тегов <blockquote>Текст цитаты</blockquote>.
+ПРАВИЛО ДЛИНЫ TG-ПОСТА: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
 
 Верни результат СТРОГО в формате JSON с тремя следующими ключами:
 {{
   "russian_title": "Привлекательный заголовок для веб-сайта на русском языке в стиле Crypto Analytics (без кликбейта, отражающий суть)",
   "telegram_caption": "Краткий пересказ новости для Telegram-канала (подпись к фото/видео). Длина должна быть не более 800 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b>, <a>, и <blockquote> (для цитат/важного контекста).",
-  "full_article": "Полная, развернутая и максимально детальная статья для веб-сайта без каких-либо сокращений (около 1500-2500 символов). Подробно опиши предысторию события, контекст, технические детали, мнения участников рынка, развернутый вывод и последствия для индустрии. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
+  "full_article": "Полная статья-перевод для веб-сайта на русском языке (около 1500-2500 символов). Подробно изложи факты, технические детали и цитаты из оригинального текста. Раздели текст на логические абзацы. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
 }}
 """
     response_json = call_gemini_api(prompt, gemini_key, is_json=True)
@@ -565,7 +657,15 @@ def download_and_standardize_image(image_url, article_id):
         target_height = 675  # соотношение 16:9
         
         with Image.open(temp_path) as img:
-            if img.mode != 'RGB':
+            # Если у изображения есть альфа-канал (прозрачность), накладываем его на белый фон,
+            # иначе при конвертации в RGB прозрачные области станут черными.
+            if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                background.paste(img, mask=img.split()[-1])
+                img = background
+            elif img.mode != 'RGB':
                 img = img.convert('RGB')
                 
             img_width, img_height = img.size
@@ -1366,6 +1466,17 @@ def main():
         with open(OUTPUT_FILE, 'w') as f:
             f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item.get('link', 'Crypto Analytics')}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
             
+        # Если картинка из RSS отсутствует или является пикселем/заглушкой, ищем og:image на странице
+        img_url = selected_item.get('image_url')
+        is_bad_img = not img_url or any(x in img_url.lower() for x in ['pixel', 'tracker', 'ad-button', 'placeholder', 'spacer'])
+        
+        if is_bad_img:
+            print("[news_engine] Картинка в RSS отсутствует или некорректна. Ищем og:image на веб-странице...")
+            og_image = fetch_og_image(selected_item.get('link', ''))
+            if og_image:
+                selected_item['image_url'] = og_image
+                print(f"[news_engine] Найдена обложка через og:image: {og_image}")
+
         local_img_path = None
         if selected_item.get('image_url'):
             if selected_item['image_url'].startswith('http'):
