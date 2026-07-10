@@ -1,4 +1,3 @@
-Perplexity Fine-Tuned a Chinese AI Model to Match Claude Opus 4.8 at One-Third the Cost
 Grayscale's CFO exits after 7 years with crypto asset manager
 Avalanche Treasury Firm AVAX One Reclaims Nasdaq Compliance After Reverse Stock Split
 Coinbase chief legal officer to transition to advisory role on July 31
@@ -18,3 +17,4 @@ SEC reviews more than 24 ETFs that could bring election betting to brokerage acc
 MARA Shares Jump 13% After 2 GW Texas Power Deal for AI and Bitcoin Growth
 Phantom pulls on-chain perps into the US wallet war ahead of July 9 deadline
 JPMorgan’s $4.7T private blockchain warning just gave Bitcoin bulls fresh ammunition
+A $293 billion fight over Satoshi’s Bitcoin just got a lot more complicated
