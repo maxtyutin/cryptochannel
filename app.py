@@ -8,10 +8,12 @@ from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/")
+@app.head("/")
 def read_root():
     return {"status": "running", "time": datetime.datetime.utcnow().isoformat() + " UTC"}
 
 @app.get("/ping")
+@app.head("/ping")
 def ping():
     return "pong"
 
