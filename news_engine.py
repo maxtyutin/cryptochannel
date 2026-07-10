@@ -1396,7 +1396,27 @@ def main():
             else:
                 local_img_path = os.path.join(BASE_DIR, selected_item['image_url'].replace('./', ''))
                 
-        if bot_token and chat_id:
+        if "--no-tg" in args:
+            print("[news_engine] Режим --no-tg активен. Сохраняем пост для отложенной отправки...")
+            pending_data = {
+                "telegram_caption": telegram_caption,
+                "local_img_path": local_img_path,
+                "image_url": selected_item.get('image_url', ''),
+                "id": selected_item['id'],
+                "title": selected_item['title'],
+                "category": category
+            }
+            try:
+                with open(os.path.join(BASE_DIR, "pending_tg_post.json"), 'w', encoding='utf-8') as f:
+                    json.dump(pending_data, f, ensure_ascii=False, indent=2)
+                print("[news_engine] Данные поста успешно сохранены в pending_tg_post.json")
+            except Exception as e:
+                print(f"[news_engine] Ошибка сохранения отложенного поста: {e}")
+                
+            save_processed_id(selected_item['id'])
+            save_recent_topic(selected_item['title'])
+            save_article_to_json(selected_item, full_article, russian_title, category=category)
+        elif bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
             
