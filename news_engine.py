@@ -421,11 +421,12 @@ def generate_forklog_post(news_item, gemini_key):
 ПРАВИЛО ИСТОЧНИКОВ: В качестве авторитетных источников данных, ончейн-метрик или финансирования старайся ссылаться на такие платформы как The Block и Allium (например, 'по данным отчетов Allium...', 'согласно информации The Block...').
 ПРАВИЛО ЦИТАТ: Если в оригинальном тексте есть прямой контекст или цитаты участников рынка, СТРОГО оформляй их через цитирование с помощью HTML-тегов <blockquote>Текст цитаты</blockquote>.
 ПРАВИЛО ДЛИНЫ TG-ПОСТА: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
+ПРАВИЛО ЗАГОЛОВКА: Заголовок russian_title должен быть написан капсом с подходящим эмодзи в начале, например: '🚀 СТЕЙБЛКОИНЫ ИНТЕГРИРУЮТ В БАНКОВСКУЮ СИСТЕМУ'. Он должен быть абсолютно одинаковым для сайта и Telegram-поста.
 
 Верни результат СТРОГО в формате JSON с тремя следующими ключами:
 {{
-  "russian_title": "Привлекательный заголовок для веб-сайта на русском языке в стиле Crypto Analytics (без кликбейта, отражающий суть)",
-  "telegram_caption": "Краткий пересказ новости для Telegram-канала (подпись к фото/видео). Длина должна быть не более 800 символов (включая пробелы). Должна содержать заголовок капсом с эмодзи в начале, лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b>, <a>, и <blockquote> (для цитат/важного контекста).",
+  "russian_title": "Привлекательный заголовок капсом с эмодзи в начале (например: '🚀 HYUNDAI ВНЕДРЯЕТ СТЕЙБЛКОИНЫ ДЛЯ МЕЖДУНАРОДНЫХ ПЕРЕВОДОВ')",
+  "telegram_caption": "Краткий пересказ новости для Telegram-канала (БЕЗ повторения заголовка в тексте!). Длина должна быть не более 800 символов (включая пробелы). Должна содержать лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b>, <a>, и <blockquote> (для цитат/важного контекста).",
   "full_article": "Полная статья-перевод для веб-сайта на русском языке (около 1500-2500 символов). Подробно изложи факты, технические детали и цитаты из оригинального текста. Раздели текст на логические абзацы. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
 }}
 """
@@ -435,9 +436,21 @@ def generate_forklog_post(news_item, gemini_key):
         
     try:
         parsed = json.loads(response_json)
+        russian_title = parsed.get("russian_title", "").strip() or news_item['title']
+        
+        # Гарантируем, что заголовок в верхнем регистре (сохраняя эмодзи)
+        match = re.match(r'^([^\w]*)(.*)$', russian_title)
+        if match:
+            prefix, text = match.groups()
+            russian_title = prefix + text.upper()
+            
+        caption_body = parsed.get("telegram_caption", "").strip()
+        # Собираем Telegram пост: заголовок в начале
+        telegram_caption = f"<b>{russian_title}</b>\n\n{caption_body}"
+        
         return {
-            "russian_title": parsed.get("russian_title", "").strip() or news_item['title'],
-            "telegram_caption": parsed.get("telegram_caption", "").strip(),
+            "russian_title": russian_title,
+            "telegram_caption": telegram_caption,
             "full_article": parsed.get("full_article", "").strip()
         }
     except Exception as e:
@@ -973,7 +986,7 @@ def save_article_to_json(news_item, post_text, russian_title=None, category="new
         "extra_images": news_item.get('extra_images', []),
         "post_text": post_text,
         "category": category,
-        "date": datetime.datetime.now().strftime("%d.%m.%Y %H:%M"),
+        "date": (datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3)))).strftime("%d.%m.%Y %H:%M"),
         # Используем предзаданный _timestamp (если был установлен для синхронизации с TG-ссылкой)
         "timestamp": news_item.get('_timestamp', int(time.time()))
     }
