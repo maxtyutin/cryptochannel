@@ -36,6 +36,11 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Pillow requests
+
       - name: Run News Engine
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
