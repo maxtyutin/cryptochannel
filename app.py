@@ -20,15 +20,6 @@ def ping():
 def background_worker():
     print("[Render] Background worker thread started.")
     
-    # Запускаем скрипт публикации пропущенных постов один раз при старте контейнера
-    try:
-        print("[Render] Запуск скрипта публикации пропущенных новостей за сегодня...")
-        import subprocess
-        subprocess.run(["python3", "publish_missed_today.py"])
-        print("[Render] Скрипт публикации пропущенных постов успешно завершен.")
-    except Exception as e:
-        print(f"[Render] Ошибка запуска скрипта пропущенных постов: {e}")
-        
     last_digest_hour = -1
     last_poll_hour = -1
     

@@ -1690,8 +1690,6 @@ def main():
         pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
         if pat:
             print("[news_engine] Обнаружен GITHUB_PAT, отправляем изменения на GitHub...")
-            import subprocess
-            import time
             repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
             try:
                 subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=False)
