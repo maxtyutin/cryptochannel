@@ -34,10 +34,11 @@ def background_worker():
                 repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
                 subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=False)
             
-            # Принудительно переключаемся на main и сбрасываем локальное состояние к origin/main
+            # Очищаем репозиторий, забираем изменения из origin и жестко сбрасываем main
+            subprocess.run(["git", "clean", "-fd"], check=False)
             subprocess.run(["git", "checkout", "main"], check=False)
+            subprocess.run(["git", "fetch", "origin"], check=False)
             subprocess.run(["git", "reset", "--hard", "origin/main"], check=False)
-            subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=False)
             
             # Определяем текущее время UTC
             now_utc = datetime.datetime.utcnow()
