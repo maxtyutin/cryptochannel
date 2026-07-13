@@ -1,65 +1,3 @@
-SpaceX's first bitcoin wallet movements in six months likely don't signal sales
-BTC speculators in focus as analysis says 'textbook Bitcoin bottom' is underway
-Kazakhstan president signs decree to accelerate crypto adoption
-India crypto tax filings lag trading activity: Report
-Bull Bitcoin asks French court to strike down DAC8 implementing decree
-The 5 types of real world assets being tokenized fastest onchain
-Adam Back's BSTR scraps original SPAC terms, seeks new deal
-BNB Chain is building a new layer-1 for high-frequency trading and AI agents
-Dinari, tZERO join forces on turnkey platform for tokenized U.S. equities
-Crypto Long & Short: With MSTR concerns assuaged, look to traditional signals around BTC
-Crypto VC Paradigm launches $1.2 billion AI fund as it broadens beyond digital assets: BBG
-Polymarket bets on U.S. marketing blitz to win back trust after 4-year ban: Report
-Lucky Trader Turns $85 Into $2 Million on Robinhood Chain Meme Coin
-Bank of England governor denies Farage lobbying swayed CBDC policy: Report
-Stablecoin-settled TradFi perpetual trading tops $1.1T: Binance Research
-XRP Logo Lands on Kansas Jayhawks Jerseys as Ripple Inks Multi-Year Deal
-Live markets: Bitcoin ETFs slip back to outflows while ether funds extend their streak
-Live markets: Bitcoin ETFs slip back to outflows while ether funds extend their streak
-Bitcoin gets a green light from a reliable momentum gauge. Here are key levels to watch
-Polymarket seeks approval to bring margin trading to U.S. customers
-Trader loses $1M after signing phishing token approval
-Wyden urges Senate leaders to keep dev protections in crypto bill
-Russia's largest private bank, Alfa-Bank, tests crypto trading
-Regulators invited Binance to seek new licenses after MiCA setback, co-CEO says
-Swift launches blockchain ledger with 17-bank tokenized deposit pilot
-Bank of Korea stands firm on bank-led stablecoin push as deposit token pilots advance
-A 20-Year-Old&#39;s Crypto Wallet Moved $123M in Romance-Scam Cash: Interpol Says
-Bitcoin ETFs end 'most overwhelming' $2.7B sell-off amid new $85M net outflow
-Hyperliquid shows how onchain perps could challenge Wall Street: Pantera
-Singapore's Temasek investment fund says crypto is off the table, will focus on AI
-Revolut says USDT delisting is limited to EEA, Switzerland
-Crypto remains resilient in face of renewed Middle East tensions
-Crypto for Advisors: Q2 2026 Digital Asset Review
-Latin America’s biggest stock exchange now offers options on bitcoin, ether and solana futures
-Sony Bank Clears OCC Hurdle for Dollar Stablecoin
-Swift rolls out new blockchain ledger to bring 24/7 banking to 17 global giants
-Interpol operation exposes $122M crypto wallet tied to romance scam laundering
-Sony Bank gets US regulator nod to issue stablecoins
-Pricing houses in bitcoin exposes dollar's loss of value
-Bitcoin price shows resilience above $60,000 amid renewed US-Iran hostilities
-Over $7.2 billion have migrated from LayerZero to Chainlink CCIP as Mantle joins exodus
-EU Set to Revise MiCA in 2027 to Cover Foreign Stablecoin Issuers
-Morning Minute: Paradigm Raises $1.2B Fund as Crypto’s Top VC Pushes Into AI
-A $1 billion HYPE treasury trade is hitting public markets before liquidity has been tested
-Hong Kong regulator orders new anti-phishing measures for crypto platforms
-Age verification is the surveillance nobody voted for
-MoonPay Brings Its AI Crypto Agents to Telegram
-Aave rolls out vaults for yield-hungry fintech investors
-Bitcoin’s quantum dilemma: Bigger blocks or STARK proofs?
-CLARITY Act misses July target making August 7 a critical date for the bill
-Cardano’s wallet hack exposed the user layer holding its on-chain government together
-Ethereum's newest nonprofit wants to become Wall Street's guide to crypto
-Labour MPs Push to Make UK Crypto Donation Ban Permanent
-Why Bitcoin ATMs are becoming the last stop in America&#8217;s $11B crypto scam pipeline
-MARA Stock Pops as Bitcoin Miner Agrees to Acquire Massive Powered Texas Land Plot
-AI contracts, not bitcoin, now drive miner valuations, and Cipher and TeraWulf look cheap, says analyst
-Bitcoin traders reveal key levels as BTC price passes $63K after Trump Iran 'deal' comments
-Swift Readies Ledger for 24/7 Token Transfers—Though True Settlement Is Stuck on Old Rails
-Robinhood launched a Wall Street layer 2 chain and the market crowned a $150M cat coin first
-MARA shares surge after 2 GW Texas infrastructure deal expands AI ambitions
-Can Bitcoin hold $62K ahead of Friday’s $1.4 billion options expiry?
-UK politicians mull permanent crypto donation ban in wake of Nigel Farage scandal
 Bitcoin miners’ AI pivot faces investor scrutiny over insider sales
 OpenAI Releases GPT-5.6 Sol: Here’s How It Stacks Up Against Other AI Models
 Kalshi’s court loss shows federal approval may still leave prediction markets fenced off by states
@@ -79,3 +17,4 @@ Avalanche Treasury Firm AVAX One Reclaims Nasdaq Compliance After Reverse Stock 
 Coinbase chief legal officer to transition to advisory role on July 31
 AI Agents Could Be Turned Into Botnets Through Hallucinations, Researchers Warn
 New Hampshire snuffs out trailblazing state-government bitcoin bond effort
+TeraWulf CEO: 'Not All Megawatts Are Created Equally' in AI Race
