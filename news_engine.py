@@ -430,32 +430,45 @@ def generate_forklog_post(news_item, gemini_key):
   "full_article": "Полная статья-перевод для веб-сайта на русском языке (около 1500-2500 символов). Подробно изложи факты, технические детали и цитаты из оригинального текста. Раздели текст на логические абзацы. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
 }}
 """
-    response_json = call_gemini_api(prompt, gemini_key, is_json=True)
-    if not response_json:
-        return None
-        
-    try:
-        parsed = json.loads(response_json)
-        russian_title = parsed.get("russian_title", "").strip() or news_item['title']
-        
-        # Гарантируем, что заголовок в верхнем регистре (сохраняя эмодзи)
-        match = re.match(r'^([^\w]*)(.*)$', russian_title)
-        if match:
-            prefix, text = match.groups()
-            russian_title = prefix + text.upper()
+    for attempt in range(3):
+        response_json = call_gemini_api(prompt, gemini_key, is_json=True)
+        if not response_json:
+            print(f"Попытка {attempt+1}: ИИ вернул пустой ответ.")
+            continue
             
-        caption_body = parsed.get("telegram_caption", "").strip()
-        # Собираем Telegram пост: заголовок в начале
-        telegram_caption = f"<b>{russian_title}</b>\n\n{caption_body}"
-        
-        return {
-            "russian_title": russian_title,
-            "telegram_caption": telegram_caption,
-            "full_article": parsed.get("full_article", "").strip()
-        }
-    except Exception as e:
-        print(f"Ошибка парсинга сгенерированного JSON: {e}")
-        return None
+        try:
+            # Очищаем возможные markdown-обертки
+            clean_json = response_json.strip()
+            if clean_json.startswith("```"):
+                start = clean_json.find("{")
+                end = clean_json.rfind("}")
+                if start != -1 and end != -1:
+                    clean_json = clean_json[start:end+1]
+            
+            parsed = json.loads(clean_json)
+            russian_title = parsed.get("russian_title", "").strip() or news_item['title']
+            
+            # Гарантируем, что заголовок в верхнем регистре (сохраняя эмодзи)
+            match = re.match(r'^([^\w]*)(.*)$', russian_title)
+            if match:
+                prefix, text = match.groups()
+                russian_title = prefix + text.upper()
+                
+            caption_body = parsed.get("telegram_caption", "").strip()
+            # Собираем Telegram пост: заголовок в начале
+            telegram_caption = f"<b>{russian_title}</b>\n\n{caption_body}"
+            
+            return {
+                "russian_title": russian_title,
+                "telegram_caption": telegram_caption,
+                "full_article": parsed.get("full_article", "").strip()
+            }
+        except Exception as e:
+            print(f"Попытка {attempt+1} - Ошибка парсинга сгенерированного JSON: {e}")
+            if attempt < 2:
+                time.sleep(2)
+                
+    return None
 
 def send_to_telegram(post_text, bot_token, chat_id):
     """Отправка сгенерированного текстового поста в Telegram-канал"""
@@ -1611,132 +1624,125 @@ def main():
         return
         
     print(f"Найдено новых новостей: {len(news_list)}. Ищем подходящую новость без дубликатов...")
-    selected_item = None
+    
+    # Пытаемся обработать новости по одной. Если одна вызывает ошибку, помечаем её и идем к следующей.
+    published_any = False
     for item in news_list:
         print(f"Проверка кандидата: {item['title']}...")
         if check_semantic_duplicate(item['title'], item['description'], gemini_key):
             print("Новость определена как семантический дубликат. Пропускаем.")
             save_processed_id(item['id'])
             continue
-        selected_item = item
-        break
+            
+        print(f"Кандидат одобрен: {item['title']}. Начинаем обработку и публикацию...")
         
-    if not selected_item:
-        print("Все новые новости оказались семантическими дубликатами.")
-        return
+        # Скачиваем и обрабатываем изображения
+        extra_images = fetch_article_images(item.get('link', ''), item.get('image_url'))
+        item['extra_images'] = extra_images if extra_images else []
         
-    print(f"Выбрана новость: {selected_item['title']}. Ищем дополнительные изображения из источника...")
-    extra_images = fetch_article_images(selected_item.get('link', ''), selected_item.get('image_url'))
-    if extra_images:
-        print(f"Найдено доп. изображений: {len(extra_images)}")
-        selected_item['extra_images'] = extra_images
-    else:
-        selected_item['extra_images'] = []
-
-    print(f"Генерация поста...")
-    post_data = generate_forklog_post(selected_item, gemini_key)
-
-    if post_data and selected_item:
+        print("Генерация перевода и поста...")
+        post_data = generate_forklog_post(item, gemini_key)
+        
+        if not post_data:
+            print(f"Ошибка: Не удалось сгенерировать пост для статьи '{item['title']}'. Пропускаем её во избежание зависания.")
+            save_processed_id(item['id'])
+            continue
+            
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         russian_title = post_data["russian_title"]
-
-        # --- Защита от пустого текста поста ---
-        MIN_CAPTION_LEN = 80  # минимум осмысленного текста
+        
+        # Защита от пустого/короткого текста поста
+        MIN_CAPTION_LEN = 80
         if len(telegram_caption) < MIN_CAPTION_LEN:
-            print(f"ПРЕДУПРЕЖДЕНИЕ: telegram_caption слишком короткий ({len(telegram_caption)} симв.). Повторная попытка генерации...")
-            retry_data = generate_forklog_post(selected_item, gemini_key)
+            print(f"ПРЕДУПРЕЖДЕНИЕ: telegram_caption слишком короткий ({len(telegram_caption)} симв.). Повторная попытка...")
+            retry_data = generate_forklog_post(item, gemini_key)
             if retry_data and len(retry_data.get("telegram_caption", "")) >= MIN_CAPTION_LEN:
                 telegram_caption = retry_data["telegram_caption"]
                 full_article = retry_data.get("full_article", full_article)
                 russian_title = retry_data.get("russian_title", russian_title)
                 print("Повторная генерация успешна.")
             else:
-                # Финальный fallback: собираем текст из заголовка и описания вручную
-                fallback_title = russian_title or selected_item['title']
-                fallback_desc = selected_item.get('description', '')[:600]
+                fallback_title = russian_title or item['title']
+                fallback_desc = item.get('description', '')[:600]
                 telegram_caption = f"<b>{fallback_title.upper()}</b>\n\n{fallback_desc}"
-                print(f"Использован fallback-текст из заголовка и описания ({len(telegram_caption)} симв.).")
-
+                print(f"Использован fallback-текст ({len(telegram_caption)} симв.).")
+                
         if len(telegram_caption.strip()) < 10:
-            print("ОШИБКА: telegram_caption пуст даже после повторной попытки. Публикация пропущена.")
-            save_processed_id(selected_item['id'])
-            return
-        # --- Конец защиты ---
+            print("Ошибка: Текст поста пуст. Пропускаем статью.")
+            save_processed_id(item['id'])
+            continue
 
-        article_url = f"https://maxtyutin.github.io/cryptochannel/#article-{selected_item['id']}"
-        # Генерируем timestamp заранее, чтобы использовать его и в URL и в save_article_to_json
         article_timestamp = int(time.time())
-        selected_item['_timestamp'] = article_timestamp
+        item['_timestamp'] = article_timestamp
         article_clean_url = f"https://maxtyutin.github.io/cryptochannel/#article-{article_timestamp}"
         telegram_caption += f"\n\n👉 <a href=\"{article_clean_url}\">Читать на Crypto Analytics</a>"
-
+        
         print("\n=== СГЕНЕРИРОВАННЫЙ ПОСТ (TG) ===")
         print(telegram_caption)
         print("\n=== СГЕНЕРИРОВАННАЯ СТАТЬЯ (САЙТ) ===")
-        print(full_article)
+        print(full_article[:300] + "...")
         print("============================\n")
         
         with open(OUTPUT_FILE, 'w') as f:
-            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {selected_item.get('link', 'Crypto Analytics')}*\n*Картинка: {selected_item.get('image_url', 'нет')}*")
+            f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {item.get('link', 'Crypto Analytics')}*\n*Картинка: {item.get('image_url', 'нет')}*")
             
-        # Если картинка из RSS отсутствует или является пикселем/заглушкой, ищем og:image на странице
-        img_url = selected_item.get('image_url')
+        # Поиск картинки
+        img_url = item.get('image_url')
         is_bad_img = not img_url or any(x in img_url.lower() for x in ['pixel', 'tracker', 'ad-button', 'placeholder', 'spacer'])
-        
         if is_bad_img:
-            print("[news_engine] Картинка в RSS отсутствует или некорректна. Ищем og:image на веб-странице...")
-            og_image = fetch_og_image(selected_item.get('link', ''))
+            print("[news_engine] Картинка в RSS отсутствует/некорректна. Ищем og:image...")
+            og_image = fetch_og_image(item.get('link', ''))
             if og_image:
-                selected_item['image_url'] = og_image
+                item['image_url'] = og_image
                 print(f"[news_engine] Найдена обложка через og:image: {og_image}")
-
+                
         local_img_path = None
-        if selected_item.get('image_url'):
-            if selected_item['image_url'].startswith('http'):
+        if item.get('image_url'):
+            if item['image_url'].startswith('http'):
                 is_tweet = False
-                title_lower = selected_item['title'].lower()
-                desc_lower = selected_item.get('description', '').lower()
+                title_lower = item['title'].lower()
+                desc_lower = item.get('description', '').lower()
                 if 'tweet' in title_lower or 'on x' in title_lower or 'on twitter' in title_lower or 'tweet' in desc_lower or 'on x' in desc_lower:
                     is_tweet = True
                     
                 if is_tweet:
-                    print("Обнаружена новость о твите. Попытка генерации скриншота поста из X...")
-                    tweet_details = extract_tweet_details(selected_item['title'], selected_item.get('description', ''), gemini_key)
+                    print("Обнаружена новость о твите. Генерация скриншота...")
+                    tweet_details = extract_tweet_details(item['title'], item.get('description', ''), gemini_key)
                     if tweet_details:
-                        safe_id = re.sub(r'[^\w\-_\.]', '_', selected_item['id'])
+                        safe_id = re.sub(r'[^\w\-_\.]', '_', item['id'])
                         tweet_filename = f"images/tweet_{safe_id}.jpg"
                         tweet_abs_path = os.path.join(BASE_DIR, tweet_filename)
                         if draw_tweet_card(tweet_details, tweet_abs_path):
                             local_img_path = tweet_abs_path
-                            selected_item['image_url'] = f"./{tweet_filename}"
-                            print(f"Скриншот твита успешно сгенерирован: {selected_item['image_url']}")
+                            item['image_url'] = f"./{tweet_filename}"
+                            print(f"Скриншот твита сгенерирован: {item['image_url']}")
                             
                 if not local_img_path:
-                    print(f"Скачивание и обработка изображения: {selected_item['image_url']}...")
-                    img_result = download_and_standardize_image(selected_item['image_url'], selected_item['id'])
+                    print(f"Скачивание и обработка изображения: {item['image_url']}...")
+                    img_result = download_and_standardize_image(item['image_url'], item['id'])
                     if img_result:
                         local_img_path = img_result["local_path"]
-                        selected_item['image_url'] = img_result["relative_url"]
+                        item['image_url'] = img_result["relative_url"]
             else:
-                local_img_path = os.path.join(BASE_DIR, selected_item['image_url'].replace('./', ''))
+                local_img_path = os.path.join(BASE_DIR, item['image_url'].replace('./', ''))
                 
-        # Если изображение отсутствует или не загрузилось, генерируем красивую фирменную обложку
+        # Если изображения нет, генерируем фирменную обложку
         if not local_img_path:
-            print("[news_engine] Изображение отсутствует или не загрузилось. Генерируем фирменную обложку...")
-            safe_id = re.sub(r'[^\w\-_\.]', '_', selected_item['id'])
+            print("[news_engine] Изображение отсутствует. Генерируем фирменную обложку...")
+            safe_id = re.sub(r'[^\w\-_\.]', '_', item['id'])
             fallback_filename = f"images/fallback_{safe_id}.jpg"
             fallback_abs_path = os.path.join(BASE_DIR, fallback_filename)
-            if generate_title_card(selected_item['title'], fallback_abs_path):
+            if generate_title_card(item['title'], fallback_abs_path):
                 local_img_path = fallback_abs_path
-                selected_item['image_url'] = f"./{fallback_filename}"
-
+                item['image_url'] = f"./{fallback_filename}"
+                
         # 1. Сохраняем статью в базу данных и отмечаем как обработанную
-        save_processed_id(selected_item['id'])
-        save_recent_topic(selected_item['title'])
-        save_article_to_json(selected_item, full_article, russian_title, category=category)
+        save_processed_id(item['id'])
+        save_recent_topic(item['title'])
+        save_article_to_json(item, full_article, russian_title, category=category)
         print("[news_engine] Статья успешно сохранена в базу данных (articles.json).")
-
+        
         # 2. Выполняем авто-пуш на GitHub, чтобы запустить сборку сайта
         pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
         if pat:
@@ -1749,7 +1755,6 @@ def main():
                 subprocess.run(["git", "config", "user.name", "Render Bot"], check=False)
                 subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=False)
                 subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json", "images/"], check=False)
-                # Обязательно используем [skip ci] или [skip render], чтобы Render не перезагружал контейнер
                 subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"], check=False)
                 subprocess.run(["git", "push", "origin", "HEAD:main"], check=False)
                 
@@ -1759,8 +1764,8 @@ def main():
                 print(f"[news_engine] Ошибка при отправке на GitHub или отслеживании сборки: {e}")
         else:
             print("[news_engine] GITHUB_PAT не задан, пропуск отправки на GitHub.")
-
-        # 3. После паузы (и публикации сайта) отправляем пост в Telegram
+            
+        # 3. Отправляем пост в Telegram
         if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
             success = False
@@ -1771,21 +1776,27 @@ def main():
                 if success:
                     print("Успешно опубликовано со стандартизированным изображением!")
                     
-            if not success and selected_item.get('image_url') and selected_item['image_url'].startswith('http'):
-                print(f"Попытка отправить пост с оригинальным URL: {selected_item['image_url']}...")
-                success = send_photo_to_telegram(telegram_caption, selected_item['image_url'], bot_token, chat_id)
+            if not success and item.get('image_url') and item['image_url'].startswith('http'):
+                print(f"Попытка отправить пост с оригинальным URL: {item['image_url']}...")
+                success = send_photo_to_telegram(telegram_caption, item['image_url'], bot_token, chat_id)
                 if success:
                     print("Успешно опубликовано с изображением по внешней ссылке!")
                     
             if not success:
-                print("Не удалось отправить изображение. Отправка текстом в качестве последнего резерва...")
+                print("Не удалось отправить изображение. Отправка текстом...")
                 success = send_to_telegram(telegram_caption, bot_token, chat_id)
                 if success:
-                    print("Пост успешно опубликован в Telegram (текстом без изображения)!")
+                    print("Пост успешно опубликован в Telegram (текстом)!")
                 else:
-                    print("Критическая ошибка: не удалось отправить пост в Telegram ни одним из способов.")
+                    print("Критическая ошибка: не удалось отправить пост в Telegram.")
         else:
-            print("TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не установлены в окружении. Пропуск публикации в Telegram.")
+            print("TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не установлены. Пропуск публикации в Telegram.")
+            
+        published_any = True
+        break
+        
+    if not published_any:
+        print("Все новые новости оказались семантическими дубликатами или завершились ошибкой при генерации.")
 
 if __name__ == "__main__":
     main()
