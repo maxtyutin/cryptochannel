@@ -1,5 +1,20 @@
 [
   {
+    "id": "https://cointelegraph.com/news/aave-brings-v4-to-avalanche-laying-groundwork-for-tokenized-asset-lending?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+    "title": "🌐 AAVE ЗАПУСКАЕТ V4 В СЕТИ AVALANCHE ДЛЯ РАЗВИТИЯ РЫНКОВ ТОКЕНИЗИРОВАННОГО КРЕДИТОВАНИЯ",
+    "source": "Cointelegraph",
+    "link": "https://cointelegraph.com/news/aave-brings-v4-to-avalanche-laying-groundwork-for-tokenized-asset-lending?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+    "image_url": "./images/article_https___cointelegraph.com_news_aave-brings-v4-to-avalanche-laying-groundwork-for-tokenized-asset-lending_utm_source_rss_feed_utm_medium_rss_utm_campaign_rss_partner_inbound.jpg",
+    "extra_images": [
+      "https://s3-images.ctmedia.io/media/article-covers/hi-ipo-models-that-exist.jpg",
+      "https://s3-images.ctmedia.io/media/article-covers/hi-ipo-models-that-exist-320x213.webp"
+    ],
+    "post_text": "Протокол децентрализованных финансов <b>Aave</b> официально объявил о запуске своей четвертой версии (V4) в сети <b>Avalanche</b>. Это обновление является стратегическим шагом, направленным на создание инфраструктуры для будущего развития рынков токенизированного кредитования. Интеграция V4 в Avalanche позволит использовать повышенную масштабируемость и низкие комиссии сети для реализации сложных финансовых продуктов в рамках DeFi-экосистемы.\n\nПараллельно с этим, сектор реальных активов (RWA) продолжает демонстрировать устойчивый рост. Как стало известно из последних новостей индустрии, компании <b>Securitize</b> и <b>Cantor Fitzgerald</b> объединяют усилия с целью подготовки токенизированных IPO для публичных рынков. Это подтверждает глобальный тренд на «оцифровку» классических ценных бумаг.\n\n<blockquote>Запуск V4 на Avalanche — это не просто обновление кода, а фундаментальная база для того, чтобы вывести токенизированный кредит в институциональный сектор, обеспечив надежность и прозрачность сделок.</blockquote>\n\nИнтерес к токенизации облигаций, акций и других финансовых инструментов растет рекордными темпами. По данным аналитических отчетов <b>Allium</b> и <b>The Block</b>, объем активов, размещенных в протоколах кредитования, демонстрирует стабильную положительную динамику, несмотря на волатильность рынка. Инициатива Aave в сочетании с планами таких гигантов, как Cantor, подчеркивает неизбежность слияния рынков блокчейна с традиционным финансовым сектором. \n\nВнедрение новых стандартов V4 должно помочь пользователям и институциональным игрокам более эффективно управлять ликвидностью. На текущий момент команда проекта сфокусирована на обеспечении безопасности протокола и плавной миграции активов, что станет важным индикатором зрелости децентрализованных финансов для широкого круга инвесторов.",
+    "category": "news",
+    "date": "15.07.2026 20:46",
+    "timestamp": 1784137599
+  },
+  {
     "id": "https://www.coindesk.com/coindesk-indices/2026/07/15/crypto-long-and-short-to-eth-or-not-to-eth-is-sol-the-better-diversifier",
     "title": "📊 ETH ИЛИ SOL: ЧТО ЛУЧШЕ ДЛЯ ДИВЕРСИФИКАЦИИ КРИПТОПОРТФЕЛЯ?",
     "source": "CoinDesk",
@@ -1255,22 +1270,5 @@
     "category": "news",
     "date": "08.07.2026 17:01",
     "timestamp": 1783519261
-  },
-  {
-    "id": "https://cointelegraph.com/news/bull-bitcoin-legal-action-france-dac8?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-    "title": "Bull Bitcoin оспаривает в суде французский указ об имплементации директивы DAC8",
-    "source": "Cointelegraph",
-    "link": "https://cointelegraph.com/news/bull-bitcoin-legal-action-france-dac8?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-    "image_url": "./images/article_https___cointelegraph.com_news_bull-bitcoin-legal-action-france-dac8_utm_source_rss_feed_utm_medium_rss_utm_campaign_rss_partner_inbound.jpg",
-    "extra_images": [
-      "https://s3-images.ctmedia.io/media/article-covers/article-covers-110589-what-happened-in-crypto-today.jpg",
-      "https://s3-images.ctmedia.io/media/article-covers/big-brother-is-watching-320x213.webp",
-      "https://s3-images.ctmedia.io/media/article-covers/article-covers-110589-what-happened-in-crypto-today-320x213.webp",
-      "https://s3-images.ctmedia.io/media/article-covers/hi-crypto-and-blockchain-job-market.jpg"
-    ],
-    "post_text": "Криптовалютная биржа Bull Bitcoin официально обратилась в Государственный совет Франции с требованием отменить действие указа, имплементирующего положения директивы DAC8 (Directive on Administrative Cooperation). Этот шаг стал ответом на ужесточение регуляторных норм, которые, по мнению представителей площадки, несут фундаментальные риски для приватности и безопасности миллионов граждан ЕС.\n\n<b>Суть претензий</b>\nОсновной аргумент Bull Bitcoin заключается в том, что требования DAC8 по раскрытию данных об операциях с криптовалютами создают избыточный массив информации, который может стать мишенью для злоумышленников. По данным, которые часто фигурируют в отчетах аналитических платформ вроде <i>The Block</i>, регуляторное давление на некастодиальные решения значительно возрастает, однако текущие методы контроля в Европе могут спровоцировать физические риски для 135 миллионов владельцев цифровых активов.\n\n<blockquote>Мы призываем суд аннулировать указ, так как он нарушает базовые принципы защиты частной жизни и создает неоправданные угрозы для пользователей некастодиальных кошельков, заставляя их передавать данные, которые могут быть скомпрометированы</blockquote> — заявляют в Bull Bitcoin.\n\n<b>Контекст и последствия</b>\nДиректива DAC8 направлена на повышение прозрачности налогообложения криптоактивов в Евросоюзе. Однако индустрия опасается, что слепое внедрение этих норм приведет к «утечке мозгов» и капитала в юрисдикции с более либеральным подходом. Согласно информации <i>Allium</i>, объемы торгов на децентрализованных и некастодиальных платформах остаются значительными, что указывает на высокий спрос на конфиденциальные транзакции даже на фоне борьбы регуляторов с анонимностью.\n\n<b>Значение для индустрии</b>\nИск Bull Bitcoin — это знаковое событие для всего европейского сегмента криптоиндустрии. Если французский суд встанет на сторону истца, это может поставить под сомнение легитимность имплементации DAC8 в других странах ЕС. Для рынка это означает возможность временной передышки и потенциальный пересмотр стандартов сбора данных. Тем не менее, регуляторы продолжают настаивать на необходимости борьбы с отмыванием денег, что создает конфликт интересов между государственным надзором и правом на приватность. <i>Crypto Analytics</i> продолжает следить за развитием событий, так как результат этого дела определит вектор регулирования блокчейн-технологий в Европе на ближайшие годы.",
-    "category": "news",
-    "date": "08.07.2026 16:51",
-    "timestamp": 1783518686
   }
 ]

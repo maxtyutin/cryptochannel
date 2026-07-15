@@ -1,4 +1,3 @@
-Bitdeer stock jumps 14% as company expands US mining hardware production
 Anthropic AI Oversight Board Adds Ben Bernanke, Who Oversaw 2008 Financial Crisis at Fed
 Arbitrum jumps 19% benefitting from Robinhood's $568 million onchain trading frenzy
 With SEC fight over, Coinbase's top legal exec Grewal moves on, and others reassigned
@@ -17,4 +16,5 @@ Cantor and Securitize collaborate on blockchain-based IPOs
 Cantor and Securitize collaborate on blockchain-based IPOs
 Ostium suffers $18 million exploit as oracle attack wave continues to hit DeFi
 The privacy paradox of protecting kids online
-Crypto Long & Short: To ETH or not to ETH — is SOL the better diversifier? 
+Crypto Long & Short: To ETH or not to ETH — is SOL the better diversifier?
+Aave launches V4 on Avalanche, laying groundwork for tokenized credit markets
