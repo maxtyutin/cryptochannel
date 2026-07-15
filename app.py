@@ -2,6 +2,7 @@ import time
 import datetime
 import subprocess
 import os
+import sys
 import threading
 from fastapi import FastAPI
 
@@ -62,7 +63,7 @@ def background_worker():
                 log("WARNING: GITHUB_PAT not set in environment!")
             
             # Очищаем репозиторий, забираем изменения из origin и жестко сбрасываем main
-            run_command(["git", "clean", "-fd"])
+            run_command(["git", "clean", "-fd", "-e", ".venv", "-e", "venv"])
             run_command(["git", "checkout", "main"])
             run_command(["git", "fetch", "origin"])
             run_command(["git", "reset", "--hard", "origin/main"])
@@ -74,15 +75,15 @@ def background_worker():
             # Запускаем нужный режим. Вся логика отправки в TG, пуша на GitHub и задержки теперь внутри news_engine.py!
             if hour_utc in [6, 18] and hour_utc != last_digest_hour:
                 log(f"Triggering digest for hour {hour_utc} UTC...")
-                run_command(["python3", "news_engine.py", "--digest"])
+                run_command([sys.executable, "news_engine.py", "--digest"])
                 last_digest_hour = hour_utc
             elif hour_utc == 11 and hour_utc != last_poll_hour:
                 log(f"Triggering poll for hour {hour_utc} UTC...")
-                run_command(["python3", "news_engine.py", "--poll"])
+                run_command([sys.executable, "news_engine.py", "--poll"])
                 last_poll_hour = hour_utc
             else:
                 log("Triggering regular news search...")
-                run_command(["python3", "news_engine.py"])
+                run_command([sys.executable, "news_engine.py"])
                 
         except Exception as e:
             log(f"Error in background worker: {e}")
