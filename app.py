@@ -32,6 +32,25 @@ def ping():
 def get_logs():
     return {"logs": worker_logs}
 
+@app.get("/run")
+def run_now():
+    def manual_run():
+        log("Manual news search triggered via web...")
+        # Сначала синхронизируем git репозиторий
+        pat = os.environ.get("GITHUB_PAT")
+        if pat:
+            repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
+            run_command(["git", "remote", "set-url", "origin", repo_url])
+        run_command(["git", "clean", "-fd", "-e", ".venv", "-e", "venv"])
+        run_command(["git", "checkout", "main"])
+        run_command(["git", "fetch", "origin"])
+        run_command(["git", "reset", "--hard", "origin/main"])
+        run_command([sys.executable, "news_engine.py"])
+        log("Manual news search finished.")
+    
+    threading.Thread(target=manual_run).start()
+    return {"status": "triggered", "message": "News engine run started in the background. Check /logs to see progress."}
+
 def run_command(cmd):
     log(f"Executing: {' '.join(cmd)}")
     res = subprocess.run(cmd, capture_output=True, text=True)
