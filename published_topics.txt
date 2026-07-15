@@ -1,4 +1,3 @@
-Phantom, Hyperliquid ask CFTC to modernize rules for onchain derivatives
 White House says it received no Democratic response related to SEC, CFTC vacancies
 New Hampshire rejects $100M Bitcoin-backed bond after public finance hearing
 Bitdeer stock jumps 14% as company expands US mining hardware production
@@ -18,3 +17,4 @@ Live updates: Bitcoin holds $62,600 as the Iran conflict reignites and CPI looms
 DTCC moves tokenized securities into live trading, marking a milestone for Wall Street's blockchain push
 Cantor and Securitize collaborate on blockchain-based IPOs
 Cantor and Securitize collaborate on blockchain-based IPOs
+Ostium suffers $18 million exploit as oracle attack wave continues to hit DeFi
