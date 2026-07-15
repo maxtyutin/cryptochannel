@@ -1,5 +1,3 @@
-DTCC moves tokenized securities into live trading, marking a milestone for Wall Street's blockchain push
-Cantor and Securitize collaborate on blockchain-based IPOs
 Cantor and Securitize collaborate on blockchain-based IPOs
 Ostium suffers $18 million exploit as oracle attack wave continues to hit DeFi
 The privacy paradox of protecting kids online
@@ -19,3 +17,4 @@ Bitcoin miner AI pivot hits roadblock with New York 50 MW permit freeze
 🇰🇷 ЮЖНАЯ КОРЕЯ ВКЛЮЧИТ ЦИФРОВЫЕ АКТИВЫ В ГОСУДАРСТВЕННУЮ СИСТЕМУ УПРАВЛЕНИЯ
 🛑 НЬЮ-ЙОРК ВВОДИТ МОРАТОРИЙ НА КРУПНЫЕ ДАТА-ЦЕНТРЫ: УДАР ПО AI-СТРАТЕГИИ МАЙНЕРОВ
 📉 СОЗДАТЕЛЬ BASE ДЖЕССИ ПОЛЛАК ОТОШЕЛ ОТ РУКОВОДСТВА ПРИЛОЖЕНИЕМ ПОСЛЕ НЕУДАЧИ С СОЦСЕТЬЮ
+🏦 MORGAN STANLEY ГОТОВИТСЯ К ЗАПУСКУ СОБСТВЕННОГО КРИПТО-ТРАСТА
