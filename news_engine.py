@@ -786,22 +786,30 @@ Return the result strictly in JSON format with two keys:
         return True
     except Exception as e:
         print(f"[news_engine] Ошибка загрузки резервной обложки: {e}")
-        
     return False
 
 def download_and_standardize_image(image_url, article_id):
     """Скачивает изображение, приводит его к стандарту 16:9 (1200x675) и сохраняет локально"""
     import urllib.request
+    import os
+    import sys
     
     # Импортируем Pillow динамически
     try:
         from PIL import Image
     except ImportError:
         import subprocess
-        import sys
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        try:
+            print("[news_engine] Pillow не установлен. Установка...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        except Exception:
+            try:
+                print("[news_engine] Стандартная установка не удалась. Установка с флагом --break-system-packages...")
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow", "--break-system-packages"])
+            except Exception as e:
+                print(f"[news_engine] Не удалось установить Pillow: {e}")
         from PIL import Image
-    
+        
     os.makedirs(os.path.join(BASE_DIR, "images"), exist_ok=True)
     import re
     safe_id = re.sub(r'[^\w\-_\.]', '_', article_id)
