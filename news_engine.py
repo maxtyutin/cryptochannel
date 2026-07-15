@@ -488,7 +488,7 @@ def send_to_telegram(post_text, bot_token, chat_id):
     )
     
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req, timeout=15) as response:
             res = json.loads(response.read().decode('utf-8'))
             return res.get("ok", False)
     except Exception as e:
@@ -1461,7 +1461,7 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
             headers={'Content-Type': 'application/json'}
         )
         
-        with urllib.request.urlopen(poll_req) as r:
+        with urllib.request.urlopen(poll_req, timeout=15) as r:
             res = json.loads(r.read().decode('utf-8'))
             return res.get("ok", False)
     except Exception as e:
@@ -1644,6 +1644,8 @@ def main():
                             subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
                         else:
                             subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
+                        subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
+                        subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
                         subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
                         subprocess.run(["git", "commit", "-m", "Reconciliation: sync processed status with Telegram [skip ci]"], check=False)
                         subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
