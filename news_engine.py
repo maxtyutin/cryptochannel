@@ -986,7 +986,7 @@ def save_recent_topic(topic):
     except Exception as e:
         print(f"Ошибка сохранения темы: {e}")
 
-def save_article_to_json(news_item, post_text, russian_title=None, category="news"):
+def save_article_to_json(news_item, post_text, russian_title=None, category="news", telegram_caption=None):
     """Сохраняет опубликованную новость в файл articles.json для веб-сайта"""
     json_path = os.path.join(BASE_DIR, "articles.json")
     articles = []
@@ -1009,7 +1009,8 @@ def save_article_to_json(news_item, post_text, russian_title=None, category="new
         "category": category,
         "date": (datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3)))).strftime("%d.%m.%Y %H:%M"),
         # Используем предзаданный _timestamp (если был установлен для синхронизации с TG-ссылкой)
-        "timestamp": news_item.get('_timestamp', int(time.time()))
+        "timestamp": news_item.get('_timestamp', int(time.time())),
+        "telegram_caption": telegram_caption
     }
     
     # Избегаем дублирования по ID
@@ -1586,6 +1587,73 @@ def main():
         
     # Только новости
     category = "news"
+    
+    # Реконсиляция (синхронизация): проверяем, есть ли статьи в articles.json,
+    # которые не числятся в processed_news.txt (то есть ушли на сайт, но не ушли в TG).
+    json_path = os.path.join(BASE_DIR, "articles.json")
+    if os.path.exists(json_path) and bot_token and chat_id:
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                articles = json.load(f)
+            
+            # Читаем то, что реально отправлено в TG
+            processed_ids = set()
+            if os.path.exists(PROCESSED_FILE):
+                with open(PROCESSED_FILE, 'r') as pf:
+                    for line in pf:
+                        s = line.strip()
+                        if s:
+                            processed_ids.add(s)
+            
+            # Находим неотправленные статьи (в обратном порядке, то есть самые старые первыми)
+            unposted = []
+            for a in reversed(articles):
+                if a.get('id') and a.get('id') not in processed_ids and a.get('telegram_caption'):
+                    unposted.append(a)
+                    
+            if unposted:
+                print(f"[news_engine] Обнаружено {len(unposted)} неотправленных в Telegram статей. Публикуем их...")
+                for a in unposted:
+                    print(f"[news_engine] Допубликация в Telegram: {a['title']}...")
+                    telegram_caption = a['telegram_caption']
+                    
+                    telegram_success = False
+                    image_path_or_url = a.get('image_url')
+                    if image_path_or_url:
+                        if image_path_or_url.startswith('./'):
+                            image_path_or_url = os.path.join(BASE_DIR, image_path_or_url[2:])
+                        telegram_success = send_photo_to_telegram(telegram_caption, image_path_or_url, bot_token, chat_id)
+                        
+                    if not telegram_success:
+                        telegram_success = send_to_telegram(telegram_caption, bot_token, chat_id)
+                        
+                    if telegram_success:
+                        print(f"[news_engine] Успешно доопубликовано в Telegram: {a['title']}")
+                        save_processed_id(a['id'])
+                        save_recent_topic(a['title'])
+                    else:
+                        print(f"[news_engine] Ошибка доопубликации в Telegram: {a['title']}")
+                        
+                # Пушим обновленные статусы на GitHub
+                pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
+                if pat:
+                    try:
+                        res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
+                        repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
+                        if "origin" in res_rem.stdout:
+                            subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
+                        else:
+                            subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
+                        subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
+                        subprocess.run(["git", "commit", "-m", "Reconciliation: sync processed status with Telegram [skip ci]"], check=False)
+                        subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
+                        print("[news_engine] Статус синхронизации Telegram успешно запушен на GitHub.")
+                    except Exception as ge:
+                        print(f"[news_engine] Ошибка отправки статуса синхронизации на GitHub: {ge}")
+                return  # Прерываем цикл, чтобы новый поиск новостей начался на следующем запуске
+        except Exception as re_err:
+            print(f"[news_engine] Ошибка в reconciliation-цикле: {re_err}")
+
     news_list = fetch_rss_news()
     if not news_list:
         print("Новых новостей в лентах не найдено.")
@@ -1705,18 +1773,16 @@ def main():
                 local_img_path = fallback_abs_path
                 item['image_url'] = f"./{fallback_filename}"
                 
-        # 1. Сохраняем статью в базу данных и отмечаем как обработанную
-        save_processed_id(item['id'])
-        save_recent_topic(item['title'])
-        save_article_to_json(item, full_article, russian_title, category=category)
+        # 1. Сохраняем статью в articles.json для веб-сайта (с сохраненным telegram_caption)
+        save_article_to_json(item, full_article, russian_title, category=category, telegram_caption=telegram_caption)
         print("[news_engine] Статья успешно сохранена в базу данных (articles.json).")
         
-        # 2. Выполняем авто-пуш на GitHub, чтобы запустить сборку сайта
+        # 2. Выполняем авто-пуш на GitHub (только articles.json и изображения), чтобы запустить сборку сайта
         pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
         if pat:
             import datetime
             push_time_utc = datetime.datetime.utcnow().replace(microsecond=0)
-            print("[news_engine] Обнаружен GITHUB_PAT, отправляем изменения на GitHub...")
+            print("[news_engine] Обнаружен GITHUB_PAT, отправляем базу данных сайта на GitHub...")
             repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
             try:
                 # Проверяем, существует ли remote 'origin'
@@ -1728,45 +1794,58 @@ def main():
                     
                 subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
                 subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
-                subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json", "images/"], check=True)
-                subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"], check=False)
+                subprocess.run(["git", "add", "articles.json", "images/"], check=True)
+                subprocess.run(["git", "commit", "-m", "Auto-update website database [skip ci]"], check=False)
                 
                 print("[news_engine] Отправка изменений в репозиторий GitHub...")
                 subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
                 
-                print("[news_engine] Изменения успешно отправлены на GitHub! Запуск отслеживания сборки сайта...")
+                print("[news_engine] Изменения успешно отправлены на GitHub! Запуск ожидания сборки сайта...")
                 wait_for_pages_build(pat, push_time_utc)
             except Exception as e:
-                print(f"[news_engine] Ошибка при отправке на GitHub или отслеживании сборки: {e}")
+                print(f"[news_engine] Ошибка при отправке базы данных на GitHub: {e}")
         else:
             print("[news_engine] GITHUB_PAT не задан, пропуск отправки на GitHub.")
             
         # 3. Отправляем пост в Telegram
+        telegram_success = False
         if bot_token and chat_id:
             print("Отправка поста в Telegram-канал...")
-            success = False
             
             if local_img_path:
                 print(f"Отправка локально обработанного изображения: {local_img_path}...")
-                success = send_photo_to_telegram(telegram_caption, local_img_path, bot_token, chat_id)
-                if success:
+                telegram_success = send_photo_to_telegram(telegram_caption, local_img_path, bot_token, chat_id)
+                if telegram_success:
                     print("Успешно опубликовано со стандартизированным изображением!")
                     
-            if not success and item.get('image_url') and item['image_url'].startswith('http'):
+            if not telegram_success and item.get('image_url') and item['image_url'].startswith('http'):
                 print(f"Попытка отправить пост с оригинальным URL: {item['image_url']}...")
-                success = send_photo_to_telegram(telegram_caption, item['image_url'], bot_token, chat_id)
-                if success:
+                telegram_success = send_photo_to_telegram(telegram_caption, item['image_url'], bot_token, chat_id)
+                if telegram_success:
                     print("Успешно опубликовано с изображением по внешней ссылке!")
                     
-            if not success:
+            if not telegram_success:
                 print("Не удалось отправить изображение. Отправка текстом...")
-                success = send_to_telegram(telegram_caption, bot_token, chat_id)
-                if success:
+                telegram_success = send_to_telegram(telegram_caption, bot_token, chat_id)
+                if telegram_success:
                     print("Пост успешно опубликован в Telegram (текстом)!")
                 else:
                     print("Критическая ошибка: не удалось отправить пост в Telegram.")
         else:
             print("TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не установлены. Пропуск публикации в Telegram.")
+            
+        # 4. Если пост отправлен (или если TG не настроен), отмечаем как опубликованный и пушим статус
+        if telegram_success or not (bot_token and chat_id):
+            save_processed_id(item['id'])
+            save_recent_topic(item['title'])
+            if pat:
+                try:
+                    subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
+                    subprocess.run(["git", "commit", "-m", "Auto-update processed status [skip ci]"], check=False)
+                    subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
+                    print("[news_engine] Статус публикации успешно обновлен на GitHub.")
+                except Exception as e:
+                    print(f"[news_engine] Ошибка при отправке статуса публикации на GitHub: {e}")
             
         published_any = True
         break
