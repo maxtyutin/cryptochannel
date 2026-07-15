@@ -1516,54 +1516,14 @@ def setup_cron():
 
 def wait_for_pages_build(pat, push_time_utc, timeout_seconds=180):
     """
-    Опрашивает GitHub API, ожидая успешного завершения сборки GitHub Pages,
-    которая началась после push_time_utc.
+    Поскольку сайт деплоится на Render, мы просто ждем 75 секунд,
+    чтобы Render успел собрать и опубликовать новую версию сайта,
+    прежде чем отправить пост в Telegram.
     """
-    import urllib.request
-    import json
-    import datetime
-    
-    url = "https://api.github.com/repos/maxtyutin/cryptochannel/pages/builds/latest"
-    headers = {
-        "Authorization": f"token {pat}",
-        "Accept": "application/vnd.github+json",
-        "User-Agent": "Render-Bot-Pages-Sync",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
-    
-    start_time = time.time()
-    print(f"[news_engine] Ожидание завершения сборки GitHub Pages (с {push_time_utc.isoformat()} UTC)...")
-    
-    while time.time() - start_time < timeout_seconds:
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as response:
-                build_data = json.loads(response.read().decode('utf-8'))
-                
-            status = build_data.get("status")
-            updated_at_str = build_data.get("updated_at")
-            
-            if updated_at_str:
-                # Парсим время обновления (например, "2026-07-13T19:51:24Z")
-                updated_at = datetime.datetime.strptime(updated_at_str, "%Y-%m-%dT%H:%M:%SZ")
-                
-                # Если сборка завершена и время обновления позже, чем наш пуш (с запасом 15 секунд)
-                if status == "built" and updated_at >= (push_time_utc - datetime.timedelta(seconds=15)):
-                    duration = int(time.time() - start_time)
-                    print(f"[news_engine] GitHub Pages успешно собран и опубликован за {duration} сек! (Обновлен в {updated_at_str})")
-                    return True
-                else:
-                    print(f"[news_engine] Статус сборки: {status}. Последнее обновление: {updated_at_str}. Ожидаем...")
-            else:
-                print(f"[news_engine] Не удалось получить время обновления сборки. Статус: {status}. Ожидаем...")
-                
-        except Exception as e:
-            print(f"[news_engine] Ошибка при проверке статуса Pages: {e}. Продолжаем ожидание...")
-            
-        time.sleep(8)
-        
-    print("[news_engine] Превышено время ожидания сборки GitHub Pages. Переходим к публикации в Telegram.")
-    return False
+    print("[news_engine] Ожидаем 75 секунд, чтобы Render успел собрать и обновить сайт...")
+    time.sleep(75)
+    print("[news_engine] Ожидание завершено. Переходим к публикации в Telegram.")
+    return True
 
 def main():
     env = load_env()
@@ -1759,12 +1719,20 @@ def main():
             print("[news_engine] Обнаружен GITHUB_PAT, отправляем изменения на GitHub...")
             repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
             try:
-                subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=False)
-                subprocess.run(["git", "config", "user.name", "Render Bot"], check=False)
-                subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=False)
-                subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json", "images/"], check=False)
+                # Проверяем, существует ли remote 'origin'
+                res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
+                if "origin" in res_rem.stdout:
+                    subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
+                else:
+                    subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
+                    
+                subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
+                subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
+                subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt", "articles.json", "images/"], check=True)
                 subprocess.run(["git", "commit", "-m", "Auto-update database from Render [skip ci]"], check=False)
-                subprocess.run(["git", "push", "origin", "HEAD:main"], check=False)
+                
+                print("[news_engine] Отправка изменений в репозиторий GitHub...")
+                subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
                 
                 print("[news_engine] Изменения успешно отправлены на GitHub! Запуск отслеживания сборки сайта...")
                 wait_for_pages_build(pat, push_time_utc)

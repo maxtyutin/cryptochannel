@@ -40,7 +40,12 @@ def run_now():
         pat = os.environ.get("GITHUB_PAT")
         if pat:
             repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
-            run_command(["git", "remote", "set-url", "origin", repo_url])
+            # Проверяем, существует ли remote 'origin'
+            res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
+            if "origin" in res_rem.stdout:
+                run_command(["git", "remote", "set-url", "origin", repo_url])
+            else:
+                run_command(["git", "remote", "add", "origin", repo_url])
         run_command(["git", "clean", "-fd", "-e", ".venv", "-e", "venv"])
         run_command(["git", "checkout", "main"])
         run_command(["git", "fetch", "origin"])
@@ -77,7 +82,12 @@ def background_worker():
             pat = os.environ.get("GITHUB_PAT")
             if pat:
                 repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
-                run_command(["git", "remote", "set-url", "origin", repo_url])
+                # Проверяем, существует ли remote 'origin'
+                res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
+                if "origin" in res_rem.stdout:
+                    run_command(["git", "remote", "set-url", "origin", repo_url])
+                else:
+                    run_command(["git", "remote", "add", "origin", repo_url])
             else:
                 log("WARNING: GITHUB_PAT not set in environment!")
             
