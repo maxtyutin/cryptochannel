@@ -1604,12 +1604,28 @@ def main():
                         s = line.strip()
                         if s:
                             processed_ids.add(s)
-            
+
+            # Читаем опубликованные темы (заголовки), чтобы избежать дублей по названию
+            processed_topics = set()
+            if os.path.exists(TOPICS_FILE):
+                with open(TOPICS_FILE, 'r', encoding='utf-8') as tf:
+                    for line in tf:
+                        s = line.strip()
+                        if s:
+                            processed_topics.add(s.lower())
+                            
             # Находим неотправленные статьи (в обратном порядке, то есть самые старые первыми)
             unposted = []
             for a in reversed(articles):
-                if a.get('id') and a.get('id') not in processed_ids and a.get('telegram_caption'):
-                    unposted.append(a)
+                if a.get('id') and a.get('telegram_caption'):
+                    # Проверяем, что ID нет в обработанных
+                    if a['id'] not in processed_ids:
+                        # Проверяем дополнительно по заголовку
+                        title_lower = a['title'].strip().lower()
+                        if title_lower in processed_topics:
+                            print(f"[news_engine] Статья '{a['title']}' уже есть в опубликованных темах. Пропуск публикации.")
+                            continue
+                        unposted.append(a)
                     
             if unposted:
                 print(f"[news_engine] Обнаружено {len(unposted)} неотправленных в Telegram статей. Публикуем их...")
