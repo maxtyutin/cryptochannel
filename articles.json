@@ -1,5 +1,20 @@
 [
   {
+    "id": "https://cointelegraph.com/markets/bitcoin-hits-655k-as-more-surprise-us-inflation-data-sparks-three-week-btc-price-high?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+    "title": "📈 БИТКОИН ДОСТИГ $65 500 НА ФОНЕ НОВЫХ ДАННЫХ ПО ИНФЛЯЦИИ В США",
+    "source": "Cointelegraph",
+    "link": "https://cointelegraph.com/markets/bitcoin-hits-655k-as-more-surprise-us-inflation-data-sparks-three-week-btc-price-high?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+    "image_url": "./images/article_https___cointelegraph.com_markets_bitcoin-hits-655k-as-more-surprise-us-inflation-data-sparks-three-week-btc-price-high_utm_source_rss_feed_utm_medium_rss_utm_campaign_rss_partner_inbound.jpg",
+    "extra_images": [
+      "https://s3-images.ctmedia.io/media/article-covers/management-control-panel-crypto-trading.jpg",
+      "https://s3-images.ctmedia.io/media/article-covers/management-control-panel-crypto-trading-320x213.webp"
+    ],
+    "post_text": "<p>Биткоин (BTC) уверенно преодолел отметку в $65 500, установив новый трехнедельный максимум. Этот ценовой скачок стал реакцией на публикацию свежих данных по инфляции в США, которые оказались для рынков неожиданными и спровоцировали приток ликвидности в криптоактивы.</p><p>Согласно отчету Уильяма Саберга для Crypto Analytics, текущая рыночная конъюнктура заставляет инвесторов пересматривать свои ожидания. На фоне позитивного импульса эксперты начали обсуждать новую амбициозную цель для первой криптовалюты — $80 000 до конца августа. Для достижения этого уровня активу необходимо удержать позиции выше текущих локальных поддержек.</p><blockquote>Участники рынка пристально следят за динамикой BTC в ближайшие часы, так как именно этот период станет решающим для закрепления цены в новом диапазоне и возможного продолжения восходящего тренда.</blockquote><p>Аналитики отмечают, что текущее поведение актива коррелирует с общей макроэкономической ситуацией. Хотя долгосрочные прогнозы остаются осторожными, последние данные по инфляции дали импульс, который оживил активность трейдеров. Согласно информации отчетов The Block, волатильность рынка остается предсказуемой в рамках текущих макроэкономических циклов, что создает благоприятные условия для накопления позиций крупными игроками.</p><p>На данный момент Crypto Analytics продолжает следить за развитием событий. Важно учитывать, что любые изменения в фундаментальных данных могут мгновенно отразиться на технической картине. Инвесторам рекомендуется проявлять бдительность при пробое ключевых сопротивлений, так как рынок может столкнуться с волной фиксации прибыли, что типично для резких движений после выхода важных экономических отчетов.</p>",
+    "category": "news",
+    "date": "15.07.2026 20:48",
+    "timestamp": 1784137726
+  },
+  {
     "id": "https://cointelegraph.com/news/aave-brings-v4-to-avalanche-laying-groundwork-for-tokenized-asset-lending?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
     "title": "🌐 AAVE ЗАПУСКАЕТ V4 В СЕТИ AVALANCHE ДЛЯ РАЗВИТИЯ РЫНКОВ ТОКЕНИЗИРОВАННОГО КРЕДИТОВАНИЯ",
     "source": "Cointelegraph",
@@ -1253,22 +1268,5 @@
     "category": "news",
     "date": "08.07.2026 17:22",
     "timestamp": 1783520567
-  },
-  {
-    "id": "https://cointelegraph.com/features/as-real-world-asset-tokenization-accelerates-heres-whats-been-put-onchain?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-    "title": "Топ-5 активов реального мира, которые активнее всего токенизируются в блокчейнах",
-    "source": "Cointelegraph",
-    "link": "https://cointelegraph.com/features/as-real-world-asset-tokenization-accelerates-heres-whats-been-put-onchain?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
-    "image_url": "./images/article_https___cointelegraph.com_features_as-real-world-asset-tokenization-accelerates-heres-whats-been-put-onchain_utm_source_rss_feed_utm_medium_rss_utm_campaign_rss_partner_inbound.jpg",
-    "extra_images": [
-      "https://s3-images.ctmedia.io/media/content/pasted-image-1679.png",
-      "https://s3-images.ctmedia.io/media/content/pasted-image-1680.png",
-      "https://s3-images.ctmedia.io/media/content/pasted-image-1681.png",
-      "https://s3-images.ctmedia.io/media/content/pasted-image-1682.png"
-    ],
-    "post_text": "<h3>Эволюция Real World Assets: какие активы захватывают блокчейн</h3>\n<p>Токенизация активов реального мира (RWA) перестала быть экспериментальной концепцией, превратившись в один из главных драйверов развития блокчейн-индустрии. Как отмечают эксперты <i>Crypto Analytics</i>, текущая рыночная динамика указывает на тесную интеграцию традиционных финансовых инструментов с децентрализованными протоколами.</p>\n\n<p>Согласно аналитическим отчетам платформы <b>Allium</b>, лидерами по темпам ончейн-миграции стали пять основных классов активов:</p>\n\n<ul>\n<li><b>Государственные облигации:</b> Стали «золотым стандартом» доходности в DeFi, позволяя инвесторам получать прибыль, сопоставимую с безрисковыми ставками TradFi.</li>\n<li><b>Недвижимость:</b> Дробная собственность (fractional ownership) открывает рынок коммерческих и жилых объектов для широкого круга лиц.</li>\n<li><b>Акции:</b> Использование токенов в качестве производных инструментов упрощает торговлю на глобальных рынках.</li>\n<li><b>Сырьевые товары:</b> Токенизация золота и других металлов обеспечивает ликвидность физических активов в режиме 24/7.</li>\n<li><b>Частный кредит:</b> Сектор, который трансформирует процесс кредитования бизнеса, исключая бюрократические барьеры банков.</li>\n</ul>\n\n<blockquote>Сектор RWA все еще невелик по меркам традиционных финансов, однако скорость его адаптации демонстрирует критическую значимость для будущего институционального капитала.</blockquote>\n\n<p>По данным <b>The Block</b>, рост объемов заблокированной стоимости (TVL) в RWA-протоколах опережает многие другие сегменты крипторынка. Институциональные инвесторы ищут способы повышения эффективности использования капитала, и блокчейн-инфраструктура предоставляет для этого все необходимые инструменты: прозрачность, неизменность реестров и автоматизацию через смарт-контракты.</p>\n\n<p><b>Что это значит для рынка?</b></p>\n<p>Процесс токенизации является мостом между старой и новой финансовыми системами. Основным следствием станет резкое сокращение издержек на клиринг и расчеты. Для обычного пользователя это означает доступ к активам, которые ранее были доступны только хедж-фондам. В долгосрочной перспективе, как полагают аналитики <i>Crypto Analytics</i>, разница между «криптоактивами» и «реальными активами» будет стерта, так как блокчейн станет единым слоем расчетов для всей мировой экономики.</p>",
-    "category": "news",
-    "date": "08.07.2026 17:01",
-    "timestamp": 1783519261
   }
 ]
