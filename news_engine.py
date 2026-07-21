@@ -1536,7 +1536,7 @@ def generate_and_send_poll(gemini_key, bot_token, chat_id):
         tg_data = {
             "chat_id": chat_id,
             "question": poll_data["question"],
-            "options": json.dumps(poll_data["options"]),
+            "options": poll_data["options"],  # Передаем как нативный массив, json.dumps(tg_data) сериализует его
             "is_anonymous": False
         }
         
@@ -1657,9 +1657,8 @@ def main():
                         print("Аналитический обзор рынка успешно опубликован в Telegram!")
                     else:
                         print("Не удалось отправить обзор рынка в Telegram.")
-        return
         
-    elif "--poll" in args:
+    if "--poll" in args:
         print("Запуск генерации опроса...")
         if bot_token and chat_id:
             if generate_and_send_poll(gemini_key, bot_token, chat_id):
@@ -1668,7 +1667,6 @@ def main():
                 print("Не удалось отправить опрос в Telegram.")
         else:
             print("Параметры Telegram не настроены. Опрос не отправлен.")
-        return
         
     # Только новости
     category = "news"
