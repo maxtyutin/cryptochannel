@@ -1,4 +1,3 @@
-Robinhood-backed DEX Arcus expands with tokenized assets, perps
 Morpho launches fixed-rate lending protocol on Base
 Russia’s parliament passes crypto market law with $3,800 annual cap for retail investors
 Galaxy Commits Up to $5 Million to Prepare Bitcoin for Quantum Threat
@@ -18,3 +17,4 @@ Pavel Durov says Telegram to roll out native Gram crypto wallet
 380 investors face Bitcoin mining losses after alleged $22M US scheme put just 13% into mining
 Google Ships New Gemini Flash Models, But Pro Is Still Missing
 Falcon Finance Launches USDf Card in More Than 90 Jurisdictions for Daily Spending
+Pakistan steps up crypto enforcement with dedicated federal unit
