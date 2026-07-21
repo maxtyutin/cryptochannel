@@ -470,8 +470,19 @@ def generate_forklog_post(news_item, gemini_key):
                 
     return None
 
+def sanitize_html_for_telegram(text):
+    if not text:
+        return ""
+    # Заменяем br теги на переводы строк
+    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+    # Заменяем абзацы p на переводы строк
+    text = re.sub(r'</p>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'<p>', '', text, flags=re.IGNORECASE)
+    return text
+
 def send_to_telegram(post_text, bot_token, chat_id):
     """Отправка сгенерированного текстового поста в Telegram-канал"""
+    post_text = sanitize_html_for_telegram(post_text)
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     data = {
         "chat_id": chat_id,
@@ -897,6 +908,7 @@ def download_and_standardize_image(image_url, article_id):
 
 def send_photo_to_telegram(post_text, image_path_or_url, bot_token, chat_id):
     """Отправка поста с изображением в Telegram-канал (поддерживает локальные файлы и URL)"""
+    post_text = sanitize_html_for_telegram(post_text)
     url = f"https://api.telegram.org/bot{bot_token}/sendPhoto"
     
     # Импортируем requests динамически
