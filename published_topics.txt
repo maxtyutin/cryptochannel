@@ -1,4 +1,3 @@
-⛓️ CARDANO АКТИВИРОВАЛА ХАРДФОРК ПОСЛЕ ПЕРВОГО ГОЛОСОВАНИЯ СООБЩЕСТВА
 ⚖️ СУД ВАШИНГТОНА ВВЕЛ ОГРАНИЧЕНИЯ ДЛЯ ПРЕДИКШН-МАРКЕТА KALSHI
 ⚠️ КАТАР ТРЕБУЕТ КОМПЕНСАЦИИ ОТ ИРАНА ПОСЛЕ АТАКИ НА RAS LAFFAN: КРИПТОРЫНОК В СТРЕССЕ
 🤖 США И КИТАЙ ПРОВЕДУТ ПЕРЕГОВОРЫ ПО ИСКУССТВЕННОМУ ИНТЕЛЛЕКТУ В СЕНТЯБРЕ
@@ -18,3 +17,4 @@ Russia’s parliament passes crypto market law with $3,800 annual cap for retail
 Galaxy Commits Up to $5 Million to Prepare Bitcoin for Quantum Threat
 Pakistan Launches Crypto Investigation Unit to Fight Money Laundering
 MEXC adds Bittensor TAO staking for its global user base
+Claude's Fable 5 just solved an 87-year-old math problem, and it matters for bitcoin
