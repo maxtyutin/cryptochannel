@@ -1039,25 +1039,60 @@ def save_article_to_json(news_item, post_text, russian_title=None, category="new
     except Exception as e:
         print(f"Ошибка сохранения статьи в JSON: {e}")
 
-def check_semantic_duplicate(news_title, news_desc, gemini_key):
-    """Семантическая проверка на дубликаты через Gemini API"""
+def get_recent_articles():
+    """Получить список последних 15 опубликованных статей из JSON для проверки дубликатов"""
+    json_path = os.path.join(BASE_DIR, "articles.json")
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                articles = json.load(f)
+                return articles[:15]
+        except Exception as e:
+            print(f"Ошибка при чтении articles.json для дубликатов: {e}")
+    return []
+
+def check_semantic_duplicate(news_title, news_desc, news_link, news_image_url, gemini_key):
+    """Семантическая проверка на дубликаты через Gemini API (по заголовку, описанию, ссылке и картинке)"""
     recent_topics = get_recent_topics()
-    if not recent_topics:
+    recent_articles = get_recent_articles()
+    
+    if not recent_topics and not recent_articles:
         return False
         
     topics_list = "\n".join([f"- {t}" for t in recent_topics])
     
-    prompt = f"""Ниже приведен список недавно опубликованных в Telegram-канале тем:
+    articles_context = []
+    for art in recent_articles:
+        title = art.get('title', '')
+        text = art.get('post_text', '')[:300]
+        img_url = art.get('image_url', '')
+        link = art.get('link', '')
+        articles_context.append(f"- Заголовок: {title}\n  Ссылка: {link}\n  Текст (фрагмент): {text}\n  Изображение: {img_url}")
+    
+    articles_list_str = "\n\n".join(articles_context)
+    
+    prompt = f"""Ниже приведен список недавно опубликованных в Telegram-канале тем и деталей статей:
+Список тем:
 {topics_list}
 
-Кандидат на новую публикацию:
-Заголовок: {news_title}
-Описание: {news_desc}
+Последние опубликованные статьи:
+{articles_list_str}
 
-Определи, сообщает ли кандидат о том же самом событии, которое уже было опубликовано (даже если написано другими словами).
+Кандидат на новую публикацию:
+Заголовок (EN): {news_title}
+Описание (EN): {news_desc}
+Ссылка: {news_link}
+Изображение: {news_image_url}
+
+Определи, сообщает ли кандидат о том же самом событии, которое уже было опубликовано (даже если написано другими словами), или использует ли ту же самую картинку/ссылку.
+Обрати внимание:
+1. Если тема, новость или событие уже были описаны в одной из недавних статей — это дубликат.
+2. Если изображение кандидата полностью совпадает или ведет на тот же файл/источник, что и у одной из недавних статей — это дубликат.
+3. Если заголовок или текст кандидата семантически выражает ту же суть — это дубликат.
+
 Ответь строго одним словом:
-YES — если это дубликат / то же самое событие.
-NO — если это новая новость о другом событии.
+YES — если это дубликат / то же самое событие / то же самое изображение.
+NO — если это новая новость о другом событии с другим изображением.
 Выведи ТОЛЬКО это слово (YES или NO), без каких-либо дополнительных объяснений или кавычек.
 """
     answer = call_gemini_api(prompt, gemini_key)
@@ -1695,7 +1730,7 @@ def main():
     published_any = False
     for item in news_list:
         print(f"Проверка кандидата: {item['title']}...")
-        if check_semantic_duplicate(item['title'], item['description'], gemini_key):
+        if check_semantic_duplicate(item['title'], item['description'], item.get('link', ''), item.get('image_url', ''), gemini_key):
             print("Новость определена как семантический дубликат. Пропускаем.")
             save_processed_id(item['id'])
             continue
