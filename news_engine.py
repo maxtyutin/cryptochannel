@@ -115,78 +115,117 @@ def extract_image_url(item, raw_item_xml):
                 
     return None
 
-def fetch_article_images(article_url, primary_image_url=None):
-    """Скачивает страницу источника и извлекает все дополнительные изображения статьи.
-    Возвращает список URL картинок (без дублей, без логотипов/иконок).
+def fetch_article_text_and_images(article_url, primary_image_url=None):
+    """Скачивает страницу источника, извлекает текст с плейсхолдерами картинок [IMAGE: N] и сами картинки.
+    Возвращает кортеж (текст_статьи, список_дополнительных_картинок).
     """
     if not article_url or not article_url.startswith('http'):
-        return []
-
-    SKIP_KEYWORDS = ['logo', 'avatar', 'icon', 'badge', 'sprite', 'banner-ad',
-                     'tracking', 'subscribe', 'newsletter', 'author', 'profile', 'gravatar',
-                     'recommend', 'sidebar', 'widget', 'advertis', 'promo', 'social', 'telegram',
-                     'twitter', 'facebook', 'instagram', 'youtube', 'linkedin', 'ad-', 'ads-',
-                     'footer', 'header', 'nav-', 'button', 'pixel']
+        return "", []
     try:
-        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+        ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         req = urllib.request.Request(article_url, headers={'User-Agent': ua})
         with urllib.request.urlopen(req, timeout=10) as resp:
             page_html = resp.read().decode('utf-8', errors='ignore')
     except Exception as e:
-        print(f"Не удалось скачать страницу для поиска доп. изображений: {e}")
-        return []
+        print(f"[news_engine] Не удалось скачать страницу для извлечения текста и картинок: {e}")
+        return "", []
 
-    found_urls = []
-    seen = set()
-    if primary_image_url:
-        seen.add(primary_image_url.split('?')[0])
-
-    def add_url(u):
-        u = u.strip().split('?')[0]
-        if not u.startswith('http'):
-            return
-        if u in seen:
-            return
-        u_lower = u.lower()
-        if any(kw in u_lower for kw in SKIP_KEYWORDS):
-            return
-        has_ext = any(u_lower.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp'])
-        has_keyword = any(kw in u_lower for kw in ['image', 'photo', 'img', 'media', 'upload'])
-        if not has_ext and not has_keyword:
-            return
-        seen.add(u)
-        found_urls.append(u)
-
-    # Сначала пытаемся вырезать блок основного контента статьи (без сайдбаров и подвалов)
+    # Ищем блок основного контента статьи
     content_block = None
     content_patterns = [
         r'<div[^>]+class=["\'][^"\']*(?:post-content|post-body|entry-content|article-body|article__body|post-content-wrap)[^"\']*["\'][^>]*>(.*?)</div>',
         r'<article[^>]*>(.*?)</article>',
         r'<main[^>]*>(.*?)</main>'
     ]
-    
     for pat in content_patterns:
         match = re.search(pat, page_html, re.DOTALL | re.IGNORECASE)
         if match:
             if len(match.group(1).strip()) > 300:
                 content_block = match.group(1)
                 break
-                
     if not content_block:
         content_block = page_html
 
-    # Очищаем контент от блоков рекомендаций, "Читайте также", промо-ссылок и врезок, встроенных в текст
+    # Очищаем от рекламы и сайдбаров
     content_block = re.sub(r'<div[^>]+class=["\'][^"\']*(?:related|read-more|read-also|promo|recommend|widget)[^"\']*["\'][^>]*>.*?</div>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
     content_block = re.sub(r'<aside[^>]*>.*?</aside>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
+    content_block = re.sub(r'<script[^>]*>.*?</script>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
+    content_block = re.sub(r'<style[^>]*>.*?</style>', '', content_block, flags=re.DOTALL | re.IGNORECASE)
 
-    # Ищем теги <img> только внутри выделенного контента статьи
-    for m in re.finditer(r'<img[^>]+(?:src|data-src)=["\']([^"\']+)["\']', content_block, re.IGNORECASE):
-        add_url(html.unescape(m.group(1)))
+    SKIP_KEYWORDS = ['logo', 'avatar', 'icon', 'badge', 'sprite', 'banner-ad',
+                     'tracking', 'subscribe', 'newsletter', 'author', 'profile', 'gravatar',
+                     'recommend', 'sidebar', 'widget', 'advertis', 'promo', 'social', 'telegram',
+                     'twitter', 'facebook', 'instagram', 'youtube', 'linkedin', 'ad-', 'ads-',
+                     'footer', 'header', 'nav-', 'button', 'pixel']
+
+    found_images = []
+    seen = set()
+    if primary_image_url:
+        seen.add(primary_image_url.split('?')[0])
+
+    def clean_img_url(u):
+        u = u.strip().split('?')[0]
+        if not u.startswith('http'):
+            return None
+        if u in seen:
+            return None
+        u_lower = u.lower()
+        if any(kw in u_lower for kw in SKIP_KEYWORDS):
+            return None
+        has_ext = any(u_lower.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp'])
+        has_keyword = any(kw in u_lower for kw in ['image', 'photo', 'img', 'media', 'upload'])
+        if not has_ext and not has_keyword:
+            return None
+        return u
+
+    def repl_img(match_obj):
+        tag_content = match_obj.group(0)
+        # Ищем src или data-src
+        src_match = re.search(r'(?:src|data-src)=["\']([^"\']+)["\']', tag_content, re.IGNORECASE)
+        if src_match:
+            img_url = html.unescape(src_match.group(1))
+            cleaned = clean_img_url(img_url)
+            if cleaned:
+                if cleaned not in found_images:
+                    found_images.append(cleaned)
+                idx = found_images.index(cleaned) + 1
+                return f"\n\n[IMAGE: {idx}]\n\n"
+        # Также проверяем srcset
+        srcset_match = re.search(r'srcset=["\']([^"\']+)', tag_content, re.IGNORECASE)
+        if srcset_match:
+            first_url = srcset_match.group(1).split(',')[0].strip().split()[0]
+            img_url = html.unescape(first_url)
+            cleaned = clean_img_url(img_url)
+            if cleaned:
+                if cleaned not in found_images:
+                    found_images.append(cleaned)
+                idx = found_images.index(cleaned) + 1
+                return f"\n\n[IMAGE: {idx}]\n\n"
+        return ""
+
+    parsed_html = re.sub(r'<img[^>]+>', repl_img, content_block, flags=re.IGNORECASE)
+    
+    # Также извлекаем картинки из отдельно стоящих srcset (на всякий случай)
     for m in re.finditer(r'srcset=["\']([^"\']+)', content_block, re.IGNORECASE):
         first = m.group(1).split(',')[0].strip().split()[0]
-        add_url(html.unescape(first))
+        cleaned = clean_img_url(html.unescape(first))
+        if cleaned and cleaned not in found_images:
+            found_images.append(cleaned)
 
-    return found_urls[:4]
+    # Удаляем все остальные HTML теги
+    text = re.sub(r'<[^>]+>', ' ', parsed_html)
+    text = html.unescape(text)
+    
+    text = re.sub(r'[ \t]+', ' ', text)
+    text_lines = [line.strip() for line in text.split('\n') if line.strip()]
+    cleaned_text = "\n\n".join(text_lines)
+
+    return cleaned_text[:6000], found_images[:4]
+
+def fetch_article_images(article_url, primary_image_url=None):
+    """Оставляем совместимость со старыми вызовами"""
+    _, imgs = fetch_article_text_and_images(article_url, primary_image_url)
+    return imgs
 
 def fetch_rss_news():
 
@@ -396,17 +435,13 @@ def fetch_article_text(article_url):
     
     return text[:6000] # Ограничиваем длину текста для Gemini
 
-def generate_forklog_post(news_item, gemini_key):
+def generate_forklog_post(news_item, source_text, gemini_key):
     """Генерация Telegram-поста и полной статьи для сайта с помощью Gemini API"""
-    
-    # Пытаемся получить полный текст статьи с оригинального сайта
-    source_text = fetch_article_text(news_item.get('link', ''))
     if not source_text:
-        # Если не удалось скачать, используем описание из RSS как резерв
         source_text = news_item.get('description', '')
         print("[news_engine] Используется описание из RSS в качестве источника текста.")
     else:
-        print(f"[news_engine] Успешно скачан оригинальный текст статьи ({len(source_text)} символов).")
+        print(f"[news_engine] Успешно получен текст статьи ({len(source_text)} символов).")
 
     prompt = f"""Ты — профессиональный крипто-журналист и редактор Crypto Analytics. 
 На основе оригинального текста статьи напиши качественный перевод-адаптацию на русский язык и краткий Telegram-пост.
@@ -420,6 +455,9 @@ def generate_forklog_post(news_item, gemini_key):
 ПРАВИЛО: КАТЕГОРИЧЕСКИ запрещено использовать или упоминать название ForkLog. Пиши только от лица Crypto Analytics.
 ПРАВИЛО ИСТОЧНИКОВ: В качестве авторитетных источников данных, ончейн-метрик или финансирования старайся ссылаться на такие платформы как The Block и Allium (например, 'по данным отчетов Allium...', 'согласно информации The Block...').
 ПРАВИЛО ЦИТАТ: Если в оригинальном тексте есть прямой контекст или цитаты участников рынка, СТРОГО оформляй их через цитирование с помощью HTML-тегов <blockquote>Текст цитаты</blockquote>.
+ПРАВИЛО ИЗОБРАЖЕНИЙ: В оригинальном тексте статьи присутствуют плейсхолдеры для дополнительных изображений вида `[IMAGE: 1]`, `[IMAGE: 2]`, `[IMAGE: 3]`.
+Ты ОБЯЗАН сохранить эти плейсхолдеры `[IMAGE: 1]`, `[IMAGE: 2]` и т.д. на соответствующих местах в переведенном тексте `full_article` (между теми же абзацами, где они находились в оригинале).
+Не переводи и не изменяй текст плейсхолдеров, пиши их ровно так: `[IMAGE: 1]`, `[IMAGE: 2]`.
 ПРАВИЛО ДЛИНЫ TG-ПОСТА: Текст telegram_caption должен представлять собой краткий пересказ новости. Длина текста telegram_caption КАТЕГОРИЧЕСКИ не должна превышать 800 символов (включая пробелы). Это необходимо, чтобы весь пост вместе с автоматически добавляемой ссылкой на сайт гарантированно укладывался в лимит 1000 символов.
 ПРАВИЛО ЗАГОЛОВКА: Заголовок russian_title должен быть написан капсом с подходящим эмодзи в начале, например: '🚀 СТЕЙБЛКОИНЫ ИНТЕГРИРУЮТ В БАНКОВСКУЮ СИСТЕМУ'. Он должен быть абсолютно одинаковым для сайта и Telegram-поста.
 
@@ -427,7 +465,7 @@ def generate_forklog_post(news_item, gemini_key):
 {{
   "russian_title": "Привлекательный заголовок капсом с эмодзи в начале (например: '🚀 HYUNDAI ВНЕДРЯЕТ СТЕЙБЛКОИНЫ ДЛЯ МЕЖДУНАРОДНЫХ ПЕРЕВОДОВ')",
   "telegram_caption": "Краткий пересказ новости для Telegram-канала (БЕЗ повторения заголовка в тексте!). Длина должна быть не более 800 символов (включая пробелы). Должна содержать лаконичный разбор и вывод 'Что это значит для рынка? 🤔'. Хэштеги КАТЕГОРИЧЕСКИ запрещены. Разрешены только теги <b>, <a>, и <blockquote> (для цитат/важного контекста).",
-  "full_article": "Полная статья-перевод для веб-сайта на русском языке (около 1500-2500 символов). Подробно изложи факты, технические детали и цитаты из оригинального текста. Раздели текст на логические абзацы. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>."
+  "full_article": "Полная статья-перевод для веб-сайта на русском языке (около 1500-2500 символов). Подробно изложи факты, технические детали и цитаты из оригинального текста. Раздели текст на логические абзацы. Разрешены HTML-теги <b>, <a>, <i>, <blockquote>. Не забудь сохранить плейсхолдеры [IMAGE: N] на правильных местах между абзацами."
 }}
 """
     for attempt in range(3):
@@ -1737,12 +1775,13 @@ def main():
             
         print(f"Кандидат одобрен: {item['title']}. Начинаем обработку и публикацию...")
         
-        # Скачиваем и обрабатываем изображения
-        extra_images = fetch_article_images(item.get('link', ''), item.get('image_url'))
+        # Скачиваем текст и извлекаем изображения
+        print("Скачивание текста и изображений статьи...")
+        source_text, extra_images = fetch_article_text_and_images(item.get('link', ''), item.get('image_url'))
         item['extra_images'] = extra_images if extra_images else []
         
         print("Генерация перевода и поста...")
-        post_data = generate_forklog_post(item, gemini_key)
+        post_data = generate_forklog_post(item, source_text, gemini_key)
         
         if not post_data:
             print(f"Ошибка: Не удалось сгенерировать пост для статьи '{item['title']}'. Пропускаем её во избежание зависания.")
@@ -1757,7 +1796,7 @@ def main():
         MIN_CAPTION_LEN = 80
         if len(telegram_caption) < MIN_CAPTION_LEN:
             print(f"ПРЕДУПРЕЖДЕНИЕ: telegram_caption слишком короткий ({len(telegram_caption)} симв.). Повторная попытка...")
-            retry_data = generate_forklog_post(item, gemini_key)
+            retry_data = generate_forklog_post(item, source_text, gemini_key)
             if retry_data and len(retry_data.get("telegram_caption", "")) >= MIN_CAPTION_LEN:
                 telegram_caption = retry_data["telegram_caption"]
                 full_article = retry_data.get("full_article", full_article)

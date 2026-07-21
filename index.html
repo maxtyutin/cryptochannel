@@ -1584,7 +1584,7 @@
             // Заполняем поля статьи
             document.getElementById('article-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
             document.getElementById('article-title').textContent = article.title;
-            document.getElementById('article-text').innerHTML = formatPostText(article.post_text);
+            document.getElementById('article-text').innerHTML = formatPostText(article.post_text, article.extra_images);
             
             // Рассчитываем динамическое время чтения (средняя скорость — 180 слов в минуту)
             const wordsCount = (article.post_text || '').trim().split(/\s+/).length;
@@ -1600,23 +1600,26 @@
                 imgContainer.style.display = 'none';
             }
 
-            // Дополнительные изображения из источника — вставляем после текста статьи
+            // Дополнительные изображения из источника
             const extraImgsContainer = document.getElementById('article-extra-images');
             if (extraImgsContainer) {
                 extraImgsContainer.innerHTML = '';
-                const extras = article.extra_images || [];
-                extras.forEach(imgUrl => {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.cssText = 'margin: 24px 0; border-radius: 16px; overflow: hidden;';
-                    const img = document.createElement('img');
-                    img.src = imgUrl;
-                    img.alt = '';
-                    img.loading = 'lazy';
-                    img.style.cssText = 'width: 100%; max-height: 480px; object-fit: cover; display: block; border-radius: 16px;';
-                    img.onerror = function() { this.parentElement.style.display = 'none'; };
-                    wrapper.appendChild(img);
-                    extraImgsContainer.appendChild(wrapper);
-                });
+                const hasPlaceholders = (article.post_text || '').includes('[IMAGE:');
+                if (!hasPlaceholders) {
+                    const extras = article.extra_images || [];
+                    extras.forEach(imgUrl => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.cssText = 'margin: 24px 0; border-radius: 16px; overflow: hidden;';
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.alt = '';
+                        img.loading = 'lazy';
+                        img.style.cssText = 'width: 100%; max-height: 480px; object-fit: cover; display: block; border-radius: 16px;';
+                        img.onerror = function() { this.parentElement.style.display = 'none'; };
+                        wrapper.appendChild(img);
+                        extraImgsContainer.appendChild(wrapper);
+                    });
+                }
             }
 
             // Отрисовка блока "Последние криптоновости"
@@ -1846,7 +1849,7 @@
             return text;
         }
 
-        function formatPostText(text) {
+        function formatPostText(text, extraImages) {
             if (!text) return '';
             
             // 1. Очищаем скрытые ссылки Telegram (заглушки)
@@ -1884,18 +1887,33 @@
                 lines.push('</ul>');
             }
             formatted = lines.join('\n');
+
+            // 5. Заменяем плейсхолдеры изображений [IMAGE: X] на реальные img теги
+            if (extraImages && extraImages.length > 0) {
+                formatted = formatted.replace(/\[IMAGE:\s*(\d+)\]/gi, (match, idxStr) => {
+                    const idx = parseInt(idxStr, 10) - 1;
+                    if (idx >= 0 && idx < extraImages.length) {
+                        const imgUrl = extraImages[idx];
+                        return `\n\n<div class="article-body-image-wrapper" style="margin: 28px 0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                            <img src="${imgUrl}" style="width: 100%; max-height: 480px; object-fit: cover; display: block; border-radius: 16px;" alt="" loading="lazy" onerror="this.parentElement.style.display='none';" />
+                        </div>\n\n`;
+                    }
+                    return '';
+                });
+            }
+            formatted = formatted.replace(/\[IMAGE:\s*\d+\]/gi, '');
             
-            // 5. Разделяем текст на абзацы по двойному переносу строки (\n\n)
+            // 6. Разделяем текст на абзацы по двойному переносу строки (\n\n)
             let paragraphs = formatted.split(/\n\s*\n/);
             for (let i = 0; i < paragraphs.length; i++) {
                 let p = paragraphs[i].trim();
                 if (!p) continue;
                 
-                // Если абзац уже начинается с блочного тега (h1-h3, ul, li), оставляем как есть
-                if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<li') || p.startsWith('</ul')) {
+                // Если абзац уже начинается с блочного тега, оставляем как есть
+                if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<li') || p.startsWith('</ul') || p.startsWith('<div')) {
                     paragraphs[i] = p;
                 } else {
-                    // Иначе оборачиваем в абзац с отступами и красивой высотой строки для чтения
+                    // Иначе оборачиваем в абзац с отступами
                     paragraphs[i] = `<p style="margin-bottom: 16px; line-height: 1.7; color: var(--text-secondary); font-size: 1.05rem;">${p.replace(/\n/g, '<br>')}</p>`;
                 }
             }
