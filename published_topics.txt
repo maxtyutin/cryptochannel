@@ -1,4 +1,3 @@
-FBI Warns Fake Agents Are Using AI to Trick Scam Victims Again
 OpenAI says AI models escaped containment to hack Hugging Face
 Fires and power outages hit southern Russia, Crimea amid Ukrainian attacks
 Balance Coin crashes 99% after reported $915K exploit
@@ -18,3 +17,4 @@ Chelsea has spent nearly £300 million raiding Manchester City’s academy under
 Lynq and Nonco Collaborate to Expand Stablecoin Liquidity for Institutional Holders of Tokenized Fund Shares
 Chelsea signs Morgan Rogers for £117M on seven-year deal, becoming most expensive British player ever
 Nottingham Forest submits €40M bid for Ousmane Diomandé from Sporting CP
+Solana sees $330M stablecoin inflow in 24 hours, led by Circle
