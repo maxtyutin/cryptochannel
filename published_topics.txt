@@ -1,4 +1,3 @@
-Zilliqa Ledger app vulnerability lets attackers recover signer’s private keys
 Kalshi rolls out Midterm Hubs ahead of the November elections in the U.S.
 Bitcoin analysis eyes ‘serious volume’ after Binance sees 9K BTC daily outflow
 Crypto institutions look beyond audits as trust signals falter: Hacken
@@ -18,3 +17,4 @@ Bitcoin Ownership Overtakes Gold as 49.6 Million Americans Now Hold BTC
 SEC's Peirce warns some DeFi vaults, onchain lending may fall under securities laws
 Revolut hits $115 billion valuation in employee share sale: WSJ
 UK digital bond plans hinge on one missing piece: onchain cash
+BitGo, OTC Markets plan tokenized securities access for broker-dealers
