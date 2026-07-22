@@ -1,4 +1,3 @@
-SEC's Peirce warns some DeFi vaults, onchain lending may fall under securities laws
 Revolut hits $115 billion valuation in employee share sale: WSJ
 UK digital bond plans hinge on one missing piece: onchain cash
 BitGo, OTC Markets plan tokenized securities access for broker-dealers
@@ -18,3 +17,4 @@ Tokenized Treasuries Cool as Wall Street Giants Wage a $35 Billion RWA War
 Iran drone strikes on CIA facilities raise questions of Russian involvement
 Cathie Wood Says SpaceX Could Become ‘the Most Important Company in History’ Despite 48% Stock Slide
 Morgan Stanley files final paperwork for Solana, Ethereum staking ETFs
+SpaceX prepares to launch Starship as soon as tomorrow
