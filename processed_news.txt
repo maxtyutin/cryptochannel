@@ -257,3 +257,4 @@ https://news.bitcoin.com/fbi-warns-fake-agents-are-using-ai-to-trick-scam-victim
 https://cointelegraph.com/news/openai-models-hacked-hugging-face-to-cheat-on-a-test?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cryptobriefing.com/us-renews-strikes-on-iran-as-trump-threatens-pickaxe-mountain/
 https://cryptobriefing.com/fires-and-power-outages-hit-southern-russia-crimea-amid-ukrainian-attacks/
+https://cointelegraph.com/news/algorithmic-stablecoin-balance-coin-plummets-99-after-exploit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
