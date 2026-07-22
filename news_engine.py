@@ -1719,13 +1719,7 @@ def generate_combined_digest(gemini_key=None):
     full_message = "\n".join(full_lines).strip()
     full_message = re.sub(r'#\w+', '', full_message)
 
-    ts = int(time.time())
-    img_filename = f"images/digest_card_{ts}.jpg"
-    img_abs_path = os.path.join(BASE_DIR, img_filename)
-    
-    draw_digest_card(crypto_card_data, stock_card_data, img_abs_path)
-    
-    return full_message, img_abs_path
+    return full_message, None
 
 def generate_and_send_poll(gemini_key, bot_token, chat_id):
     """Генерация опроса через Gemini на основе последних новостей и отправка его"""
@@ -1858,20 +1852,16 @@ def main():
     args = sys.argv[1:]
     
     if "--digest" in args:
-        print("Запуск генерации единого дайджеста цен, акций и обзора рынка...")
-        digest_text, digest_img = generate_combined_digest(gemini_key)
+        print("Запуск генерации единого дайджеста цен, акций и обзора рынка (без картинок)...")
+        digest_text, _ = generate_combined_digest(gemini_key)
         if digest_text:
-            print("\n=== СГЕНЕРИРОВАННЫЙ ЕДИНЫЙ ДАЙДЖЕСТ ===")
+            print("\n=== СГЕНЕРИРОВАННЫЙ ЕДИНЫЙ ТЕКСТОВЫЙ ДАЙДЖЕСТ ===")
             print(digest_text)
             if bot_token and chat_id:
-                if digest_img and os.path.exists(digest_img):
-                    if send_photo_to_telegram(digest_text, digest_img, bot_token, chat_id):
-                        print("Единый дайджест с графической карточкой успешно опубликован в Telegram!")
-                    else:
-                        print("Не удалось отправить фото-дайджест. Отправляем текстом...")
-                        send_to_telegram(digest_text, bot_token, chat_id)
+                if send_to_telegram(digest_text, bot_token, chat_id):
+                    print("Единый текстовый дайджест успешно опубликован в Telegram!")
                 else:
-                    send_to_telegram(digest_text, bot_token, chat_id)
+                    print("Не удалось отправить дайджест в Telegram.")
         
     if "--poll" in args:
         print("Запуск генерации опроса...")
