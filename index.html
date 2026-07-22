@@ -296,12 +296,53 @@
             opacity: 1;
         }
 
-        /* Карусель последних новостей (по 3 в ряд) */
+        /* Карусель последних новостей (по 2 в ряд на десктопе для более широких карточек и полного отображения текста) */
         .carousel-slide {
-            width: calc((100% - 48px) / 3);
+            width: calc((100% - 24px) / 2);
             flex-shrink: 0;
             box-sizing: border-box;
-            cursor: pointer;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .carousel-slide:active {
+            cursor: grabbing;
+        }
+
+        .carousel-viewport {
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        /* Убираем обрезку заголовков и текста в блоке "Последние криптоновости" */
+        .related-news-section .news-card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1.45;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: block !important;
+            -webkit-line-clamp: unset !important;
+            -webkit-box-orient: unset !important;
+            overflow: visible !important;
+            height: auto !important;
+            min-height: auto !important;
+            word-break: break-word;
+        }
+
+        .related-news-section .news-card-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: block !important;
+            -webkit-line-clamp: unset !important;
+            -webkit-box-orient: unset !important;
+            overflow: visible !important;
+            height: auto !important;
+            flex-grow: 1;
+            word-break: break-word;
         }
 
         .carousel-dot {
@@ -318,13 +359,7 @@
             transform: scale(1.2);
         }
 
-        @media (max-width: 1024px) {
-            .carousel-slide {
-                width: calc((100% - 24px) / 2);
-            }
-        }
-
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .carousel-slide {
                 width: 100%;
             }
@@ -1653,6 +1688,107 @@
         // Переменные для карусели новостей
         let currentSlideIndex = 0;
         let totalSlides = 0;
+        let isCarouselDragging = false;
+        let carouselStartX = 0;
+        let carouselCurrentTranslate = 0;
+        let carouselPrevTranslate = 0;
+        let carouselDragMoved = false;
+
+        function initCarouselSwipeGestures() {
+            const viewport = document.querySelector('.carousel-viewport');
+            const track = document.getElementById('related-news-carousel-track');
+            if (!viewport || !track || viewport.dataset.gesturesInit) return;
+            viewport.dataset.gesturesInit = "true";
+
+            function getSlideWidth() {
+                const firstSlide = track.children[0];
+                return firstSlide ? firstSlide.offsetWidth + 24 : 300;
+            }
+
+            function getMaxOffset() {
+                let visibleCards = 2;
+                if (window.innerWidth <= 768) visibleCards = 1;
+                const maxIndex = Math.max(0, totalSlides - visibleCards);
+                return maxIndex * getSlideWidth();
+            }
+
+            // Touch events (мобильные устройства и планшеты)
+            viewport.addEventListener('touchstart', (e) => {
+                isCarouselDragging = true;
+                carouselDragMoved = false;
+                carouselStartX = e.touches[0].clientX;
+                carouselPrevTranslate = -currentSlideIndex * getSlideWidth();
+                track.style.transition = 'none';
+            }, { passive: true });
+
+            viewport.addEventListener('touchmove', (e) => {
+                if (!isCarouselDragging) return;
+                const currentTouchX = e.touches[0].clientX;
+                const diffX = currentTouchX - carouselStartX;
+                if (Math.abs(diffX) > 6) carouselDragMoved = true;
+                
+                carouselCurrentTranslate = carouselPrevTranslate + diffX;
+                const maxOffset = -getMaxOffset();
+                if (carouselCurrentTranslate > 0) carouselCurrentTranslate *= 0.3;
+                if (carouselCurrentTranslate < maxOffset) carouselCurrentTranslate = maxOffset + (carouselCurrentTranslate - maxOffset) * 0.3;
+                
+                track.style.transform = `translateX(${carouselCurrentTranslate}px)`;
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', (e) => {
+                if (!isCarouselDragging) return;
+                isCarouselDragging = false;
+                track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                
+                const endTouchX = e.changedTouches[0].clientX;
+                const diffX = endTouchX - carouselStartX;
+                
+                if (Math.abs(diffX) > 40) {
+                    if (diffX < 0) slideCarousel(1);
+                    else slideCarousel(-1);
+                } else {
+                    setCarouselSlide(currentSlideIndex);
+                }
+            });
+
+            // Mouse Drag events (для ПК при нажатии мыши)
+            viewport.addEventListener('mousedown', (e) => {
+                isCarouselDragging = true;
+                carouselDragMoved = false;
+                carouselStartX = e.clientX;
+                carouselPrevTranslate = -currentSlideIndex * getSlideWidth();
+                viewport.style.cursor = 'grabbing';
+                track.style.transition = 'none';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isCarouselDragging) return;
+                const diffX = e.clientX - carouselStartX;
+                if (Math.abs(diffX) > 6) carouselDragMoved = true;
+                
+                carouselCurrentTranslate = carouselPrevTranslate + diffX;
+                const maxOffset = -getMaxOffset();
+                if (carouselCurrentTranslate > 0) carouselCurrentTranslate *= 0.3;
+                if (carouselCurrentTranslate < maxOffset) carouselCurrentTranslate = maxOffset + (carouselCurrentTranslate - maxOffset) * 0.3;
+                
+                track.style.transform = `translateX(${carouselCurrentTranslate}px)`;
+            });
+
+            window.addEventListener('mouseup', (e) => {
+                if (!isCarouselDragging) return;
+                isCarouselDragging = false;
+                viewport.style.cursor = 'grab';
+                track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                
+                const diffX = e.clientX - carouselStartX;
+                if (Math.abs(diffX) > 40) {
+                    if (diffX < 0) slideCarousel(1);
+                    else slideCarousel(-1);
+                } else {
+                    setCarouselSlide(currentSlideIndex);
+                }
+            });
+        }
 
         window.slideCarousel = function(direction) {
             const track = document.getElementById('related-news-carousel-track');
@@ -1663,9 +1799,8 @@
             const slideWidth = firstSlide.offsetWidth;
             const gap = 24;
             
-            let visibleCards = 3;
-            if (window.innerWidth <= 600) visibleCards = 1;
-            else if (window.innerWidth <= 1024) visibleCards = 2;
+            let visibleCards = 2;
+            if (window.innerWidth <= 768) visibleCards = 1;
             
             const maxIndex = Math.max(0, totalSlides - visibleCards);
             
@@ -1703,9 +1838,8 @@
             const dotsContainer = document.getElementById('carousel-dots');
             if (!dotsContainer) return;
             
-            let visibleCards = 3;
-            if (window.innerWidth <= 600) visibleCards = 1;
-            else if (window.innerWidth <= 1024) visibleCards = 2;
+            let visibleCards = 2;
+            if (window.innerWidth <= 768) visibleCards = 1;
             
             const maxIndex = Math.max(0, totalSlides - visibleCards);
             dotsContainer.innerHTML = '';
@@ -1734,9 +1868,8 @@
             const slideWidth = firstSlide.offsetWidth;
             const gap = 24;
             
-            let visibleCards = 3;
-            if (window.innerWidth <= 600) visibleCards = 1;
-            else if (window.innerWidth <= 1024) visibleCards = 2;
+            let visibleCards = 2;
+            if (window.innerWidth <= 768) visibleCards = 1;
             
             const maxIndex = Math.max(0, totalSlides - visibleCards);
             if (currentSlideIndex > maxIndex) {
@@ -1813,7 +1946,12 @@
                     </div>
                 `;
                 
-                slide.onclick = () => {
+                slide.onclick = (e) => {
+                    if (carouselDragMoved) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
                     window.location.hash = `#article-${art.timestamp}`;
                     document.getElementById('full-article-view').scrollIntoView({ behavior: 'smooth' });
                 };
