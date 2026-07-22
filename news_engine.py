@@ -1827,16 +1827,46 @@ def setup_cron():
     else:
         print("Задачи планировщика уже были настроены ранее.")
 
-def wait_for_pages_build(pat, push_time_utc, timeout_seconds=180):
+def wait_for_pages_build(pat, push_time_utc=None, timeout_seconds=120):
     """
-    Поскольку сайт деплоится на Render, мы просто ждем 75 секунд,
-    чтобы Render успел собрать и опубликовать новую версию сайта,
-    прежде чем отправить пост в Telegram.
+    Опрашивает GitHub API каждые 5 секунд и ждет, пока запущенный деплой GitHub Pages 
+    (workflow 'pages build and deployment') не завершится со статусом 'success'.
     """
-    print("[news_engine] Ожидаем 75 секунд, чтобы Render успел собрать и обновить сайт...")
-    time.sleep(75)
-    print("[news_engine] Ожидание завершено. Переходим к публикации в Telegram.")
-    return True
+    if not pat:
+        print("[news_engine] PAT отсутствует, производим стандартное ожидание 60 секунд...")
+        time.sleep(60)
+        return True
+        
+    print("[news_engine] Ожидание завершения деплоя GitHub Pages через API...")
+    start_time = time.time()
+    runs_url = "https://api.github.com/repos/maxtyutin/cryptochannel/actions/runs?per_page=5"
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0',
+        'Authorization': f'token {pat}'
+    }
+    
+    while time.time() - start_time < timeout_seconds:
+        try:
+            req = urllib.request.Request(runs_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+            runs = data.get('workflow_runs', [])
+            for r in runs:
+                if r.get('name') == 'pages build and deployment':
+                    status = r.get('status')
+                    conclusion = r.get('conclusion')
+                    print(f"[news_engine] Статус деплоя GitHub Pages: status={status}, conclusion={conclusion}")
+                    if status == 'completed' and conclusion == 'success':
+                        print("[news_engine] Деплой GitHub Pages успешно завершен! Сайт полностью обновлен.")
+                        return True
+        except Exception as e:
+            print(f"[news_engine] Ошибка проверки статуса деплоя: {e}")
+            
+        time.sleep(5)
+        
+    print("[news_engine] Время ожидания деплоя истекло (timeout). Публикуем пост.")
+    return False
 
 def main():
     env = load_env()
