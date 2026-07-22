@@ -1879,6 +1879,43 @@ def wait_for_pages_build(pat, push_time_utc=None, timeout_seconds=300):
     print("[news_engine] Время ожидания деплоя истекло (timeout). Публикуем пост.")
     return False
 
+def verify_live_article_on_site(article_timestamp, timeout_seconds=900):
+    """
+    Прямым HTTP-запросом к живому сайту (https://maxtyutin.github.io/cryptochannel/articles.json)
+    физически проверяет, доступна ли статья на домене.
+    Ждет до 15 минут (900 сек) и КАТЕГОРИЧЕСКИ НЕ пускает публикацию в Telegram,
+    пока статья физически не появится в реальном файле на сервере сайта.
+    """
+    if not article_timestamp:
+        return True
+        
+    print(f"[news_engine] Прямая HTTP-проверка наличия статьи #{article_timestamp} на живом сайте...")
+    start_time = time.time()
+    
+    while time.time() - start_time < timeout_seconds:
+        try:
+            live_url = f"https://maxtyutin.github.io/cryptochannel/articles.json?cb={int(time.time())}"
+            req = urllib.request.Request(live_url, headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            })
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read().decode('utf-8'))
+                    for item in data:
+                        if str(item.get('timestamp')) == str(article_timestamp):
+                            print(f"[news_engine] 100% УСПЕХ: Статья #{article_timestamp} подтверждена на живом домене сайта!")
+                            return True
+                    print(f"[news_engine] Статья #{article_timestamp} еще не выкатилась на живой сайт. Ожидание 10 секунд...")
+        except Exception as e:
+            print(f"[news_engine] Ошибка HTTP-запроса к живому сайту: {e}. Повтор через 10 сек...")
+            
+        time.sleep(10)
+        
+    print(f"[news_engine] ВНИМАНИЕ: Время прямого ожидания ({timeout_seconds}с) истекло.")
+    return False
+
 def main():
     env = load_env()
     gemini_key = env.get("GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
@@ -2148,8 +2185,9 @@ def main():
                 print("[news_engine] Отправка изменений в репозиторий GitHub...")
                 subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
                 
-                print("[news_engine] Изменения успешно отправлены на GitHub! Запуск ожидания сборки сайта...")
+                print("[news_engine] Изменения успешно отправлены на GitHub! Запуск ожидания сборки и публикации статьи на живом сайте...")
                 wait_for_pages_build(pat, push_time_utc)
+                verify_live_article_on_site(article_timestamp)
             except Exception as e:
                 print(f"[news_engine] Ошибка при отправке базы данных на GitHub: {e}")
         else:
