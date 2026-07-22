@@ -115,6 +115,35 @@ def extract_image_url(item, raw_item_xml):
                 
     return None
 
+def normalize_image_slug(u):
+    if not u:
+        return ""
+    u = u.split('?')[0].split('#')[0]
+    filename = u.split('/')[-1].lower()
+    filename = re.sub(r'^\.?/?images/', '', filename)
+    filename = re.sub(r'^article_', '', filename)
+    filename = re.sub(r'\.(jpg|jpeg|png|webp|gif|svg)$', '', filename)
+    filename = re.sub(r'[\-_]\d+x\d+$', '', filename)
+    filename = re.sub(r'[\-_](nwmk|thumb|preview|scaled)$', '', filename)
+    slug = re.sub(r'[^a-z0-9]', '', filename)
+    return slug
+
+def are_images_duplicate(url1, url2):
+    if not url1 or not url2:
+        return False
+    if url1 == url2:
+        return True
+    s1 = normalize_image_slug(url1)
+    s2 = normalize_image_slug(url2)
+    if not s1 or not s2:
+        return False
+    if s1 == s2:
+        return True
+    if len(s1) >= 12 and len(s2) >= 12:
+        if s1 in s2 or s2 in s1:
+            return True
+    return False
+
 def fetch_article_text_and_images(article_url, primary_image_url=None):
     """Скачивает страницу источника, извлекает текст с плейсхолдерами картинок [IMAGE: N] и сами картинки.
     Возвращает кортеж (текст_статьи, список_дополнительных_картинок).
@@ -159,15 +188,15 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
                      'footer', 'header', 'nav-', 'button', 'pixel']
 
     found_images = []
-    seen = set()
+    seen_slugs = set()
     if primary_image_url:
-        seen.add(primary_image_url.split('?')[0])
+        p_slug = normalize_image_slug(primary_image_url)
+        if p_slug:
+            seen_slugs.add(p_slug)
 
     def clean_img_url(u):
         u = u.strip().split('?')[0]
         if not u.startswith('http'):
-            return None
-        if u in seen:
             return None
         u_lower = u.lower()
         if any(kw in u_lower for kw in SKIP_KEYWORDS):
@@ -176,6 +205,12 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
         has_keyword = any(kw in u_lower for kw in ['image', 'photo', 'img', 'media', 'upload'])
         if not has_ext and not has_keyword:
             return None
+        u_slug = normalize_image_slug(u)
+        if not u_slug or u_slug in seen_slugs or are_images_duplicate(u, primary_image_url):
+            return None
+        for s in seen_slugs:
+            if len(u_slug) >= 12 and len(s) >= 12 and (u_slug in s or s in u_slug):
+                return None
         return u
 
     def repl_img(match_obj):
@@ -186,9 +221,10 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
             img_url = html.unescape(src_match.group(1))
             cleaned = clean_img_url(img_url)
             if cleaned:
-                if cleaned not in found_images:
-                    found_images.append(cleaned)
-                idx = found_images.index(cleaned) + 1
+                slug = normalize_image_slug(cleaned)
+                seen_slugs.add(slug)
+                found_images.append(cleaned)
+                idx = len(found_images)
                 return f"\n\n[IMAGE: {idx}]\n\n"
         # Также проверяем srcset
         srcset_match = re.search(r'srcset=["\']([^"\']+)', tag_content, re.IGNORECASE)
@@ -197,9 +233,10 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
             img_url = html.unescape(first_url)
             cleaned = clean_img_url(img_url)
             if cleaned:
-                if cleaned not in found_images:
-                    found_images.append(cleaned)
-                idx = found_images.index(cleaned) + 1
+                slug = normalize_image_slug(cleaned)
+                seen_slugs.add(slug)
+                found_images.append(cleaned)
+                idx = len(found_images)
                 return f"\n\n[IMAGE: {idx}]\n\n"
         return ""
 
@@ -209,7 +246,9 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
     for m in re.finditer(r'srcset=["\']([^"\']+)', content_block, re.IGNORECASE):
         first = m.group(1).split(',')[0].strip().split()[0]
         cleaned = clean_img_url(html.unescape(first))
-        if cleaned and cleaned not in found_images:
+        if cleaned:
+            slug = normalize_image_slug(cleaned)
+            seen_slugs.add(slug)
             found_images.append(cleaned)
 
     # Удаляем все остальные HTML теги
@@ -219,6 +258,15 @@ def fetch_article_text_and_images(article_url, primary_image_url=None):
     text = re.sub(r'[ \t]+', ' ', text)
     text_lines = [line.strip() for line in text.split('\n') if line.strip()]
     cleaned_text = "\n\n".join(text_lines)
+
+    # Защита: если текст начинается с [IMAGE: 1], убираем его, т.к. обложка уже показана вверху статьи
+    if cleaned_text.startswith('[IMAGE: 1]'):
+        cleaned_text = re.sub(r'^\[IMAGE:\s*1\]\s*', '', cleaned_text).strip()
+        if found_images:
+            found_images.pop(0)
+            # Сдвигаем индексы оставшихся плейсхолдеров
+            for i in range(1, len(found_images) + 2):
+                cleaned_text = cleaned_text.replace(f'[IMAGE: {i+1}]', f'[IMAGE: {i}]')
 
     return cleaned_text[:6000], found_images[:4]
 
@@ -1772,9 +1820,17 @@ def main():
             save_processed_id(item['id'])
             continue
             
-        print(f"Кандидат одобрен: {item['title']}. Начинаем обработку и публикацию...")
-        
-        # Скачиваем текст и извлекаем изображения
+        # 1. Поиск основной обложки статьи (из RSS или og:image)
+        img_url = item.get('image_url')
+        is_bad_img = not img_url or any(x in img_url.lower() for x in ['pixel', 'tracker', 'ad-button', 'placeholder', 'spacer'])
+        if is_bad_img:
+            print("[news_engine] Картинка в RSS отсутствует/некорректна. Ищем og:image...")
+            og_image = fetch_og_image(item.get('link', ''))
+            if og_image:
+                item['image_url'] = og_image
+                print(f"[news_engine] Найдена обложка через og:image: {og_image}")
+
+        # 2. Скачиваем текст и извлекаем дополнительные изображения
         print("Скачивание текста и изображений статьи...")
         source_text, extra_images = fetch_article_text_and_images(item.get('link', ''), item.get('image_url'))
         item['extra_images'] = extra_images if extra_images else []
@@ -1826,16 +1882,6 @@ def main():
         with open(OUTPUT_FILE, 'w') as f:
             f.write(f"# Свежая новость от ИИ-редактора\n\n## ДЛЯ TELEGRAM:\n{telegram_caption}\n\n## ДЛЯ САЙТА:\n{full_article}\n\n*Оригинальный источник: {item.get('link', 'Crypto Analytics')}*\n*Картинка: {item.get('image_url', 'нет')}*")
             
-        # Поиск картинки
-        img_url = item.get('image_url')
-        is_bad_img = not img_url or any(x in img_url.lower() for x in ['pixel', 'tracker', 'ad-button', 'placeholder', 'spacer'])
-        if is_bad_img:
-            print("[news_engine] Картинка в RSS отсутствует/некорректна. Ищем og:image...")
-            og_image = fetch_og_image(item.get('link', ''))
-            if og_image:
-                item['image_url'] = og_image
-                print(f"[news_engine] Найдена обложка через og:image: {og_image}")
-                
         local_img_path = None
         if item.get('image_url'):
             if item['image_url'].startswith('http'):

@@ -1584,7 +1584,7 @@
             // Заполняем поля статьи
             document.getElementById('article-date').innerHTML = `<i data-lucide="calendar" style="width: 14px; height: 14px; margin-right: 4px; vertical-align: middle;"></i> ${article.date}`;
             document.getElementById('article-title').textContent = article.title;
-            document.getElementById('article-text').innerHTML = formatPostText(article.post_text, article.extra_images);
+            document.getElementById('article-text').innerHTML = formatPostText(article.post_text, article.extra_images, article.image_url);
             
             // Рассчитываем динамическое время чтения (средняя скорость — 180 слов в минуту)
             const wordsCount = (article.post_text || '').trim().split(/\s+/).length;
@@ -1607,7 +1607,17 @@
                 const hasPlaceholders = (article.post_text || '').includes('[IMAGE:');
                 if (!hasPlaceholders) {
                     const extras = article.extra_images || [];
+                    const renderedSlugs = new Set();
+                    if (article.image_url) {
+                        const cSlug = normalizeImageSlug(article.image_url);
+                        if (cSlug) renderedSlugs.add(cSlug);
+                    }
                     extras.forEach(imgUrl => {
+                        const slug = normalizeImageSlug(imgUrl);
+                        if (renderedSlugs.has(slug) || areImagesDuplicate(imgUrl, article.image_url)) {
+                            return;
+                        }
+                        renderedSlugs.add(slug);
                         const wrapper = document.createElement('div');
                         wrapper.style.cssText = 'margin: 24px 0; border-radius: 16px; overflow: hidden;';
                         const img = document.createElement('img');
@@ -1849,7 +1859,32 @@
             return text;
         }
 
-        function formatPostText(text, extraImages) {
+        function normalizeImageSlug(url) {
+            if (!url) return "";
+            let u = url.split('?')[0].split('#')[0];
+            let filename = u.split('/').pop().toLowerCase();
+            filename = filename.replace(/^\.?\/?images\//, '');
+            filename = filename.replace(/^article_/, '');
+            filename = filename.replace(/\.(jpg|jpeg|png|webp|gif|svg)$/, '');
+            filename = filename.replace(/[\-_]\d+x\d+$/, '');
+            filename = filename.replace(/[\-_](nwmk|thumb|preview|scaled)$/, '');
+            return filename.replace(/[^a-z0-9]/g, '');
+        }
+
+        function areImagesDuplicate(url1, url2) {
+            if (!url1 || !url2) return false;
+            if (url1 === url2) return true;
+            let s1 = normalizeImageSlug(url1);
+            let s2 = normalizeImageSlug(url2);
+            if (!s1 || !s2) return false;
+            if (s1 === s2) return true;
+            if (s1.length >= 12 && s2.length >= 12) {
+                if (s1.includes(s2) || s2.includes(s1)) return true;
+            }
+            return false;
+        }
+
+        function formatPostText(text, extraImages, mainCoverUrl) {
             if (!text) return '';
             
             // 1. Очищаем скрытые ссылки Telegram (заглушки)
@@ -1888,12 +1923,23 @@
             }
             formatted = lines.join('\n');
 
-            // 5. Заменяем плейсхолдеры изображений [IMAGE: X] на реальные img теги
+            // 5. Заменяем плейсхолдеры изображений [IMAGE: X] на реальные img теги с проверкой дублирования
+            const renderedSlugs = new Set();
+            if (mainCoverUrl) {
+                const cSlug = normalizeImageSlug(mainCoverUrl);
+                if (cSlug) renderedSlugs.add(cSlug);
+            }
+
             if (extraImages && extraImages.length > 0) {
                 formatted = formatted.replace(/\[IMAGE:\s*(\d+)\]/gi, (match, idxStr) => {
                     const idx = parseInt(idxStr, 10) - 1;
                     if (idx >= 0 && idx < extraImages.length) {
                         const imgUrl = extraImages[idx];
+                        const slug = normalizeImageSlug(imgUrl);
+                        if (renderedSlugs.has(slug) || areImagesDuplicate(imgUrl, mainCoverUrl)) {
+                            return '';
+                        }
+                        renderedSlugs.add(slug);
                         return `\n\n<div class="article-body-image-wrapper" style="margin: 28px 0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
                             <img src="${imgUrl}" style="width: 100%; max-height: 480px; object-fit: cover; display: block; border-radius: 16px;" alt="" loading="lazy" onerror="this.parentElement.style.display='none';" />
                         </div>\n\n`;
