@@ -296,7 +296,7 @@
             opacity: 1;
         }
 
-        /* Карусель последних новостей (по 4 в ряд на десктопе) */
+        /* Карусель последних новостей (строго 4 в ряд на десктопе) */
         .carousel-slide {
             width: calc((100% - 48px) / 4);
             flex-shrink: 0;
@@ -315,42 +315,52 @@
             user-select: none;
         }
 
-        /* Пропорционально уменьшенные стили для карточек в блоке "Последние криптоновости" (4 в ряд) */
+        /* Гармоничные аккуратные стили с красивой обрезкой текста (line-clamp) */
+        .related-news-section .news-card {
+            margin: 0;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
         .related-news-section .news-card-image {
             height: 130px;
+            flex-shrink: 0;
         }
 
         .related-news-section .news-card-body {
             padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
         }
 
         .related-news-section .news-card-title {
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            line-height: 1.38;
+            line-height: 1.35;
             margin-bottom: 8px;
             color: var(--text-primary);
-            display: block !important;
-            -webkit-line-clamp: unset !important;
-            -webkit-box-orient: unset !important;
-            overflow: visible !important;
-            height: auto !important;
-            min-height: auto !important;
-            word-break: break-word;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            height: 2.6rem !important;
+            text-overflow: ellipsis;
         }
 
         .related-news-section .news-card-excerpt {
             color: var(--text-secondary);
-            font-size: 0.83rem;
-            line-height: 1.48;
+            font-size: 0.82rem;
+            line-height: 1.45;
             margin-bottom: 12px;
-            display: block !important;
-            -webkit-line-clamp: unset !important;
-            -webkit-box-orient: unset !important;
-            overflow: visible !important;
-            height: auto !important;
-            flex-grow: 1;
-            word-break: break-word;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            height: 3.6rem !important;
+            text-overflow: ellipsis;
         }
 
         .carousel-dot {
@@ -367,13 +377,13 @@
             transform: scale(1.2);
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 768px) {
             .carousel-slide {
                 width: calc((100% - 16px) / 2);
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 480px) {
             .carousel-slide {
                 width: 100%;
             }
@@ -1721,8 +1731,8 @@
 
             function getMaxOffset() {
                 let visibleCards = 4;
-                if (window.innerWidth <= 600) visibleCards = 1;
-                else if (window.innerWidth <= 1024) visibleCards = 2;
+                if (window.innerWidth <= 480) visibleCards = 1;
+                else if (window.innerWidth <= 768) visibleCards = 2;
                 const maxIndex = Math.max(0, totalSlides - visibleCards);
                 return maxIndex * getSlideWidth();
             }
@@ -1815,8 +1825,8 @@
             const gap = 16;
             
             let visibleCards = 4;
-            if (window.innerWidth <= 600) visibleCards = 1;
-            else if (window.innerWidth <= 1024) visibleCards = 2;
+            if (window.innerWidth <= 480) visibleCards = 1;
+            else if (window.innerWidth <= 768) visibleCards = 2;
             
             const maxIndex = Math.max(0, totalSlides - visibleCards);
             
@@ -1854,8 +1864,9 @@
             const dotsContainer = document.getElementById('carousel-dots');
             if (!dotsContainer) return;
             
-            let visibleCards = 2;
-            if (window.innerWidth <= 768) visibleCards = 1;
+            let visibleCards = 4;
+            if (window.innerWidth <= 480) visibleCards = 1;
+            else if (window.innerWidth <= 768) visibleCards = 2;
             
             const maxIndex = Math.max(0, totalSlides - visibleCards);
             dotsContainer.innerHTML = '';
