@@ -372,11 +372,10 @@ def fetch_rss_news():
     return news_items
 
 GEMINI_MODELS = [
-    "gemini-3.5-flash",
-    "gemini-3.0-flash",
-    "gemini-3-flash",
-    "gemini-3.1-flash-lite",
     "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
     "gemini-2.5-flash-lite"
 ]
 
@@ -1796,6 +1795,7 @@ def main():
                         subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
                         subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
                         subprocess.run(["git", "commit", "-m", "Reconciliation: sync processed status with Telegram [skip ci]"], check=False)
+                        subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
                         subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
                         print("[news_engine] Статус синхронизации Telegram успешно запушен на GitHub.")
                     except Exception as ge:
@@ -1945,6 +1945,7 @@ def main():
                 subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
                 subprocess.run(["git", "add", "articles.json", "images/"], check=True)
                 subprocess.run(["git", "commit", "-m", "Auto-update website database [skip ci]"], check=False)
+                subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
                 
                 print("[news_engine] Отправка изменений в репозиторий GitHub...")
                 subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
