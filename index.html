@@ -1838,14 +1838,34 @@
         }
 
         // Обработка системного роутинга (кнопки Назад/Вперед в браузере)
-        function handleRouting() {
+        async function handleRouting() {
             const hash = window.location.hash;
             if (hash.startsWith('#article-')) {
                 const ts = hash.replace('#article-', '');
-                const index = allArticles.findIndex(a => String(a.timestamp) === String(ts));
+                let index = allArticles.findIndex(a => String(a.timestamp) === String(ts));
                 if (index !== -1) {
                     showArticle(index);
                     return;
+                }
+                
+                // МГНОВЕННЫЙ ФОЛБЕК: если GitHub Pages еще собирается в очереди GitHub,
+                // запрашиваем свежий articles.json напрямую с GitHub Raw (обновляется за 0 секунд!)
+                try {
+                    const rawUrl = 'https://raw.githubusercontent.com/maxtyutin/cryptochannel/main/articles.json?v=' + Date.now();
+                    const resp = await fetch(rawUrl);
+                    if (resp.ok) {
+                        const freshArticles = await resp.json();
+                        freshArticles.sort((a, b) => b.timestamp - a.timestamp);
+                        allArticles = freshArticles;
+                        renderSite(allArticles);
+                        index = allArticles.findIndex(a => String(a.timestamp) === String(ts));
+                        if (index !== -1) {
+                            showArticle(index);
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Ошибка подгрузки из GitHub Raw:", e);
                 }
             }
             closeArticleView();

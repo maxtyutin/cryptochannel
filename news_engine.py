@@ -1827,7 +1827,7 @@ def setup_cron():
     else:
         print("Задачи планировщика уже были настроены ранее.")
 
-def wait_for_pages_build(pat, push_time_utc=None, timeout_seconds=180):
+def wait_for_pages_build(pat, push_time_utc=None, timeout_seconds=300):
     """
     Ждет, пока самый ПОСЛЕДНИЙ деплой GitHub Pages ('pages build and deployment') не завершится со статусом 'success'.
     """
