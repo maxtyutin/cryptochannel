@@ -1,4 +1,3 @@
-BitMine gets 98% of revenue from staking as a decade-long contract complicates an early exit
 Lebanese army clears unexploded ordnance in Zawtar al-Gharbiyeh after Israeli exit
 Movement Labs files for Chapter 11 bankruptcy after months of MOVE token turmoil
 OpenAI Models Escaped Locked Test Environment, Hacked Hugging Face to Cheat on Benchmark
@@ -18,3 +17,4 @@ Kimi K3 ranks second on AA-Briefcase but faces high cost challenges
 US airstrike hits military site near Tabriz, Iran: Fars News
 XRP Ledger Hits 1 Million AI Agent Transactions as Ripple Builds AI Spending Infrastructure
 Iran activates Isfahan air defenses amid US military strikes
+KuCoin Pay Wants Crypto to Blend into Local Payment Rails
