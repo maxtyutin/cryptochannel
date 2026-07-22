@@ -374,9 +374,9 @@ def fetch_rss_news():
 GEMINI_MODELS = [
     "gemini-2.5-flash",
     "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
-    "gemini-2.5-flash-lite"
+    "gemini-2.5-flash-lite",
+    "gemini-1.5-flash-latest",
+    "gemini-1.5-pro-latest"
 ]
 
 def call_gemini_api(prompt, gemini_key, is_json=False):
@@ -1436,51 +1436,8 @@ def check_price_signals(bot_token, chat_id, gemini_key):
     except Exception:
         pass
 
-def generate_price_digest():
-    """Получение курсов с CoinGecko и генерация дайджеста цен"""
-    url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,solana,the-open-network&vs_currencies=usd&include_24hr_change=true'
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    try:
-        with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
-        
-        coins = {
-            'bitcoin': ('🪙 Bitcoin', 'BTC'),
-            'ethereum': ('💎 Ethereum', 'ETH'),
-            'binancecoin': ('🔸 BNB', 'BNB'),
-            'solana': ('☀️ Solana', 'SOL'),
-            'the-open-network': ('💎 TON', 'TON')
-        }
-        
-        lines = ["📊 <b>КРИПТОВАЛЮТЫ: ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Курсы основных криптоактивов и их изменение за 24 часа:\n"]
-        
-        for coin_id, (name, symbol) in coins.items():
-            if coin_id in data:
-                price = data[coin_id]['usd']
-                change = data[coin_id]['usd_24h_change'] or 0.0
-                
-                if price >= 1000:
-                    price_str = f"${price:,.0f}"
-                elif price >= 1:
-                    price_str = f"${price:,.2f}"
-                else:
-                    price_str = f"${price:,.4f}"
-                    
-                emoji = "🟢" if change >= 0 else "🔴"
-                sign = "+" if change >= 0 else ""
-                
-                lines.append(f"{name} ({symbol}): <b>{price_str}</b> ({emoji} {sign}{change:.2f}%)")
-                
-        lines.append("\n#дайджест #курсы #аналитика #рынок")
-        return "\n".join(lines)
-    except Exception as e:
-        print(f"Ошибка генерации дайджеста цен: {e}")
-        return None
-
 def get_stock_price(ticker):
     """Получение цен акций и изменения за 24ч с Yahoo Finance"""
-    import urllib.request
-    import json
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     try:
@@ -1492,55 +1449,283 @@ def get_stock_price(ticker):
             change = ((price - prev_close) / prev_close) * 100
             return price, change
     except Exception as e:
-        print(f"Ошибка получения акций {ticker}: {e}")
+        print(f"[news_engine] Ошибка получения акций {ticker}: {e}")
         return None, None
 
-def generate_stock_digest():
-    """Генерация дайджеста цен акций ведущих криптокомпаний"""
-    tickers = {
-        'MSTR': 'MicroStrategy',
-        'COIN': 'Coinbase',
-        'MARA': 'MARA Holdings',
-        'RIOT': 'Riot Platforms'
-    }
-    lines = ["📈 <b>АКЦИИ КРИПТОКОМПАНИЙ: ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n", "Стоимость акций ведущих компаний индустрии и их изменение за 24 часа:\n"]
+def draw_digest_card(crypto_data, stock_data, output_path):
+    """
+    Создает высококачественную графическую карточку дайджеста (1200x675 px).
+    """
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        import sys
+        import subprocess
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
+        from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 1200, 675
+    img = Image.new("RGB", (W, H), "#0b0f17")
+    draw = ImageDraw.Draw(img)
+
+    for y in range(H):
+        r = int(11 + (15 - 11) * (y / H))
+        g = int(15 + (23 - 15) * (y / H))
+        b = int(23 + (35 - 23) * (y / H))
+        draw.line([(0, y), (W, y)], fill=(r, g, b))
+
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    o_draw = ImageDraw.Draw(overlay)
     
-    success_count = 0
-    for ticker, name in tickers.items():
+    for r_idx in range(220, 0, -10):
+        alpha = int(20 * (r_idx / 220))
+        o_draw.ellipse([-80 - r_idx, -80 - r_idx, 300 + r_idx, 300 + r_idx], fill=(99, 102, 241, alpha))
+
+    for r_idx in range(200, 0, -10):
+        alpha = int(18 * (r_idx / 200))
+        o_draw.ellipse([W - 250 - r_idx, H - 200 - r_idx, W + 100 + r_idx, H + 100 + r_idx], fill=(16, 185, 129, alpha))
+
+    img = Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    for x in range(0, W, 80):
+        draw.line([(x, 0), (x, H)], fill=(255, 255, 255, 6))
+    for y in range(0, H, 80):
+        draw.line([(0, y), (W, y)], fill=(255, 255, 255, 6))
+
+    def get_font(size, bold=False):
+        font_names = ["DejaVuSans-Bold.ttf", "LiberationSans-Bold.ttf", "Arial-Bold.ttf", "Helvetica-Bold.ttf"] if bold else ["DejaVuSans.ttf", "LiberationSans.ttf", "Arial.ttf", "Helvetica.ttf"]
+        for fn in font_names:
+            try:
+                return ImageFont.truetype(fn, size)
+            except Exception:
+                continue
+        return ImageFont.load_default()
+
+    font_title = get_font(24, bold=True)
+    font_badge = get_font(12, bold=True)
+    font_section = get_font(17, bold=True)
+    font_symbol = get_font(15, bold=True)
+    font_sub = get_font(12, bold=False)
+    font_price = get_font(15, bold=True)
+    font_change = get_font(13, bold=True)
+
+    # 1. Шапка
+    draw.rounded_rectangle([50, 35, 195, 65], radius=6, fill=(99, 102, 241, 40), outline=(99, 102, 241), width=1)
+    draw.text((62, 43), "CRYPTO ANALYTICS", fill=(199, 210, 254), font=font_badge)
+
+    draw.text((215, 37), "DAILY MARKET & STOCKS DIGEST", fill=(255, 255, 255), font=font_title)
+
+    date_str = time.strftime("%d %B %Y").upper()
+    draw.text((W - 190, 43), date_str, fill=(156, 163, 175), font=font_badge)
+
+    draw.line([(50, 82), (W - 50, 82)], fill=(55, 65, 81), width=1)
+
+    # 2. Панели данных
+    panel_w = 525
+    panel_h = 425
+    panel_y = 105
+
+    # Панель 1: КРИПТО
+    px1 = 50
+    draw.rounded_rectangle([px1, panel_y, px1 + panel_w, panel_y + panel_h], radius=12, fill=(15, 23, 42), outline=(30, 41, 59), width=1)
+    draw.rounded_rectangle([px1, panel_y, px1 + panel_w, panel_y + 48], radius=12, fill=(30, 41, 59))
+    draw.rectangle([px1, panel_y + 36, px1 + panel_w, panel_y + 48], fill=(30, 41, 59))
+    draw.text((px1 + 20, panel_y + 16), "CRYPTO ASSETS (24H)", fill=(243, 244, 246), font=font_section)
+
+    item_y = panel_y + 65
+    for coin in crypto_data[:5]:
+        draw.rounded_rectangle([px1 + 20, item_y, px1 + 75, item_y + 42], radius=8, fill=(30, 41, 59))
+        draw.text((px1 + 30, item_y + 13), coin['symbol'], fill=(243, 244, 246), font=font_symbol)
+
+        draw.text((px1 + 90, item_y + 6), coin['name'], fill=(255, 255, 255), font=font_symbol)
+        draw.text((px1 + 90, item_y + 25), "Crypto Asset", fill=(148, 163, 184), font=font_sub)
+
+        price_text = coin['price']
+        draw.text((px1 + 320, item_y + 13), price_text, fill=(255, 255, 255), font=font_price)
+
+        is_up = coin['is_up']
+        pill_bg = (6, 78, 59) if is_up else (127, 29, 29)
+        pill_border = (16, 185, 129) if is_up else (239, 68, 68)
+        pill_txt = (52, 211, 153) if is_up else (248, 113, 113)
+
+        pill_x = px1 + 425
+        draw.rounded_rectangle([pill_x, item_y + 9, pill_x + 80, item_y + 35], radius=10, fill=pill_bg, outline=pill_border, width=1)
+        draw.text((pill_x + 12, item_y + 14), coin['change'], fill=pill_txt, font=font_change)
+
+        draw.line([(px1 + 20, item_y + 55), (px1 + panel_w - 20, item_y + 55)], fill=(30, 41, 59), width=1)
+        item_y += 70
+
+    # Панель 2: АКЦИИ
+    px2 = 625
+    draw.rounded_rectangle([px2, panel_y, px2 + panel_w, panel_y + panel_h], radius=12, fill=(15, 23, 42), outline=(30, 41, 59), width=1)
+    draw.rounded_rectangle([px2, panel_y, px2 + panel_w, panel_y + 48], radius=12, fill=(30, 41, 59))
+    draw.rectangle([px2, panel_y + 36, px2 + panel_w, panel_y + 48], fill=(30, 41, 59))
+    draw.text((px2 + 20, panel_y + 16), "CRYPTO STOCKS (24H)", fill=(243, 244, 246), font=font_section)
+
+    item_y = panel_y + 65
+    for stock in stock_data[:5]:
+        draw.rounded_rectangle([px2 + 20, item_y, px2 + 75, item_y + 42], radius=8, fill=(30, 41, 59))
+        draw.text((px2 + 28, item_y + 13), stock['symbol'], fill=(243, 244, 246), font=font_symbol)
+
+        draw.text((px2 + 90, item_y + 6), stock['name'], fill=(255, 255, 255), font=font_symbol)
+        draw.text((px2 + 90, item_y + 25), "NASDAQ / NYSE", fill=(148, 163, 184), font=font_sub)
+
+        price_text = stock['price']
+        draw.text((px2 + 320, item_y + 13), price_text, fill=(255, 255, 255), font=font_price)
+
+        is_up = stock['is_up']
+        pill_bg = (6, 78, 59) if is_up else (127, 29, 29)
+        pill_border = (16, 185, 129) if is_up else (239, 68, 68)
+        pill_txt = (52, 211, 153) if is_up else (248, 113, 113)
+
+        pill_x = px2 + 425
+        draw.rounded_rectangle([pill_x, item_y + 9, pill_x + 80, item_y + 35], radius=10, fill=pill_bg, outline=pill_border, width=1)
+        draw.text((pill_x + 12, item_y + 14), stock['change'], fill=pill_txt, font=font_change)
+
+        draw.line([(px2 + 20, item_y + 55), (px2 + panel_w - 20, item_y + 55)], fill=(30, 41, 59), width=1)
+        item_y += 70
+
+    # 3. Подвал
+    footer_y = 550
+    draw.rounded_rectangle([50, footer_y, W - 50, H - 30], radius=12, fill=(15, 23, 42), outline=(30, 41, 59), width=1)
+
+    chart_points = [(70, 625), (160, 605), (250, 615), (340, 580), (430, 590), (520, 570), (620, 580), (720, 575), (820, 590), (920, 570), (1020, 585), (1130, 565)]
+    draw.line(chart_points, fill=(16, 185, 129), width=3)
+
+    draw.text((70, footer_y + 18), "AUTOMATED MARKET INTELLIGENCE SYSTEM", fill=(148, 163, 184), font=font_badge)
+    draw.text((W - 280, footer_y + 18), "CRYPTO ANALYTICS | REALTIME", fill=(99, 102, 241), font=font_badge)
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    img.save(output_path, "JPEG", quality=95)
+    print(f"[news_engine] Карточка дайджеста успешно сохранена: {output_path}")
+    return True
+
+def generate_combined_digest(gemini_key=None):
+    """
+    Генерирует единый дайджест (криптовалюты + акции + обзор рынка) в ОДНОМ сообщении
+    строго БЕЗ ХЭШТЕГОВ и со специально сгенерированной графической карточкой.
+    """
+    crypto_lines = []
+    crypto_card_data = []
+    try:
+        url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,the-open-network&vs_currencies=usd&include_24hr_change=true'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode())
+        
+        coins = [
+            ('bitcoin', 'Bitcoin', 'BTC'),
+            ('ethereum', 'Ethereum', 'ETH'),
+            ('solana', 'Solana', 'SOL'),
+            ('binancecoin', 'Binance Coin', 'BNB'),
+            ('the-open-network', 'Toncoin', 'TON')
+        ]
+        for coin_id, name, symbol in coins:
+            if coin_id in data:
+                price = data[coin_id]['usd']
+                change = data[coin_id].get('usd_24h_change') or 0.0
+                is_up = change >= 0
+                emoji = "🟢" if is_up else "🔴"
+                sign = "+" if is_up else ""
+                
+                if price >= 1000:
+                    price_str = f"${price:,.0f}"
+                elif price >= 1:
+                    price_str = f"${price:,.2f}"
+                else:
+                    price_str = f"${price:,.4f}"
+                    
+                crypto_lines.append(f"• {name} ({symbol}): <b>{price_str}</b> ({emoji} {sign}{change:.2f}%)")
+                crypto_card_data.append({
+                    'symbol': symbol,
+                    'name': name,
+                    'price': price_str,
+                    'change': f"{sign}{change:.2f}%",
+                    'is_up': is_up
+                })
+    except Exception as e:
+        print(f"[news_engine] Ошибка получения котировок криптовалют: {e}")
+
+    stock_lines = []
+    stock_card_data = []
+    tickers = [
+        ('MSTR', 'MicroStrategy'),
+        ('COIN', 'Coinbase'),
+        ('MARA', 'MARA Holdings'),
+        ('RIOT', 'Riot Platforms'),
+        ('IREN', 'IREN')
+    ]
+    for ticker, name in tickers:
         price, change = get_stock_price(ticker)
         if price is not None:
-            success_count += 1
-            emoji = "🟢" if change >= 0 else "🔴"
-            sign = "+" if change >= 0 else ""
-            lines.append(f"🔸 {name} ({ticker}): <b>${price:.2f}</b> ({emoji} {sign}{change:.2f}%)")
-            
-    if success_count == 0:
-        return None
-        
-    lines.append("\n#акции #фондовыйрынок #mstr #coin #mara #riot #рынок")
-    return "\n".join(lines)
+            is_up = change >= 0
+            emoji = "🟢" if is_up else "🔴"
+            sign = "+" if is_up else ""
+            price_str = f"${price:.2f}"
+            stock_lines.append(f"• {name} ({ticker}): <b>{price_str}</b> ({emoji} {sign}{change:.2f}%)")
+            stock_card_data.append({
+                'symbol': ticker,
+                'name': name,
+                'price': price_str,
+                'change': f"{sign}{change:.2f}%",
+                'is_up': is_up
+            })
 
-def generate_market_review(gemini_key, crypto_digest, stock_digest):
-    """Генерация краткого аналитического обзора рынка через Gemini API"""
-    prompt = f"""Ты — профессиональный финансовый аналитик и редактор Crypto Analytics.
-На основе следующих данных о котировках за 24 часа составь краткий аналитический обзор состояния крипторынка (не более 600 символов).
-Опиши текущий тренд, взаимосвязь криптовалют и фондового рынка, и настроения инвесторов.
+    if not crypto_lines and not stock_lines:
+        print("[news_engine] Не удалось получить данные ни по крипте, ни по акциям.")
+        return None, None
 
-Курсы криптовалют:
-{crypto_digest}
+    review_text = ""
+    if gemini_key:
+        crypto_summary = "\n".join(crypto_lines)
+        stock_summary = "\n".join(stock_lines)
+        prompt = f"""Ты — главный финансовый аналитик Crypto Analytics.
+На основе котировок за 24 часа составь лаконичный аналитический обзор рынка (1 абзац, около 300-500 символов).
+Опиши текущий тренд, взаимосвязь криптовалют и акций криптокомпаний, а также настроения инвесторов.
 
-Акции криптокомпаний:
-{stock_digest}
+Криптовалюты:
+{crypto_summary}
+
+Акции компаний:
+{stock_summary}
 
 ПРАВИЛА:
-- Пиши только на русском языке.
-- Ограничение по длине: строго не более 600 символов.
-- Используй HTML-теги <b> для выделения ключевых выводов или цифр.
-- Никаких хэштегов внутри текста. В конце добавь хэштеги: #обзор #аналитика #рынок.
-- Никаких упоминаний ForkLog.
+- КАТЕГОРИЧЕСКИ запрещено использовать любые хэштеги! Никаких символов #.
+- Используй HTML-теги <b> для выделения ключевых цифр и выводов.
+- Не упоминай ForkLog. Пиши только от лица Crypto Analytics.
 """
-    review = call_gemini_api(prompt, gemini_key, is_json=False)
-    return review.strip() if review else None
+        resp = call_gemini_api(prompt, gemini_key, is_json=False)
+        if resp:
+            review_text = resp.strip()
+            review_text = re.sub(r'#\w+', '', review_text).strip()
+
+    full_lines = ["📊 <b>КРИПТОВАЛЮТЫ И АКЦИИ: ЕЖЕДНЕВНЫЙ ДАЙДЖЕСТ CRYPTO ANALYTICS</b>\n"]
+    
+    if crypto_lines:
+        full_lines.append("🪙 <b>Курсы основных криптоактивов:</b>")
+        full_lines.extend(crypto_lines)
+        full_lines.append("")
+        
+    if stock_lines:
+        full_lines.append("📈 <b>Котировки криптокомпаний (акции):</b>")
+        full_lines.extend(stock_lines)
+        full_lines.append("")
+        
+    if review_text:
+        full_lines.append("🧠 <b>Аналитический обзор рынка:</b>")
+        full_lines.append(review_text)
+
+    full_message = "\n".join(full_lines).strip()
+    full_message = re.sub(r'#\w+', '', full_message)
+
+    ts = int(time.time())
+    img_filename = f"images/digest_card_{ts}.jpg"
+    img_abs_path = os.path.join(BASE_DIR, img_filename)
+    
+    draw_digest_card(crypto_card_data, stock_card_data, img_abs_path)
+    
+    return full_message, img_abs_path
 
 def generate_and_send_poll(gemini_key, bot_token, chat_id):
     """Генерация опроса через Gemini на основе последних новостей и отправка его"""
@@ -1673,38 +1858,20 @@ def main():
     args = sys.argv[1:]
     
     if "--digest" in args:
-        print("Запуск генерации дайджеста цен и акций...")
-        crypto_text = generate_price_digest()
-        stock_text = generate_stock_digest()
-        
-        if crypto_text:
-            print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ КРИПТЫ ===")
-            print(crypto_text)
+        print("Запуск генерации единого дайджеста цен, акций и обзора рынка...")
+        digest_text, digest_img = generate_combined_digest(gemini_key)
+        if digest_text:
+            print("\n=== СГЕНЕРИРОВАННЫЙ ЕДИНЫЙ ДАЙДЖЕСТ ===")
+            print(digest_text)
             if bot_token and chat_id:
-                if send_to_telegram(crypto_text, bot_token, chat_id):
-                    print("Дайджест цен криптовалют успешно опубликован в Telegram!")
-                else:
-                    print("Не удалось отправить дайджест криптовалют в Telegram.")
-                    
-        if stock_text:
-            print("\n=== СГЕНЕРИРОВАННЫЙ ДАЙДЖЕСТ АКЦИЙ ===")
-            print(stock_text)
-            if bot_token and chat_id:
-                if send_to_telegram(stock_text, bot_token, chat_id):
-                    print("Дайджест акций криптокомпаний успешно опубликован в Telegram!")
-                else:
-                    print("Не удалось отправить дайджест акций в Telegram.")
-                    
-        if crypto_text and stock_text:
-            print("\n=== СГЕНЕРИРОВАННЫЙ ОБЗОР РЫНКА ===")
-            review_text = generate_market_review(gemini_key, crypto_text, stock_text)
-            if review_text:
-                print(review_text)
-                if bot_token and chat_id:
-                    if send_to_telegram(review_text, bot_token, chat_id):
-                        print("Аналитический обзор рынка успешно опубликован в Telegram!")
+                if digest_img and os.path.exists(digest_img):
+                    if send_photo_to_telegram(digest_text, digest_img, bot_token, chat_id):
+                        print("Единый дайджест с графической карточкой успешно опубликован в Telegram!")
                     else:
-                        print("Не удалось отправить обзор рынка в Telegram.")
+                        print("Не удалось отправить фото-дайджест. Отправляем текстом...")
+                        send_to_telegram(digest_text, bot_token, chat_id)
+                else:
+                    send_to_telegram(digest_text, bot_token, chat_id)
         
     if "--poll" in args:
         print("Запуск генерации опроса...")
