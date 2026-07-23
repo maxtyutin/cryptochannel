@@ -940,6 +940,28 @@ def download_and_standardize_image(image_url, article_id):
                 pass
         return None
         
+    # 1.5. Проверяем MD5-хэш изображения на дубликаты с ранее сохраненными обложками
+    try:
+        import hashlib
+        with open(temp_path, 'rb') as f:
+            temp_hash = hashlib.md5(f.read()).hexdigest()
+            
+        img_dir = os.path.join(BASE_DIR, "images")
+        if os.path.exists(img_dir):
+            for existing_file in os.listdir(img_dir):
+                if existing_file.endswith('.jpg') and not existing_file.startswith('temp_') and existing_file != local_filename:
+                    epath = os.path.join(img_dir, existing_file)
+                    try:
+                        with open(epath, 'rb') as ef:
+                            if hashlib.md5(ef.read()).hexdigest() == temp_hash:
+                                print(f"[news_engine] Изображение {image_url} отбраковано: в источнике использована повторяющаяся заглушка сайта (хэш {temp_hash} совпадает с {existing_file})!")
+                                os.remove(temp_path)
+                                return None
+                    except Exception:
+                        pass
+    except Exception as he:
+        print(f"[news_engine] Ошибка проверки хэша изображения: {he}")
+        
     # 2. Обрабатываем изображение с помощью Pillow
     try:
         target_width = 1200
@@ -2228,13 +2250,13 @@ def main():
             else:
                 local_img_path = os.path.join(BASE_DIR, item['image_url'].replace('./', ''))
                 
-        # Если изображения нет, генерируем фирменную обложку
+        # Если изображения нет или оно отбраковано как дубликат-заглушка, генерируем уникальную обложку
         if not local_img_path:
-            print("[news_engine] Изображение отсутствует. Генерируем фирменную обложку...")
+            print("[news_engine] Изображение отсутствует или отбраковано. Генерируем уникальную фирменную обложку...")
             safe_id = re.sub(r'[^\w\-_\.]', '_', item['id'])
             fallback_filename = f"images/fallback_{safe_id}.jpg"
             fallback_abs_path = os.path.join(BASE_DIR, fallback_filename)
-            if generate_title_card(item['title'], fallback_abs_path):
+            if generate_fallback_cover(item['title'], fallback_abs_path, category=category) or generate_title_card(item['title'], fallback_abs_path):
                 local_img_path = fallback_abs_path
                 item['image_url'] = f"./{fallback_filename}"
                 
