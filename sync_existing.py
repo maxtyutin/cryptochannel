@@ -74,12 +74,12 @@ def fetch_all_feed_items():
     return items
 
 GEMINI_MODELS = [
-    "gemini-3.5-flash",
-    "gemini-3.0-flash",
-    "gemini-3-flash",
-    "gemini-3.1-flash-lite",
     "gemini-2.5-flash",
-    "gemini-2.5-flash-lite"
+    "gemini-2.0-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro"
 ]
 
 def generate_full_article(news_item, gemini_key):

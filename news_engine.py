@@ -375,45 +375,55 @@ GEMINI_MODELS = [
     "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-2.5-flash-lite",
-    "gemini-1.5-flash-latest",
-    "gemini-1.5-pro-latest"
+    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro"
 ]
 
 def call_gemini_api(prompt, gemini_key, is_json=False):
-    """Выполняет запрос к Gemini API с автоматическим переключением моделей при ошибках лимитов (429, 503)"""
+    """Выполняет запрос к Gemini API с автоматическим переключением моделей и повторными попытками при 429/503"""
     last_err = None
-    for model in GEMINI_MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
-        
-        data = {
-            "contents": [{
-                "parts": [{
-                    "text": prompt
-                }]
-            }]
-        }
-        if is_json:
-            data["generationConfig"] = {
-                "responseMimeType": "application/json"
-            }
+    for attempt in range(2):
+        for model in GEMINI_MODELS:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={gemini_key}"
             
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(data).encode('utf-8'),
-            headers={'Content-Type': 'application/json'}
-        )
-        
-        print(f"Запрос к ИИ: Попытка через модель {model}...")
-        try:
-            with urllib.request.urlopen(req, timeout=30) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                text_out = result['candidates'][0]['content']['parts'][0]['text'].strip()
-                print(f"Успешный ответ получен от модели: {model}")
-                return text_out
-        except Exception as e:
-            print(f"Модель {model} выдала ошибку: {e}. Переключаемся на резервную модель...")
-            last_err = e
-            time.sleep(2)
+            data = {
+                "contents": [{
+                    "parts": [{
+                        "text": prompt
+                    }]
+                }]
+            }
+            if is_json:
+                data["generationConfig"] = {
+                    "responseMimeType": "application/json"
+                }
+                
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(data).encode('utf-8'),
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"Запрос к ИИ: Попытка через модель {model} (круг {attempt+1})...")
+            try:
+                with urllib.request.urlopen(req, timeout=30) as response:
+                    result = json.loads(response.read().decode('utf-8'))
+                    text_out = result['candidates'][0]['content']['parts'][0]['text'].strip()
+                    print(f"Успешный ответ получен от модели: {model}")
+                    return text_out
+            except Exception as e:
+                err_str = str(e)
+                print(f"Модель {model} выдала ошибку: {err_str}. Переключаемся на резервную модель...")
+                last_err = e
+                if "429" in err_str or "503" in err_str:
+                    time.sleep(3)
+                else:
+                    time.sleep(1)
+                    
+        if attempt == 0:
+            print("[news_engine] Пауза 5 секунд перед повторной попыткой обращения к ИИ...")
+            time.sleep(5)
             
     print(f"Все доступные ИИ-модели вернули ошибку. Последняя ошибка: {last_err}")
     return None
@@ -1827,6 +1837,51 @@ def setup_cron():
     else:
         print("Задачи планировщика уже были настроены ранее.")
 
+def git_sync_and_push(pat, commit_message, files=None):
+    """
+    Безопасно сохраняет и отправляет изменения на GitHub с автоматической 
+    синхронизацией (git add, commit, rebase --autostash, push).
+    """
+    if not pat:
+        print("[news_engine] GITHUB_PAT не задан, пропуск отправки на GitHub.")
+        return False
+        
+    repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
+    try:
+        res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
+        if "origin" in res_rem.stdout:
+            subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
+        else:
+            subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
+            
+        subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
+        subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
+        
+        if files:
+            for f in files:
+                subprocess.run(["git", "add", f], check=False)
+        else:
+            subprocess.run(["git", "add", "-A"], check=False)
+            
+        res_diff = subprocess.run(["git", "diff", "--cached", "--quiet"])
+        if res_diff.returncode != 0:
+            subprocess.run(["git", "commit", "-m", commit_message], check=False)
+            
+        subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
+        
+        res_push = subprocess.run(["git", "push", "origin", "HEAD:main"])
+        if res_push.returncode == 0:
+            print(f"[news_engine] Изменения успешно отправлены на GitHub: {commit_message}")
+            return True
+        else:
+            print("[news_engine] Повторный pull --rebase перед повторным push...")
+            subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
+            subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
+            return True
+    except Exception as e:
+        print(f"[news_engine] Ошибка при отправке изменений на GitHub: {e}")
+        return False
+
 def wait_for_pages_build(pat, push_time_utc=None, timeout_seconds=300):
     """
     Ждет, пока самый ПОСЛЕДНИЙ деплой GitHub Pages ('pages build and deployment') не завершится со статусом 'success'.
@@ -2019,22 +2074,7 @@ def main():
                 # Пушим обновленные статусы на GitHub
                 pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
                 if pat:
-                    try:
-                        res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
-                        repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
-                        if "origin" in res_rem.stdout:
-                            subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
-                        else:
-                            subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
-                        subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
-                        subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
-                        subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
-                        subprocess.run(["git", "commit", "-m", "Reconciliation: sync processed status with Telegram [skip ci]"], check=False)
-                        subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
-                        subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
-                        print("[news_engine] Статус синхронизации Telegram успешно запушен на GitHub.")
-                    except Exception as ge:
-                        print(f"[news_engine] Ошибка отправки статуса синхронизации на GitHub: {ge}")
+                    git_sync_and_push(pat, "Reconciliation: sync processed status with Telegram [skip ci]")
                 return  # Прерываем цикл, чтобы новый поиск новостей начался на следующем запуске
         except Exception as re_err:
             print(f"[news_engine] Ошибка в reconciliation-цикле: {re_err}")
@@ -2167,29 +2207,10 @@ def main():
             import datetime
             push_time_utc = datetime.datetime.utcnow().replace(microsecond=0)
             print("[news_engine] Обнаружен GITHUB_PAT, отправляем базу данных сайта на GitHub...")
-            repo_url = f"https://maxtyutin:{pat}@github.com/maxtyutin/cryptochannel.git"
-            try:
-                # Проверяем, существует ли remote 'origin'
-                res_rem = subprocess.run(["git", "remote"], capture_output=True, text=True)
-                if "origin" in res_rem.stdout:
-                    subprocess.run(["git", "remote", "set-url", "origin", repo_url], check=True)
-                else:
-                    subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
-                    
-                subprocess.run(["git", "config", "user.name", "Render Bot"], check=True)
-                subprocess.run(["git", "config", "user.email", "render-bot@example.com"], check=True)
-                subprocess.run(["git", "add", "articles.json", "images/"], check=True)
-                subprocess.run(["git", "commit", "-m", "Auto-update website database [skip ci]"], check=False)
-                subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], check=False)
-                
-                print("[news_engine] Отправка изменений в репозиторий GitHub...")
-                subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
-                
-                print("[news_engine] Изменения успешно отправлены на GitHub! Запуск ожидания сборки и публикации статьи на живом сайте...")
-                wait_for_pages_build(pat, push_time_utc)
-                verify_live_article_on_site(article_timestamp)
-            except Exception as e:
-                print(f"[news_engine] Ошибка при отправке базы данных на GitHub: {e}")
+            git_sync_and_push(pat, "Auto-update website database [skip ci]", ["articles.json", "images/"])
+            print("[news_engine] Изменения отправлены на GitHub. Запуск ожидания сборки и публикации статьи на живом сайте...")
+            wait_for_pages_build(pat, push_time_utc)
+            verify_live_article_on_site(article_timestamp)
         else:
             print("[news_engine] GITHUB_PAT не задан, пропуск отправки на GitHub.")
             
@@ -2225,13 +2246,7 @@ def main():
             save_processed_id(item['id'])
             save_recent_topic(item['title'])
             if pat:
-                try:
-                    subprocess.run(["git", "add", "processed_news.txt", "published_topics.txt"], check=True)
-                    subprocess.run(["git", "commit", "-m", "Auto-update processed status [skip ci]"], check=False)
-                    subprocess.run(["git", "push", "origin", "HEAD:main"], check=True)
-                    print("[news_engine] Статус публикации успешно обновлен на GitHub.")
-                except Exception as e:
-                    print(f"[news_engine] Ошибка при отправке статуса публикации на GitHub: {e}")
+                git_sync_and_push(pat, "Auto-update processed status [skip ci]", ["processed_news.txt", "published_topics.txt"])
             
         published_any = True
         break
