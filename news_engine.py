@@ -372,12 +372,10 @@ def fetch_rss_news():
     return news_items
 
 GEMINI_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-    "gemini-1.5-pro"
+    "gemini-3.1-flash-lite",  # Основная модель — 500 генераций/сут (RPD), 15 RPM
+    "gemini-3.5-flash",       # Резервная модель 1 — 20 RPD, 5 RPM
+    "gemini-2.5-flash",       # Резервная модель 2 — 20 RPD, 5 RPM
+    "gemini-2.5-flash-lite"   # Резервная модель 3 — 20 RPD, 10 RPM
 ]
 
 def call_gemini_api(prompt, gemini_key, is_json=False):

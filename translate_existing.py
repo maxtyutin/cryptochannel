@@ -9,12 +9,10 @@ JSON_PATH = os.path.join(BASE_DIR, "articles.json")
 ENV_FILE = os.path.join(BASE_DIR, ".env")
 
 GEMINI_MODELS = [
+    "gemini-3.1-flash-lite",
+    "gemini-3.5-flash",
     "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-flash",
-    "gemini-1.5-pro"
+    "gemini-2.5-flash-lite"
 ]
 
 def load_env():
