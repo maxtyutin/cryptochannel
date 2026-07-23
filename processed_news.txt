@@ -607,3 +607,6 @@ https://cointelegraph.com/news/ethereum-nears-market-bottom-against-bitcoin-key-
 https://www.coindesk.com/business/2026/07/23/coinbase-closes-the-gaps-in-ai-agent-economy-for-businesses-users-and-developers
 https://cointelegraph.com/news/goldman-sachs-ceo-clarity-act-stablecoin-vote?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/magazine/heres-why-the-clarity-acts-ethics-deal-may-be-so-hard-to-reach?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/bitcoin-treasury-firm-empery-digital-invests-20m-in-ai-data-center-developer-cardinal-data-power?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cryptoslate.com/bitmex-shutdown-announcement-gives-users-2-months-to-withdraw-but-active-positions-face-an-earlier-deadline/
+https://news.bitcoin.com/verus-bridge-suffers-second-exploit-in-66-days-as-flaw-pushes-total-losses-to-19-1m/
