@@ -1146,13 +1146,37 @@ def get_recent_articles():
     return []
 
 def check_semantic_duplicate(news_title, news_desc, news_link, news_image_url, gemini_key):
-    """Семантическая проверка на дубликаты через Gemini API (по заголовку, описанию, ссылке и картинке)"""
+    """Семантическая и локальная проверка на дубликаты (по заголовку, описанию, ключевым словам и Gemini ИИ)"""
     recent_topics = get_recent_topics()
     recent_articles = get_recent_articles()
     
     if not recent_topics and not recent_articles:
         return False
         
+    # 1. Быстрая локальная проверка по ключевым сущностям/словам
+    candidate_norm = re.sub(r'[^\w\s]', ' ', (news_title + " " + (news_desc or "")).lower())
+    cand_words = set(w for w in candidate_norm.split() if len(w) > 3)
+    
+    for art in recent_articles:
+        art_title = art.get('title', '').lower()
+        art_norm = re.sub(r'[^\w\s]', ' ', art_title)
+        art_words = set(w for w in art_norm.split() if len(w) > 3)
+        if cand_words and art_words:
+            overlap = cand_words.intersection(art_words)
+            if len(overlap) >= 3 or (len(cand_words) > 0 and len(overlap) / len(cand_words) >= 0.45):
+                print(f"[news_engine] Обнаружен дубликат по ключевым словам: '{news_title}' <-> '{art['title']}'")
+                return True
+
+    for top in recent_topics:
+        top_norm = re.sub(r'[^\w\s]', ' ', top.lower())
+        top_words = set(w for w in top_norm.split() if len(w) > 3)
+        if cand_words and top_words:
+            overlap = cand_words.intersection(top_words)
+            if len(overlap) >= 3:
+                print(f"[news_engine] Обнаружен дубликат по названию темы: '{news_title}' <-> '{top}'")
+                return True
+
+    # 2. ИИ-проверка через Gemini API
     topics_list = "\n".join([f"- {t}" for t in recent_topics])
     
     articles_context = []
@@ -1191,6 +1215,7 @@ NO — если это новая новость о другом событии 
 """
     answer = call_gemini_api(prompt, gemini_key)
     if not answer:
+        # Если API не ответил, отдаем предпочтение безопасности (локальному анализу)
         return False
         
     return "YES" in answer.upper()
