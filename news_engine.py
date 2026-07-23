@@ -2008,6 +2008,18 @@ def main():
     args = sys.argv[1:]
     
     if "--digest" in args:
+        digest_lock = os.path.join(BASE_DIR, "last_digest_sent.txt")
+        now_ts = time.time()
+        if os.path.exists(digest_lock):
+            try:
+                with open(digest_lock, 'r') as f:
+                    last_ts = float(f.read().strip())
+                if now_ts - last_ts < 14400:  # 4 часа (14400 секунд)
+                    print(f"[news_engine] Дайджест уже отправлялся {int((now_ts - last_ts)/60)} минут назад. Пропуск отправки.")
+                    return
+            except Exception:
+                pass
+                
         print("Запуск генерации единого дайджеста цен, акций и обзора рынка (без картинок)...")
         digest_text, _ = generate_combined_digest(gemini_key)
         if digest_text:
@@ -2016,8 +2028,14 @@ def main():
             if bot_token and chat_id:
                 if send_to_telegram(digest_text, bot_token, chat_id):
                     print("Единый текстовый дайджест успешно опубликован в Telegram!")
+                    try:
+                        with open(digest_lock, 'w') as f:
+                            f.write(str(now_ts))
+                    except Exception:
+                        pass
                 else:
                     print("Не удалось отправить дайджест в Telegram.")
+        return
         
     if "--poll" in args:
         print("Запуск генерации опроса...")
