@@ -394,3 +394,4 @@ https://research.glassnode.com/spot-orderbook-metrics/
 https://research.glassnode.com/market-compass/
 https://research.glassnode.com/glassnode-on-snowflake/
 https://cryptobriefing.com/arbitrum-bridge-not-hacked-ostium-exploit/
+https://beincrypto.com/gold-most-undervalued-fund-managers/
