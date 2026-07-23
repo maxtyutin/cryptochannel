@@ -383,9 +383,10 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .carousel-slide {
-                width: 100%;
+        @media (max-width: 1024px) {
+            .search-box {
+                width: 100% !important;
+                max-width: 100% !important;
             }
         }
 
@@ -522,8 +523,8 @@
 
         .search-box {
             position: relative;
-            flex-grow: 1;
-            max-width: 400px;
+            width: calc(75% - 4px);
+            max-width: calc(75% - 4px);
         }
 
         .search-box input {
