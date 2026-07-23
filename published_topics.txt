@@ -1,4 +1,3 @@
-AFX Protocol reportedly loses $24M in bridge exploit
 Oil prices surge amid Middle East tensions, supply disruption fears
 Iran disables US radar, satellite systems, escalating conflict
 AFX Trade Exploited for $24 Million in Bridge Attack on Arbitrum
@@ -18,3 +17,4 @@ Live markets: Bitcoin trades above $65,000 as Alphabet's bigger AI bill props up
 Bitcoin may have bottomed before its traditional cycle low: Grayscale’s Pandl
 How Prediction Markets Actually Work (And What It Takes to Build One Legally)
 Coinbase to expand Singapore office headcount by 25%: report
+Bitcoin’s $69,000 test could expose its whale-led rebound as a fragile Fed gamble
