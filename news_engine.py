@@ -1298,6 +1298,56 @@ def get_recent_articles():
             print(f"Ошибка при чтении articles.json для дубликатов: {e}")
     return []
 
+def is_russian_title_duplicate(russian_title, threshold=0.50):
+    """
+    Проверяет сгенерированный русский заголовок на дубликат по отношению к уже опубликованным статьям.
+    Если совпадение слов >= 50% (строже лимита пользователя 60%), заголовок блокируется!
+    """
+    if not russian_title:
+        return False
+        
+    cand_norm = re.sub(r'[^\w\s]', ' ', russian_title.lower())
+    cand_words = set(w for w in cand_norm.split() if len(w) > 2 and not w.isdigit())
+    cand_nums = set(re.findall(r'\b\d+\b', russian_title))
+    
+    if not cand_words:
+        return False
+        
+    recent_articles = get_recent_articles()
+    recent_topics = get_recent_topics()
+    
+    for art in recent_articles:
+        prev_title = art.get('title', '')
+        if not prev_title:
+            continue
+        prev_norm = re.sub(r'[^\w\s]', ' ', prev_title.lower())
+        prev_words = set(w for w in prev_norm.split() if len(w) > 2 and not w.isdigit())
+        prev_nums = set(re.findall(r'\b\d+\b', prev_title))
+        
+        if cand_words and prev_words:
+            overlap = cand_words.intersection(prev_words)
+            max_len = max(len(cand_words), len(prev_words))
+            ratio = len(overlap) / max_len if max_len > 0 else 0
+            
+            num_overlap = cand_nums.intersection(prev_nums) if (cand_nums and prev_nums) else set()
+            
+            if ratio >= threshold or (ratio >= 0.35 and len(num_overlap) > 0):
+                print(f"[news_engine] БЛОКИРОВКА ДУБЛИКАТА (>50% перекрытие заголовков): '{russian_title}' <-> '{prev_title}' (Совпадение: {int(ratio*100)}%)")
+                return True
+
+    for top in recent_topics:
+        top_norm = re.sub(r'[^\w\s]', ' ', top.lower())
+        top_words = set(w for w in top_norm.split() if len(w) > 2 and not w.isdigit())
+        if cand_words and top_words:
+            overlap = cand_words.intersection(top_words)
+            max_len = max(len(cand_words), len(top_words))
+            ratio = len(overlap) / max_len if max_len > 0 else 0
+            if ratio >= threshold:
+                print(f"[news_engine] БЛОКИРОВКА ДУБЛИКАТА (>50% перекрытие с темой): '{russian_title}' <-> '{top}'")
+                return True
+
+    return False
+
 def check_semantic_duplicate(news_title, news_desc, news_link, news_image_url, gemini_key):
     """Семантическая и локальная проверка на дубликаты (по заголовку, описанию, ключевым словам и Gemini ИИ)"""
     recent_topics = get_recent_topics()
@@ -1307,25 +1357,43 @@ def check_semantic_duplicate(news_title, news_desc, news_link, news_image_url, g
         return False
         
     # 1. Быстрая локальная проверка по ключевым сущностям/словам
-    candidate_norm = re.sub(r'[^\w\s]', ' ', (news_title + " " + (news_desc or "")).lower())
-    cand_words = set(w for w in candidate_norm.split() if len(w) > 3)
+    candidate_raw = (news_title + " " + (news_desc or "")).lower()
+    cand_norm = re.sub(r'[^\w\s]', ' ', candidate_raw)
+    cand_words = set(w for w in cand_norm.split() if len(w) > 2 and not w.isdigit())
+    cand_numbers = set(re.findall(r'\b\d+\b', candidate_raw))
     
     for art in recent_articles:
         art_title = art.get('title', '').lower()
         art_norm = re.sub(r'[^\w\s]', ' ', art_title)
-        art_words = set(w for w in art_norm.split() if len(w) > 3)
+        art_words = set(w for w in art_norm.split() if len(w) > 2 and not w.isdigit())
+        art_numbers = set(re.findall(r'\b\d+\b', art_title))
+        
+        # Проверка ключевых латинских сущностей (Gemini, Trump, SpaceX, 10M)
+        cand_entities = set(re.findall(r'[a-zA-Z0-9]+', candidate_raw))
+        art_entities = set(re.findall(r'[a-zA-Z0-9]+', art_title))
+        if cand_entities and art_entities:
+            common_ent = cand_entities.intersection(art_entities)
+            meaningful_ent = [e for e in common_ent if e not in {'coindesk', 'cointelegraph', 'news', 'crypto', 'https', 'com'}]
+            if len(meaningful_ent) >= 2 and cand_numbers and cand_numbers.intersection(art_numbers):
+                print(f"[news_engine] Блокировка дубликата по ключевым сущностям и числам: {meaningful_ent} + {cand_numbers.intersection(art_numbers)}")
+                return True
+
         if cand_words and art_words:
             overlap = cand_words.intersection(art_words)
-            if len(overlap) >= 3 or (len(cand_words) > 0 and len(overlap) / len(cand_words) >= 0.45):
-                print(f"[news_engine] Обнаружен дубликат по ключевым словам: '{news_title}' <-> '{art['title']}'")
+            max_len = max(len(cand_words), len(art_words))
+            ratio = len(overlap) / max_len if max_len > 0 else 0
+            if ratio >= 0.45 or (ratio >= 0.35 and cand_numbers and cand_numbers.intersection(art_numbers)):
+                print(f"[news_engine] Обнаружен дубликат по перекрытию слов ({int(ratio*100)}%): '{news_title}' <-> '{art['title']}'")
                 return True
 
     for top in recent_topics:
         top_norm = re.sub(r'[^\w\s]', ' ', top.lower())
-        top_words = set(w for w in top_norm.split() if len(w) > 3)
+        top_words = set(w for w in top_norm.split() if len(w) > 2 and not w.isdigit())
         if cand_words and top_words:
             overlap = cand_words.intersection(top_words)
-            if len(overlap) >= 3:
+            max_len = max(len(cand_words), len(top_words))
+            ratio = len(overlap) / max_len if max_len > 0 else 0
+            if ratio >= 0.45:
                 print(f"[news_engine] Обнаружен дубликат по названию темы: '{news_title}' <-> '{top}'")
                 return True
 
@@ -2329,6 +2397,11 @@ def main():
         telegram_caption = post_data["telegram_caption"]
         full_article = post_data["full_article"]
         russian_title = post_data["russian_title"]
+        
+        if is_russian_title_duplicate(russian_title):
+            print(f"[news_engine] Блокировка: сгенерированный заголовок '{russian_title}' имеет совпадение с имеющейся статьей >=50%. Пропускаем.")
+            save_processed_id(item['id'])
+            continue
         
         # Защита от пустого/короткого текста поста
         MIN_CAPTION_LEN = 80
