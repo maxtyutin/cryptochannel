@@ -20,16 +20,16 @@ from tweet_template_generator import generate_tweet_card_html
 from playwright.sync_api import sync_playwright
 
 INFLUENCERS = [
-    {"username": "VitalikButerin", "name": "vitalik.eth", "subtitle": "Создатель Ethereum"},
-    {"username": "saylor", "name": "Michael Saylor", "subtitle": "Глава MicroStrategy"},
-    {"username": "cz_binance", "name": "CZ 🔶 Binance", "subtitle": "Основатель Binance"},
-    {"username": "brian_armstrong", "name": "Brian Armstrong", "subtitle": "CEO Coinbase"},
-    {"username": "elonmusk", "name": "Elon Musk", "subtitle": "Глава X & Tesla"},
-    {"username": "aeyakovenko", "name": "Anatoly Yakovenko", "subtitle": "Основатель Solana"},
-    {"username": "CryptoHayes", "name": "Arthur Hayes", "subtitle": "Основатель BitMEX"},
-    {"username": "paoloardoino", "name": "Paolo Ardoino", "subtitle": "CEO Tether (USDT)"},
-    {"username": "justinsuntron", "name": "Justin Sun", "subtitle": "Основатель TRON"},
-    {"username": "IOHK_Charles", "name": "Charles Hoskinson", "subtitle": "Создатель Cardano"}
+    {"username": "VitalikButerin", "name": "vitalik.eth", "role": "Создатель Ethereum"},
+    {"username": "saylor", "name": "Michael Saylor", "role": "Глава MicroStrategy"},
+    {"username": "cz_binance", "name": "CZ 🔶 Binance", "role": "Основатель Binance"},
+    {"username": "brian_armstrong", "name": "Brian Armstrong", "role": "CEO Coinbase"},
+    {"username": "elonmusk", "name": "Elon Musk", "role": "Глава X & Tesla"},
+    {"username": "aeyakovenko", "name": "Anatoly Yakovenko", "role": "Основатель Solana"},
+    {"username": "CryptoHayes", "name": "Arthur Hayes", "role": "Основатель BitMEX"},
+    {"username": "paoloardoino", "name": "Paolo Ardoino", "role": "CEO Tether (USDT)"},
+    {"username": "justinsuntron", "name": "Justin Sun", "role": "Основатель TRON"},
+    {"username": "IOHK_Charles", "name": "Charles Hoskinson", "role": "Создатель Cardano"}
 ]
 
 def format_count(num):
@@ -42,16 +42,33 @@ def format_count(num):
         return f"{num/1000:.1f}K".replace('.0', '').replace('.', ',') + " тыс."
     return str(num)
 
+def clean_tweet_text(text):
+    """
+    Удаляет весь лишний мусор UI, ссылки вещаний и утекающие счетчики типа 4.1K, 31K, 4.7M
+    """
+    if not text:
+        return ""
+    lines = [l.strip() for l in text.split('\n') if l.strip()]
+    clean_lines = []
+    for l in lines:
+        # Фильтруем чистые числа или числа с K/M (например: 4.1K, 31K, 4.7M, 277K)
+        if re.match(r'^\d+(\.\d+)?[KMkmM]?$', l):
+            continue
+        # Фильтруем служебные строки X UI
+        if any(x in l for x in ['Replies', 'Retweets', 'Likes', 'Views', 'Bookmarks', 'x.com/i/broadcasts/']):
+            continue
+        clean_lines.append(l)
+    return "\n".join(clean_lines)
+
 def fetch_top10_tweets_from_apify():
-    """Единый пакетный запрос к Apify API для 10 инфлюенсеров"""
     dataset_id = "w0g162dfGxl7oovEG"
     url = f"https://api.apify.com/v2/datasets/{dataset_id}/items?token={apify_token}"
-    print(f"[influencers_engine] Проверка обновлений 10 инфлюенсеров через Apify...")
+    print(f"[influencers_engine] Получение данных твитов через Apify API...")
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=12) as resp:
             data = json.loads(resp.read().decode('utf-8'))
-            print(f"[influencers_engine] Получено {len(data)} постов.")
+            print(f"[influencers_engine] УСПЕХ: Загружено {len(data)} постов.")
             return data
     except Exception as e:
         print(f"[influencers_engine] Ошибка Apify: {e}")
@@ -74,18 +91,21 @@ def process_influencers_feed():
         if tweet_id in processed_ids:
             continue
             
-        full_text = tweet.get("text") or tweet.get("fullText") or ""
+        raw_text = tweet.get("text") or tweet.get("fullText") or ""
+        full_text = clean_tweet_text(raw_text)
+        if not full_text or len(full_text) < 10:
+            continue
+
         author = tweet.get("author", {})
         author_username = author.get("userName", "")
         author_name = author.get("name", author_username)
         author_handle = f"@{author_username}"
         avatar_url = author.get("profileImageUrl")
         
-        # Находим русскоязычную подпись роли автора
         matched_inf = next((x for x in INFLUENCERS if x["username"].lower() == author_username.lower()), None)
-        author_role = matched_inf["subtitle"] if matched_inf else "Крипто-эксперт"
+        author_role = matched_inf["role"] if matched_inf else "Крипто-эксперт"
 
-        print(f"\n[influencers_engine] Новый твит от {author_name} ({author_handle}): {full_text[:80]}...")
+        print(f"\n[influencers_engine] Обработка твита {author_name} ({author_handle}): {full_text[:70]}...")
 
         replies_cnt = format_count(tweet.get("replyCount", 0))
         retweets_cnt = format_count(tweet.get("retweetCount", 0))
@@ -103,7 +123,7 @@ def process_influencers_feed():
 "{full_text}"
 
 Твоя задача:
-1. Создать заголовок 'russian_title' с эмодзи в начале, подчеркивающий автора (например: '⚡️ МАЙКЛ СЭЙЛОР О ПОКУПКЕ БИТКОИНА').
+1. Создать заголовок 'russian_title' с эмодзи в начале, подчеркивающий автора (например: '⚡️ ИЛОН МАСК О БУДУЩЕМ ИИ').
 2. Написать лаконичный аналитический пост 'telegram_caption' на русском языке (до 550 символов) с разбором смысла и блоком 'Что это значит для рынка? 🤔'.
 КАТЕГОРИЧЕСКИ НЕ ДОБАВЛЯЙ никаких ссылок на оригинальный твит или X.com!
 
@@ -161,11 +181,9 @@ def process_influencers_feed():
         if bot_token and chat_id and os.path.exists(card_png_path):
             sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
             if sent:
-                print(f"[influencers_engine] УСПЕХ: Пост {author_name} опубликован в Telegram!")
+                print(f"[influencers_engine] УСПЕХ: Чистая карточка твита от {author_name} опубликована в Telegram!")
                 save_processed_id(tweet_id)
                 published_count += 1
-                if published_count >= 2: # Ограничиваем до 2 постов за прогон, чтобы не спамить
-                    break
 
 if __name__ == "__main__":
     process_influencers_feed()
