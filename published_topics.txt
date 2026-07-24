@@ -1,4 +1,3 @@
-Morning Minute: Bitcoin's New $15M Quantum Defense Fund
 Crypto home invasions jump 20x as wrench-attack exposure hits $124 million
 Institutional crypto trading platform LMAX is exploring sale, IPO
 Sam Altman-backed World Network secures $52.5 million in fresh funding to fight online AI deepfakes
@@ -18,3 +17,4 @@ Eaton and nVent Electric scale revenues amid AI data center boom, with ripple ef
 Claude Opus 5 Outscores Fable 5 on Most Benchmarks—At Half the Price
 FBI used Google cookies, 500 food orders and a Monero seed phrase to identify Steam malware funder
 BlackRock’s IBIT accounted for 90% of a $225 million Bitcoin ETF reversal after a seven-day buying streak
+Samsung Wallet Will Add Stablecoin Support, Including USDC
