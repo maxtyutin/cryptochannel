@@ -8,13 +8,9 @@ AVATARS_DIR = os.path.join(BASE_DIR, "images/avatars")
 os.makedirs(AVATARS_DIR, exist_ok=True)
 
 def get_base64_avatar_for_user(username="VitalikButerin", avatar_url=None):
-    """
-    Скачивает и кодирует в Base64 УНИКАЛЬНУЮ аватарку ДЛЯ КАЖДОГО конкретного инфлюенсера!
-    """
     clean_user = username.replace("@", "").strip()
     local_avatar_path = os.path.join(AVATARS_DIR, f"{clean_user}.jpg")
     
-    # Загружаем с проверенных сервисов аватарку конкретного пользователя
     urls_to_try = []
     if avatar_url and avatar_url.startswith("http"):
         urls_to_try.append(avatar_url)
@@ -56,10 +52,6 @@ def generate_tweet_card_html(
     bookmarks_cnt="234",
     output_html_path="tweet_card.html"
 ):
-    """
-    Генерирует HTML-шаблон твита с уникальной аватаркой автора (Base64)
-    и ПОЛНЫМ текстом твита в оригинале на английском языке.
-    """
     username = author_handle.replace("@", "")
     avatar_base64 = get_base64_avatar_for_user(username=username, avatar_url=avatar_url)
         
@@ -67,7 +59,8 @@ def generate_tweet_card_html(
     if attached_img_url:
         img_html = f'<div class="media-container"><img src="{attached_img_url}" class="media-img"/></div>'
 
-    formatted_text = tweet_text_en.replace("\n", "<br><br>")
+    # Естественные переносы строк как на X.com без огромных искусственных отступов
+    formatted_text = tweet_text_en.strip()
         
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -93,9 +86,9 @@ def generate_tweet_card_html(
   .verified-badge {{ width: 18px; height: 18px; fill: #1d9bf0; }}
   .author-handle {{ font-size: 15px; color: #536471; }}
   .more-btn {{ color: #536471; font-size: 18px; font-weight: bold; cursor: pointer; }}
-  .tweet-text {{ font-size: 17px; line-height: 1.45; color: #0f1419; margin-bottom: 14px; word-wrap: break-word; }}
+  .tweet-text {{ font-size: 16px; line-height: 1.38; color: #0f1419; margin-bottom: 14px; word-wrap: break-word; white-space: pre-wrap; }}
   .media-container {{ margin-bottom: 14px; border-radius: 12px; overflow: hidden; border: 1px solid #cfd9de; }}
-  .media-img {{ width: 100%; max-height: 380px; object-fit: cover; display: block; }}
+  .media-img {{ width: 100%; height: auto; display: block; object-fit: contain; max-height: none; }}
   .meta-row {{ font-size: 15px; color: #536471; border-bottom: 1px solid #eff3f4; padding-bottom: 12px; margin-bottom: 12px; display: flex; gap: 6px; align-items: center; }}
   .meta-views {{ font-weight: 700; color: #0f1419; }}
   .metrics-row {{ display: flex; justify-content: space-between; align-items: center; color: #536471; font-size: 14px; padding: 0 10px; }}
