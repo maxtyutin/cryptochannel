@@ -796,3 +796,4 @@ https://news.bitcoin.com/grayscale-says-fed-policy-could-decide-if-bitcoin-bear-
 https://cryptobriefing.com/bahrain-intercepts-iranian-aerial-attacks-amid-regional-tensions/
 https://cryptobriefing.com/meta-pauses-smart-glasses-subscription/
 https://cryptobriefing.com/robinhood-crypto-com-prediction-markets-expansion/
+https://cryptobriefing.com/bitwise-launches-new-onchain-vault/
