@@ -766,3 +766,4 @@ https://decrypt.co/374282/nvidia-meta-microsoft-washington-dont-kill-open-source
 https://cryptoslate.com/zilliqa-says-roughly-5-native-ledger-signatures-can-expose-a-key-rescuing-the-funds-becomes-a-race-against-attackers/
 https://cointelegraph.com/news/crypto-advocacy-groups-support-clarity-act-pushback-ethics-rules?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://news.bitcoin.com/exploiting-private-data-lawsuit-claims-bitmex-used-god-access-to-force-customer-liquidations/
+https://news.bitcoin.com/bitcoin-keeps-hitting-a-68000-wall-a-3-55-million-btc-cluster-helps-explain-why/
