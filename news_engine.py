@@ -2030,6 +2030,17 @@ def main():
     args = sys.argv[1:]
     
     if "--digest" in args:
+        # Проверяем минуто-часовой диапазон прямо в Python
+        import datetime
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        current_minute = now_utc.minute
+        
+        # Если запущено автоматически при 15-минутном прогоне, дайджест выполняется ТОЛЬКО в 00 минут часа (09:00 / 18:00 MSK)
+        # Если минутный интервал >= 12 (например, 15, 31, 38 мин), авто-дайджест пропускается!
+        if current_minute >= 12 and "--force" not in args:
+            print(f"[news_engine] Авто-дайджест пропускается (запускается строго в 00 минут часа 09:00/18:00 MSK, текущие минуты: {current_minute}).")
+            return
+
         digest_lock = os.path.join(BASE_DIR, "last_digest_sent.txt")
         now_ts = time.time()
         if os.path.exists(digest_lock):
@@ -2055,6 +2066,9 @@ def main():
                             f.write(str(now_ts))
                     except Exception:
                         pass
+                    pat = os.environ.get("GITHUB_PAT") or env.get("GITHUB_PAT")
+                    if pat:
+                        git_sync_and_push(pat, "Update digest timestamp lock [skip ci]", ["last_digest_sent.txt"])
                 else:
                     print("Не удалось отправить дайджест в Telegram.")
         return
