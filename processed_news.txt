@@ -771,3 +771,4 @@ https://news.bitcoin.com/bitcoin-miner-poolin-technology-files-chapter-11-with-1
 https://cryptobriefing.com/verizon-google-dark-fiber-deal/
 https://cryptobriefing.com/tech-titans-defend-open-source-ai/
 https://cryptobriefing.com/eaton-nvent-ai-data-center-revenue-growth/
+https://decrypt.co/374305/claude-opus-5-outscores-fable-5-most-benchmarks-half-price

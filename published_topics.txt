@@ -1,4 +1,3 @@
-A quantum roadmap would push Bitcoin much higher: Charles Edwards
 Odos Protocol to shut down, gives users until July 30 to withdraw assets
 RWAs become Hyperliquid’s largest trading category
 Morning Minute: Bitcoin's New $15M Quantum Defense Fund
@@ -18,3 +17,4 @@ Exploiting Private Data: Lawsuit Claims BitMEX Used ‘God Access’ to Force Cu
 Bitcoin Keeps Hitting a $68,000 Wall—A 3.55 Million BTC Cluster Helps Explain Why
 Verizon signs $1B deal with Google for dark fiber infrastructure as AI data demands surge
 Eaton and nVent Electric scale revenues amid AI data center boom, with ripple effects for crypto mining
+Claude Opus 5 Outscores Fable 5 on Most Benchmarks—At Half the Price
