@@ -2283,6 +2283,13 @@ def main():
             print("Параметры Telegram не настроены. Опрос не отправлен.")
         return
 
+    # 0. Проверяем твиты 10 инфлюенсеров через Apify
+    try:
+        from apify_vitalik_engine import process_influencers_feed
+        process_influencers_feed()
+    except Exception as e:
+        print(f"[news_engine] Ошибка проверки инфлюенсеров: {e}")
+
     category = "news"
     
     # Реконсиляция (синхронизация): проверяем, есть ли статьи в articles.json,

@@ -6,7 +6,7 @@ import urllib.request
 import re
 from PIL import Image
 
-BASE_DIR = "/Users/maxtyutin/antigravity/Cryptochannel"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 from news_engine import load_env, call_gemini_api, send_photo_to_telegram, save_processed_id, is_russian_title_duplicate
 
@@ -19,8 +19,20 @@ apify_token = os.environ.get("APIFY_API_TOKEN") or env.get("APIFY_API_TOKEN")
 from tweet_template_generator import generate_tweet_card_html
 from playwright.sync_api import sync_playwright
 
+INFLUENCERS = [
+    {"username": "VitalikButerin", "name": "vitalik.eth", "subtitle": "Создатель Ethereum"},
+    {"username": "saylor", "name": "Michael Saylor", "subtitle": "Глава MicroStrategy"},
+    {"username": "cz_binance", "name": "CZ 🔶 Binance", "subtitle": "Основатель Binance"},
+    {"username": "brian_armstrong", "name": "Brian Armstrong", "subtitle": "CEO Coinbase"},
+    {"username": "elonmusk", "name": "Elon Musk", "subtitle": "Глава X & Tesla"},
+    {"username": "aeyakovenko", "name": "Anatoly Yakovenko", "subtitle": "Основатель Solana"},
+    {"username": "CryptoHayes", "name": "Arthur Hayes", "subtitle": "Основатель BitMEX"},
+    {"username": "paoloardoino", "name": "Paolo Ardoino", "subtitle": "CEO Tether (USDT)"},
+    {"username": "justinsuntron", "name": "Justin Sun", "subtitle": "Основатель TRON"},
+    {"username": "IOHK_Charles", "name": "Charles Hoskinson", "subtitle": "Создатель Cardano"}
+]
+
 def format_count(num):
-    """Форматирует числа в стиль X (например 302398 -> 302.4K / 302,4 тыс.)"""
     if not num:
         return "0"
     num = int(num)
@@ -30,25 +42,24 @@ def format_count(num):
         return f"{num/1000:.1f}K".replace('.0', '').replace('.', ',') + " тыс."
     return str(num)
 
-def fetch_vitalik_tweets_from_apify():
-    """Получает свежие данные твитов Виталика Бутерина из Apify API"""
+def fetch_top10_tweets_from_apify():
+    """Единый пакетный запрос к Apify API для 10 инфлюенсеров"""
     dataset_id = "w0g162dfGxl7oovEG"
     url = f"https://api.apify.com/v2/datasets/{dataset_id}/items?token={apify_token}"
-    print(f"[apify_engine] Запрос к Apify API датасету: {dataset_id}...")
+    print(f"[influencers_engine] Проверка обновлений 10 инфлюенсеров через Apify...")
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=12) as resp:
             data = json.loads(resp.read().decode('utf-8'))
-            print(f"[apify_engine] УСПЕХ: Получено {len(data)} твитов из Apify.")
+            print(f"[influencers_engine] Получено {len(data)} постов.")
             return data
     except Exception as e:
-        print(f"[apify_engine] Ошибка получения данных из Apify: {e}")
+        print(f"[influencers_engine] Ошибка Apify: {e}")
         return []
 
-def process_apify_vitalik_tweets():
-    tweets = fetch_vitalik_tweets_from_apify()
+def process_influencers_feed():
+    tweets = fetch_top10_tweets_from_apify()
     if not tweets:
-        print("[apify_engine] Твитов не найдено.")
         return False
         
     proc_file = os.path.join(BASE_DIR, "processed_news.txt")
@@ -57,37 +68,43 @@ def process_apify_vitalik_tweets():
         with open(proc_file, 'r', encoding='utf-8') as f:
             processed_ids = set(line.strip() for line in f if line.strip())
 
+    published_count = 0
     for tweet in tweets:
         tweet_id = str(tweet.get("id"))
         if tweet_id in processed_ids:
             continue
             
-        print(f"\n[apify_engine] Обработка твита ID {tweet_id}...")
         full_text = tweet.get("text") or tweet.get("fullText") or ""
         author = tweet.get("author", {})
-        author_name = author.get("name", "vitalik.eth")
-        author_handle = f"@{author.get('userName', 'VitalikButerin')}"
+        author_username = author.get("userName", "")
+        author_name = author.get("name", author_username)
+        author_handle = f"@{author_username}"
         avatar_url = author.get("profileImageUrl")
         
+        # Находим русскоязычную подпись роли автора
+        matched_inf = next((x for x in INFLUENCERS if x["username"].lower() == author_username.lower()), None)
+        author_role = matched_inf["subtitle"] if matched_inf else "Крипто-эксперт"
+
+        print(f"\n[influencers_engine] Новый твит от {author_name} ({author_handle}): {full_text[:80]}...")
+
         replies_cnt = format_count(tweet.get("replyCount", 0))
         retweets_cnt = format_count(tweet.get("retweetCount", 0))
         likes_cnt = format_count(tweet.get("likeCount", 0))
         views_cnt = format_count(tweet.get("viewCount", 0))
         bookmarks_cnt = format_count(tweet.get("bookmarkCount", 0))
         
-        # Получаем прикрепленное медиа (если есть)
         attached_media_url = None
         media_list = tweet.get("media", [])
         if media_list and isinstance(media_list, list):
             attached_media_url = media_list[0].get("media_url_https") or media_list[0].get("url")
             
-        # 1. Запрос к Gemini для аналитической выжимки на русском для Telegram
-        prompt = f"""Ниже 100% оригинальный текст твита Виталика Бутерина из X.com:
+        # 1. Запрос к ИИ для создания русскоязычного аналитического поста для Telegram
+        prompt = f"""Ниже свежий оригинальный твит от {author_name} ({author_role}) из X.com:
 "{full_text}"
 
 Твоя задача:
-1. Создать броский заголовок 'russian_title' с эмодзи в начале (капсом).
-2. Написать лаконичный аналитический пост 'telegram_caption' на русском языке (до 550 символов) с разбором сути предложения Виталика и блоком 'Что это значит для рынка? 🤔'.
+1. Создать заголовок 'russian_title' с эмодзи в начале, подчеркивающий автора (например: '⚡️ МАЙКЛ СЭЙЛОР О ПОКУПКЕ БИТКОИНА').
+2. Написать лаконичный аналитический пост 'telegram_caption' на русском языке (до 550 символов) с разбором смысла и блоком 'Что это значит для рынка? 🤔'.
 КАТЕГОРИЧЕСКИ НЕ ДОБАВЛЯЙ никаких ссылок на оригинальный твит или X.com!
 
 Верни JSON с ключами russian_title и telegram_caption.
@@ -105,17 +122,17 @@ def process_apify_vitalik_tweets():
         telegram_caption = parsed["telegram_caption"]
 
         if is_russian_title_duplicate(russian_title):
-            print(f"[apify_engine] Блокировка дубликата заголовка: {russian_title}")
+            print(f"[influencers_engine] Пропуск дубликата: {russian_title}")
             save_processed_id(tweet_id)
             continue
 
-        # 2. Генерируем HTML карточку твита с данными Apify
+        # 2. Рендеринг карточки твита
         html_path = os.path.join(BASE_DIR, f"scratch_tweet_{tweet_id}.html")
         generate_tweet_card_html(
             author_name=author_name,
             author_handle=author_handle,
             avatar_url=avatar_url,
-            date_str="21 июл. 2026 г.",
+            date_str="24 июл. 2026 г.",
             tweet_text_en=full_text,
             attached_img_url=attached_media_url,
             views_str=views_cnt,
@@ -126,8 +143,7 @@ def process_apify_vitalik_tweets():
             output_html_path=html_path
         )
 
-        # 3. Рендерим HTML в Retina 2K PNG через Playwright
-        card_png_path = os.path.join(BASE_DIR, f"images/apify_tweet_{tweet_id}.png")
+        card_png_path = os.path.join(BASE_DIR, f"images/influencer_tweet_{tweet_id}.png")
         os.makedirs(os.path.dirname(card_png_path), exist_ok=True)
 
         with sync_playwright() as p:
@@ -140,16 +156,16 @@ def process_apify_vitalik_tweets():
             card_el.screenshot(path=card_png_path)
             browser.close()
 
-        print(f"[apify_engine] Идеальная карточка твита создана -> {card_png_path}")
-
-        # 4. Отправляем в Telegram без ссылок
+        # 3. Публикация в Telegram
         final_caption = f"<b>{russian_title}</b>\n\n{telegram_caption}"
         if bot_token and chat_id and os.path.exists(card_png_path):
             sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
             if sent:
-                print(f"[apify_engine] УСПЕХ: Пост по твиту ID {tweet_id} опубликован в Telegram!")
+                print(f"[influencers_engine] УСПЕХ: Пост {author_name} опубликован в Telegram!")
                 save_processed_id(tweet_id)
-                return True
+                published_count += 1
+                if published_count >= 2: # Ограничиваем до 2 постов за прогон, чтобы не спамить
+                    break
 
 if __name__ == "__main__":
-    process_apify_vitalik_tweets()
+    process_influencers_feed()
