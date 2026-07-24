@@ -4,7 +4,6 @@ import json
 import time
 import urllib.request
 import re
-from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
@@ -43,19 +42,14 @@ def format_count(num):
     return str(num)
 
 def clean_tweet_text(text):
-    """
-    Строго удаляет весь мусор UI, ссылки вещаний и утекающие счетчики активности типа 4.1K, 31K, 4.7M
-    """
     if not text:
         return ""
     lines = [l.strip() for l in text.split('\n') if l.strip()]
     clean_lines = []
     for l in lines:
-        # Фильтруем чистые числа или числа с K/M (например: 4.1K, 31K, 4.7M, 277K)
         if re.match(r'^\d+(\.\d+)?[KMkmM]?$', l):
             continue
-        # Фильтруем служебные строки X UI и трансляций
-        if any(x in l for x in ['Replies', 'Retweets', 'Likes', 'Views', 'Bookmarks', 'x.com/i/broadcasts/']):
+        if any(x in l for x in ['Replies', 'Retweets', 'Likes', 'Views', 'Bookmarks', 'x.com/i/broadcasts/', 'Show more', 'Показать еще']):
             continue
         clean_lines.append(l)
     return "\n".join(clean_lines)
@@ -79,6 +73,16 @@ def fetch_influencer_tweets_playwright(target):
             
             articles = pg.locator('article').all()
             for art in articles[:2]:
+                # КЛИКАЕМ НА КНОПКУ 'Show more' / 'Показать еще', если пост свернут!
+                show_more = art.locator('[data-testid="tweet-text-show-more-link"], span:has-text("Show more"), span:has-text("Показать еще")')
+                if show_more.count() > 0:
+                    try:
+                        show_more.first.click()
+                        time.sleep(0.5)
+                        print(f"[engine_10] Раскрыта кнопка 'Show more' для {name}!")
+                    except Exception:
+                        pass
+                        
                 text = art.inner_text()
                 
                 img_el = art.locator('img[src*="pbs.twimg.com/media"]').first
@@ -122,9 +126,9 @@ def process_all_10_today():
                 print(f"[engine_10] Уже опубликован твит от {name}")
                 continue
 
-            print(f"\n[engine_10] Публикация чистого твита от {name} (@{username})...")
+            print(f"\n[engine_10] Публикация 100% ПОЛНОГО твита от {name} (@{username})...")
 
-            prompt = f"""Ниже сегодняшняя публикация от {name} ({role}) из X.com:
+            prompt = f"""Ниже 100% оригинальный развернутый твит от {name} ({role}) из X.com:
 "{full_text}"
 
 Твоя задача:
@@ -167,7 +171,7 @@ def process_all_10_today():
                 output_html_path=html_path
             )
 
-            card_png_path = os.path.join(BASE_DIR, f"images/clean_card_{username}_{idx}.png")
+            card_png_path = os.path.join(BASE_DIR, f"images/full_card_{username}_{idx}.png")
             os.makedirs(os.path.dirname(card_png_path), exist_ok=True)
 
             with sync_playwright() as p:
@@ -183,7 +187,7 @@ def process_all_10_today():
             if bot_token and chat_id and os.path.exists(card_png_path):
                 sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
                 if sent:
-                    print(f"[SUCCESS] Чистый твит от {name} БЕЗ МУСОРНЫХ ЦИФР опубликован!")
+                    print(f"[SUCCESS] 100% ПОЛНЫЙ твит от {name} (без сокращений) опубликован!")
                     save_processed_id(tweet_hash)
                     time.sleep(2)
                     break
