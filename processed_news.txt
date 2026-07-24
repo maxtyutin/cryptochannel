@@ -769,3 +769,5 @@ https://news.bitcoin.com/exploiting-private-data-lawsuit-claims-bitmex-used-god-
 https://news.bitcoin.com/bitcoin-keeps-hitting-a-68000-wall-a-3-55-million-btc-cluster-helps-explain-why/
 https://news.bitcoin.com/bitcoin-miner-poolin-technology-files-chapter-11-with-173m-debt-as-52m-asset-sale-moves-forward/
 https://cryptobriefing.com/verizon-google-dark-fiber-deal/
+https://cryptobriefing.com/tech-titans-defend-open-source-ai/
+https://cryptobriefing.com/eaton-nvent-ai-data-center-revenue-growth/
