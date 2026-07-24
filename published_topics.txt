@@ -1,4 +1,3 @@
-Nvidia, Meta, and Microsoft Tell Washington: Don't Kill Open-Source AI
 A 7 year Ledger bug lets attackers rebuild a private key from five signatures in seconds
 Exploiting Private Data: Lawsuit Claims BitMEX Used ‘God Access’ to Force Customer Liquidations
 Bitcoin Keeps Hitting a $68,000 Wall—A 3.55 Million BTC Cluster Helps Explain Why
@@ -18,3 +17,4 @@ Trump confirms US-Iran talks, undecided on military strikes
 Strive’s SATA recovers most of June decline, trades within 3% of par
 Scribe Therapeutics surges 67% after $129M IPO as biotech market heats up
 Russian missile strikes on Kyiv kill 10, injure 100 amid ongoing invasion
+Mozambique-flagged LPG tanker attacked in Iranian waters, Indian crew safe
