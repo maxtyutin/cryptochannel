@@ -1,16 +1,46 @@
 import os
 import sys
 import base64
+import urllib.request
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+AVATARS_DIR = os.path.join(BASE_DIR, "images/avatars")
+os.makedirs(AVATARS_DIR, exist_ok=True)
 
-def get_base64_avatar():
-    avatar_path = os.path.join(BASE_DIR, "images/vitalik_avatar.jpg")
-    if os.path.exists(avatar_path):
-        with open(avatar_path, "rb") as f:
+def get_base64_avatar_for_user(username="VitalikButerin", avatar_url=None):
+    """
+    Скачивает и кодирует в Base64 УНИКАЛЬНУЮ аватарку ДЛЯ КАЖДОГО конкретного инфлюенсера!
+    """
+    clean_user = username.replace("@", "").strip()
+    local_avatar_path = os.path.join(AVATARS_DIR, f"{clean_user}.jpg")
+    
+    # Загружаем с проверенных сервисов аватарку конкретного пользователя
+    urls_to_try = []
+    if avatar_url and avatar_url.startswith("http"):
+        urls_to_try.append(avatar_url)
+    urls_to_try.append(f"https://unavatar.io/twitter/{clean_user}")
+    
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
+    
+    if not os.path.exists(local_avatar_path) or os.path.getsize(local_avatar_path) < 1000:
+        for u in urls_to_try:
+            try:
+                req = urllib.request.Request(u, headers=headers)
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    content = resp.read()
+                    if len(content) > 1000:
+                        with open(local_avatar_path, "wb") as f:
+                            f.write(content)
+                        break
+            except Exception:
+                pass
+                
+    if os.path.exists(local_avatar_path) and os.path.getsize(local_avatar_path) > 1000:
+        with open(local_avatar_path, "rb") as f:
             encoded = base64.b64encode(f.read()).decode("utf-8")
             return f"data:image/jpeg;base64,{encoded}"
-    return "https://unavatar.io/twitter/VitalikButerin"
+            
+    return f"https://unavatar.io/twitter/{clean_user}"
 
 def generate_tweet_card_html(
     author_name="vitalik.eth",
@@ -27,11 +57,11 @@ def generate_tweet_card_html(
     output_html_path="tweet_card.html"
 ):
     """
-    Генерирует HTML-шаблон твита с гарантированным отображением 100% реальной аватарки (Base64)
-    и ПОЛНОГО текста твита в оригинале на английском языке.
+    Генерирует HTML-шаблон твита с уникальной аватаркой автора (Base64)
+    и ПОЛНЫМ текстом твита в оригинале на английском языке.
     """
-    if not avatar_url or avatar_url.startswith("http"):
-        avatar_url = get_base64_avatar()
+    username = author_handle.replace("@", "")
+    avatar_base64 = get_base64_avatar_for_user(username=username, avatar_url=avatar_url)
         
     img_html = ""
     if attached_img_url:
@@ -78,7 +108,7 @@ def generate_tweet_card_html(
 <div class="tweet-card">
   <div class="header">
     <div class="author-info">
-      <img src="{avatar_url}" class="avatar" alt="Vitalik Avatar"/>
+      <img src="{avatar_base64}" class="avatar" alt="Avatar"/>
       <div class="name-box">
         <div class="name-row">
           <span class="author-name">{author_name}</span>
