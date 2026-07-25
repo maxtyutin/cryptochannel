@@ -1,4 +1,3 @@
-BloFin Wallet Unifies Visa Payments and Perpetual Trading for the Next Era of Finance
 Bitcoin’s Difficulty Adjustment Explained: How the Network Punishes Itself Every Two Weeks
 Democratizing weather derivatives through tokenization could be crypto's most important real-world use case
 Bitcoin Continues to Flirt With $64,000 After $225 Million ETF Outflow Rattles Confidence
@@ -18,3 +17,4 @@ Google backs open-weight AI letter alongside OpenAI and xAI, signaling a unified
 Wise expected to resubmit US charter application under GENIUS
 DeFi Aggregator Odos Closes Doors, Leaves Users 5 Days to Move Locked Funds
 Trust Stamp joins EU semiconductor initiative to build biometric identity into chips
+Trump ties Saudi nuclear deal to Abraham Accords, adding new wildcard to Middle East diplomacy
