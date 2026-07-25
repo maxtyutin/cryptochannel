@@ -1,4 +1,3 @@
-Strive’s SATA recovers most of June decline, trades within 3% of par
 Scribe Therapeutics surges 67% after $129M IPO as biotech market heats up
 Russian missile strikes on Kyiv kill 10, injure 100 amid ongoing invasion
 Mozambique-flagged LPG tanker attacked in Iranian waters, Indian crew safe
@@ -18,3 +17,4 @@ SK Group chairman says Anthropic is building its own computing power, signaling 
 382,000-Member Police Group Supports Revised Crypto CLARITY Act
 Boring Company reportedly seeks funding at $20B valuation, more than double its last known price tag
 📈 МАРЖИНАЛЬНЫЙ ДОЛГ В США ДОСТИГ ИСТОРИЧЕСКОГО РЕКОРДА В $1,5 ТРЛН
+OpenAI’s AI agent hacked Hugging Face undetected for a week, raising alarm across AI and crypto sectors
