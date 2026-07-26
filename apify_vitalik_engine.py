@@ -284,20 +284,35 @@ def fetch_all_influencer_tweets():
                     except Exception:
                         pass
 
-                    # ID твита (фильтруем ретвиты других пользователей)
+                    # ID твита и проверка на ретвит
                     tweet_id = None
+                    orig_author = username
+                    orig_author_name = inf["name"]
+                    is_retweet = False
                     try:
-                        link_el = art.locator(f'a[href*="/{username}/status/"]').first
+                        link_el = art.locator('a[href*="/status/"]').first
                         if link_el.count() > 0:
                             href = link_el.get_attribute('href', timeout=2000) or ""
-                            if "/status/" in href:
-                                tweet_id = href.split("/status/")[-1].split("?")[0]
+                            parts = href.strip('/').split('/')
+                            if len(parts) >= 3 and parts[1] == 'status':
+                                orig_author = parts[0]
+                                tweet_id = parts[2].split("?")[0]
                     except Exception:
                         pass
 
                     if not tweet_id:
-                        print(f"[playwright] @{username}: пропускаем чужой ретвит #{i}")
                         continue
+
+                    if orig_author.lower() != username.lower():
+                        is_retweet = True
+                        try:
+                            user_name_el = art.locator('[data-testid="User-Name"]').first
+                            if user_name_el.count() > 0:
+                                orig_author_name = user_name_el.inner_text().split('\n')[0].strip()
+                            else:
+                                orig_author_name = f"@{orig_author}"
+                        except Exception:
+                            orig_author_name = f"@{orig_author}"
 
                     # Счётчики активности
                     replies_cnt = "0"
@@ -318,7 +333,7 @@ def fetch_all_influencer_tweets():
 
                     # Получаем 100% полный текст без обрезки через прямую страницу статуса твита
                     if tweet_id and not tweet_id.startswith("pw_"):
-                        raw_text = fetch_untruncated_tweet_text(pg, username, tweet_id, raw_text)
+                        raw_text = fetch_untruncated_tweet_text(pg, orig_author, tweet_id, raw_text)
 
                     result = {
                         "id": tweet_id,
@@ -329,9 +344,13 @@ def fetch_all_influencer_tweets():
                         "inf_role": inf["role"],
                         "likes": likes_cnt,
                         "retweets": retweets_cnt,
-                        "replies": replies_cnt
+                        "replies": replies_cnt,
+                        "is_retweet": is_retweet,
+                        "orig_author_handle": f"@{orig_author}",
+                        "orig_author_name": orig_author_name
                     }
-                    print(f"[playwright] @{username}: твит найден #{i}, ID={tweet_id} | ❤️ {likes_cnt} | 🔁 {retweets_cnt} | 💬 {replies_cnt}")
+                    rt_tag = f" [Ретвит от {inf['name']}]" if is_retweet else ""
+                    print(f"[playwright] @{username}{rt_tag}: твит найден #{i}, ID={tweet_id} | ❤️ {likes_cnt} | 🔁 {retweets_cnt} | 💬 {replies_cnt}")
                     break
 
                 if result:
@@ -368,24 +387,29 @@ def process_influencers_feed():
         if not full_text or len(full_text) < 10:
             continue
 
-        username = tweet.get("username", "")
-        author_name = tweet.get("inf_name", username)
-        author_role = tweet.get("inf_role", "Крипто-эксперт")
-        author_handle = f"@{username}"
-        attached_media_url = tweet.get("media_url")
+        is_retweet = tweet.get("is_retweet", False)
+        retweeted_by_name = author_name if is_retweet else None
 
-        print(f"\n[influencers_engine] Обработка твита {author_name} ({author_handle}): {full_text[:70]}...")
+        if is_retweet:
+            card_author_name = tweet.get("orig_author_name", "Author")
+            card_author_handle = tweet.get("orig_author_handle", "@author")
+        else:
+            card_author_name = author_name
+            card_author_handle = author_handle
+
+        print(f"\n[influencers_engine] Обработка твита {card_author_name} ({card_author_handle}) [Ретвитнул: {retweeted_by_name}]: {full_text[:70]}...")
 
         replies_cnt = tweet.get("replies", "0")
         retweets_cnt = tweet.get("retweets", "0")
         likes_cnt = tweet.get("likes", "0")
 
         # 1. Запрос к ИИ для создания русскоязычного аналитического поста для Telegram
-        prompt = f"""Ниже свежий оригинальный твит от {author_name} ({author_role}) из X.com:
+        retweet_context = f"(ВНИМАНИЕ: Это РЕТВИТ, который {author_name} ретвитнул себе в профиль. В заголовке напиши '[🔄 Ретвит от {author_name}]')" if is_retweet else f"от {author_name} ({author_role})"
+        prompt = f"""Ниже свежий твит из X.com {retweet_context}:
 "{full_text}"
 
 Твоя задача:
-1. Создать заголовок 'russian_title' с эмодзи в начале, подчеркивающий автора (например: '⚡️ ИЛОН МАСК О БУДУЩЕМ ИИ').
+1. Создать заголовок 'russian_title' с эмодзи в начале. Если это ретвит, обязательно добавь '[🔄 Ретвит от {author_name}]'.
 2. Написать лаконичный аналитический пост 'telegram_caption' на русском языке (до 550 символов) с разбором смысла и блоком 'Что это значит для рынка? 🤔'.
 КАТЕГОРИЧЕСКИ НЕ ДОБАВЛЯЙ никаких ссылок на оригинальный твит или X.com!
 
@@ -433,8 +457,8 @@ def process_influencers_feed():
         from datetime import datetime
         date_str = datetime.utcnow().strftime("%d %b. %Y г.")
         generate_tweet_card_html(
-            author_name=author_name,
-            author_handle=author_handle,
+            author_name=card_author_name,
+            author_handle=card_author_handle,
             avatar_url=None,
             date_str=date_str,
             tweet_text_en=full_text,
@@ -444,6 +468,7 @@ def process_influencers_feed():
             retweets_cnt=retweets_cnt,
             likes_cnt=likes_cnt,
             bookmarks_cnt="",
+            retweeted_by_name=retweeted_by_name,
             output_html_path=html_path
         )
 
