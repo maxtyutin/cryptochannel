@@ -16,6 +16,8 @@ bot_token = env.get("TELEGRAM_BOT_TOKEN")
 chat_id = env.get("TELEGRAM_CHAT_ID")
 apify_token = os.environ.get("APIFY_API_TOKEN") or env.get("APIFY_API_TOKEN")
 
+from supabase_engine_integration import cleanup_local_temp_images, get_processed_ids_from_supabase, save_processed_id_to_supabase
+
 from tweet_template_generator import generate_tweet_card_html
 from playwright.sync_api import sync_playwright
 
@@ -75,15 +77,12 @@ def fetch_top10_tweets_from_apify():
         return []
 
 def process_influencers_feed():
+    cleanup_local_temp_images()
     tweets = fetch_top10_tweets_from_apify()
     if not tweets:
         return False
         
-    proc_file = os.path.join(BASE_DIR, "processed_news.txt")
-    processed_ids = set()
-    if os.path.exists(proc_file):
-        with open(proc_file, 'r', encoding='utf-8') as f:
-            processed_ids = set(line.strip() for line in f if line.strip())
+    processed_ids = get_processed_ids_from_supabase()
 
     published_count = 0
     for tweet in tweets:
@@ -182,8 +181,9 @@ def process_influencers_feed():
             sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
             if sent:
                 print(f"[influencers_engine] УСПЕХ: Чистая карточка твита от {author_name} опубликована в Telegram!")
-                save_processed_id(tweet_id)
+                save_processed_id_to_supabase(tweet_id, author_name)
                 published_count += 1
+                cleanup_local_temp_images()
 
 if __name__ == "__main__":
     process_influencers_feed()
