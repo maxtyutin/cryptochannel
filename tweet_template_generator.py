@@ -52,6 +52,7 @@ def generate_tweet_card_html(
     likes_cnt="2 тыс.",
     bookmarks_cnt="234",
     retweeted_by_name=None,
+    retweet_info=None,
     output_html_path="tweet_card.html"
 ):
     username = author_handle.replace("@", "")
@@ -62,10 +63,11 @@ def generate_tweet_card_html(
         img_html = f'<div class="media-container"><img src="{attached_img_url}" class="media-img"/></div>'
 
     retweet_header_html = ""
-    if retweeted_by_name:
+    header_label = retweet_info or (f"Ретвитнул(а) от {retweeted_by_name}" if retweeted_by_name else None)
+    if header_label:
         retweet_header_html = f'''<div class="retweet-header">
   <svg class="retweet-badge-icon" viewBox="0 0 24 24"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.9 2 2 2H14v2H7.5C5.57 20 4 18.43 4 16.5V7.55L1.932 9.48.568 8.02 4.5 3.88zM19.5 20.12l-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.9-2-2-2H10V4h6.5C18.43 4 20 5.57 20 7.5v8.95l2.068-1.93 1.364 1.46-3.932 4.14z" fill="#536471"/></svg>
-  <span>Ретвитнул(а) <b>{retweeted_by_name}</b></span>
+  <span><b>{header_label}</b></span>
 </div>'''
 
     formatted_text = tweet_text_en.strip()

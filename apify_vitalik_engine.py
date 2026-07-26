@@ -391,28 +391,30 @@ def process_influencers_feed():
             continue
 
         is_retweet = tweet.get("is_retweet", False)
-        retweeted_by_name = author_name if is_retweet else None
+        orig_name = tweet.get("orig_author_name", "")
+        orig_handle = tweet.get("orig_author_handle", "")
 
+        # Аватар и имя карточки всегда принадлежат самому инфлюенсеру
+        card_author_name = author_name
+        card_author_handle = author_handle
+
+        retweet_info = None
         if is_retweet:
-            card_author_name = tweet.get("orig_author_name", "Author")
-            card_author_handle = tweet.get("orig_author_handle", "@author")
-        else:
-            card_author_name = author_name
-            card_author_handle = author_handle
+            retweet_info = f"Ретвитнул(а) от {orig_name}" if orig_name else f"Ретвитнул(а) от {orig_handle}"
 
-        print(f"\n[influencers_engine] Обработка твита {card_author_name} ({card_author_handle}) [Ретвитнул: {retweeted_by_name}]: {full_text[:70]}...")
+        print(f"\n[influencers_engine] Обработка твита {card_author_name} ({card_author_handle}) [{retweet_info or 'Оригинал'}]: {full_text[:70]}...")
 
         replies_cnt = tweet.get("replies", "0")
         retweets_cnt = tweet.get("retweets", "0")
         likes_cnt = tweet.get("likes", "0")
 
         # 1. Запрос к ИИ для создания русскоязычного аналитического поста для Telegram
-        retweet_context = f"(ВНИМАНИЕ: Это РЕТВИТ, который {author_name} ретвитнул себе в профиль. В заголовке напиши '[🔄 Ретвит от {author_name}]')" if is_retweet else f"от {author_name} ({author_role})"
+        retweet_context = f"(ВНИМАНИЕ: Это РЕТВИТ. {author_name} ретвитнул запись от {orig_name} ({orig_handle}). В заголовке или начале текста напиши '[🔄 Ретвит от {orig_name}]')" if is_retweet else f"от {author_name} ({author_role})"
         prompt = f"""Ниже свежий твит из X.com {retweet_context}:
 "{full_text}"
 
 Твоя задача:
-1. Создать заголовок 'russian_title' с эмодзи в начале. Если это ретвит, обязательно добавь '[🔄 Ретвит от {author_name}]'.
+1. Создать заголовок 'russian_title' с эмодзи в начале. Если это ретвит, обязательно напиши '[🔄 Ретвит от {orig_name}]'.
 2. Написать лаконичный аналитический пост 'telegram_caption' на русском языке (до 550 символов) с разбором смысла и блоком 'Что это значит для рынка? 🤔'.
 КАТЕГОРИЧЕСКИ НЕ ДОБАВЛЯЙ никаких ссылок на оригинальный твит или X.com!
 
@@ -471,7 +473,7 @@ def process_influencers_feed():
             retweets_cnt=retweets_cnt,
             likes_cnt=likes_cnt,
             bookmarks_cnt="",
-            retweeted_by_name=retweeted_by_name,
+            retweet_info=retweet_info,
             output_html_path=html_path
         )
 
