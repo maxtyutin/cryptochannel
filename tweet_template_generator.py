@@ -2,6 +2,7 @@ import os
 import sys
 import base64
 import urllib.request
+import re
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 AVATARS_DIR = os.path.join(BASE_DIR, "images/avatars")
