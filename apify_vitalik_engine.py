@@ -284,16 +284,20 @@ def fetch_all_influencer_tweets():
                     except Exception:
                         pass
 
-                    # ID твита
-                    tweet_id = f"pw_{username}_{int(time.time())}"
+                    # ID твита (фильтруем ретвиты других пользователей)
+                    tweet_id = None
                     try:
-                        link_el = art.locator('a[href*="/status/"]').first
+                        link_el = art.locator(f'a[href*="/{username}/status/"]').first
                         if link_el.count() > 0:
                             href = link_el.get_attribute('href', timeout=2000) or ""
                             if "/status/" in href:
                                 tweet_id = href.split("/status/")[-1].split("?")[0]
                     except Exception:
                         pass
+
+                    if not tweet_id:
+                        print(f"[playwright] @{username}: пропускаем чужой ретвит #{i}")
+                        continue
 
                     # Счётчики активности
                     replies_cnt = "0"
