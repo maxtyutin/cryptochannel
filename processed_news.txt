@@ -928,3 +928,4 @@ https://news.bitcoin.com/the-secret-service-recovers-25-million-in-crypto-from-f
 https://cryptobriefing.com/iraq-syria-pipeline-oil-exports/
 https://cointelegraph.com/news/binance-red-teams-own-staff-every-month-to-keep-hackers-out?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cryptobriefing.com/bitmex-shutdown-operations-cease/
+https://news.bitcoin.com/8000-devices-infected-80-crypto-wallets-accessed-by-video-game-malware/
