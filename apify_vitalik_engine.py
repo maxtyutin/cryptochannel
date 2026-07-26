@@ -8,7 +8,7 @@ from PIL import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
-from news_engine import load_env, call_gemini_api, send_photo_to_telegram, save_processed_id, is_russian_title_duplicate
+from news_engine import load_env, call_gemini_api, send_photo_to_telegram, send_to_telegram, save_processed_id, is_russian_title_duplicate
 
 env = load_env()
 gemini_key = env.get("GEMINI_API_KEY")
@@ -271,15 +271,35 @@ def fetch_all_influencer_tweets():
                     except Exception:
                         pass
 
+                    # Счётчики активности
+                    replies_cnt = "0"
+                    retweets_cnt = "0"
+                    likes_cnt = "0"
+                    try:
+                        rep_el = art.locator('[data-testid="reply"]').first
+                        if rep_el.count() > 0: replies_cnt = rep_el.inner_text(timeout=1000) or "0"
+                    except Exception: pass
+                    try:
+                        ret_el = art.locator('[data-testid="retweet"]').first
+                        if ret_el.count() > 0: retweets_cnt = ret_el.inner_text(timeout=1000) or "0"
+                    except Exception: pass
+                    try:
+                        lik_el = art.locator('[data-testid="like"]').first
+                        if lik_el.count() > 0: likes_cnt = lik_el.inner_text(timeout=1000) or "0"
+                    except Exception: pass
+
                     result = {
                         "id": tweet_id,
                         "text": raw_text,
                         "media_url": media_url,
                         "username": username,
                         "inf_name": inf["name"],
-                        "inf_role": inf["role"]
+                        "inf_role": inf["role"],
+                        "likes": likes_cnt,
+                        "retweets": retweets_cnt,
+                        "replies": replies_cnt
                     }
-                    print(f"[playwright] @{username}: твит найден #{i}, ID={tweet_id}")
+                    print(f"[playwright] @{username}: твит найден #{i}, ID={tweet_id} | ❤️ {likes_cnt} | 🔁 {retweets_cnt} | 💬 {replies_cnt}")
                     break
 
                 if result:
@@ -324,13 +344,10 @@ def process_influencers_feed():
 
         print(f"\n[influencers_engine] Обработка твита {author_name} ({author_handle}): {full_text[:70]}...")
 
-        # Playwright не возвращает счётчики — используем пустые заглушки
-        replies_cnt = ""
-        retweets_cnt = ""
-        likes_cnt = ""
-        views_cnt = ""
-        bookmarks_cnt = ""
-            
+        replies_cnt = tweet.get("replies", "0")
+        retweets_cnt = tweet.get("retweets", "0")
+        likes_cnt = tweet.get("likes", "0")
+
         # 1. Запрос к ИИ для создания русскоязычного аналитического поста для Telegram
         prompt = f"""Ниже свежий оригинальный твит от {author_name} ({author_role}) из X.com:
 "{full_text}"
@@ -355,7 +372,6 @@ def process_influencers_feed():
         try:
             parsed = json.loads(clean_json)
         except json.JSONDecodeError:
-            # Фаллбэк: извлекаем значения регулярками
             try:
                 title_m = re.search(r'"russian_title"\s*:\s*"(.*?)"(?=\s*,|\s*})', clean_json, re.DOTALL)
                 cap_m = re.search(r'"telegram_caption"\s*:\s*"(.*?)"(?=\s*})', clean_json, re.DOTALL)
@@ -380,44 +396,43 @@ def process_influencers_feed():
             save_processed_id(tweet_id)
             continue
 
-        # 2. Рендеринг карточки твита
-        html_path = os.path.join(BASE_DIR, f"scratch_tweet_{tweet_id}.html")
-        from datetime import datetime
-        date_str = datetime.utcnow().strftime("%d %b. %Y г.")
-        generate_tweet_card_html(
-            author_name=author_name,
-            author_handle=author_handle,
-            avatar_url=None,
-            date_str=date_str,
-            tweet_text_en=full_text,
-            attached_img_url=attached_media_url,
-            views_str=views_cnt,
-            comments_cnt=replies_cnt,
-            retweets_cnt=retweets_cnt,
-            likes_cnt=likes_cnt,
-            bookmarks_cnt=bookmarks_cnt,
-            output_html_path=html_path
+        # 2. Формирование нативного поста для Telegram (без скриншотов HTML)
+        stats_line = ""
+        if likes_cnt != "0" or retweets_cnt != "0" or replies_cnt != "0":
+            stats_line = f"📊 ❤️ {likes_cnt} | 🔁 {retweets_cnt} | 💬 {replies_cnt}\n\n"
+
+        post_body = (
+            f"<b>{russian_title}</b>\n\n"
+            f"👤 <b>{author_name}</b> ({author_handle}) — <i>{author_role}</i>\n\n"
+            f"💬 <b>Оригинальный твит:</b>\n«{full_text}»\n\n"
+            f"{stats_line}"
+            f"{telegram_caption}"
         )
 
-        card_png_path = os.path.join(BASE_DIR, f"images/influencer_tweet_{tweet_id}.png")
-        os.makedirs(os.path.dirname(card_png_path), exist_ok=True)
+        sent = False
+        if bot_token and chat_id:
+            if attached_media_url:
+                local_img = os.path.join(BASE_DIR, f"images/tweet_media_{tweet_id}.jpg")
+                try:
+                    os.makedirs(os.path.dirname(local_img), exist_ok=True)
+                    import requests
+                    req_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+                    r = requests.get(attached_media_url, headers=req_headers, timeout=10)
+                    if r.status_code == 200 and len(r.content) > 1000:
+                        with open(local_img, 'wb') as f:
+                            f.write(r.content)
+                        sent = send_photo_to_telegram(post_body, local_img, bot_token, chat_id)
+                    else:
+                        sent = send_to_telegram(post_body, bot_token, chat_id)
+                except Exception as e:
+                    print(f"[influencers_engine] Не удалось отправить с картинкой ({e}), отправляем текстом")
+                    sent = send_to_telegram(post_body, bot_token, chat_id)
+            else:
+                sent = send_to_telegram(post_body, bot_token, chat_id)
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(device_scale_factor=2)
-            page = context.new_page()
-            
-            page.goto(f"file://{html_path}", wait_until="load")
-            card_el = page.locator('.tweet-card')
-            card_el.screenshot(path=card_png_path)
-            browser.close()
-
-        # 3. Публикация в Telegram
-        final_caption = f"<b>{russian_title}</b>\n\n{telegram_caption}"
-        if bot_token and chat_id and os.path.exists(card_png_path):
-            sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
             if sent:
-                print(f"[influencers_engine] УСПЕХ: Чистая карточка твита от {author_name} опубликована в Telegram!")
+                print(f"[influencers_engine] УСПЕХ: Нативный пост от {author_name} опубликован в Telegram!")
+                save_processed_id(tweet_id)
                 save_processed_id_to_supabase(tweet_id, author_name)
                 published_count += 1
                 cleanup_local_temp_images()
