@@ -47,22 +47,46 @@ def format_count(num):
     return str(num)
 
 def clean_tweet_text(text):
-    """
-    Удаляет весь лишний мусор UI, ссылки вещаний и утекающие счетчики типа 4.1K, 31K, 4.7M
-    """
     if not text:
         return ""
     lines = [l.strip() for l in text.split('\n') if l.strip()]
     clean_lines = []
     for l in lines:
-        # Фильтруем чистые числа или числа с K/M (например: 4.1K, 31K, 4.7M, 277K)
         if re.match(r'^\d+(\.\d+)?[KMkmM]?$', l):
             continue
-        # Фильтруем служебные строки X UI
         if any(x in l for x in ['Replies', 'Retweets', 'Likes', 'Views', 'Bookmarks', 'x.com/i/broadcasts/']):
             continue
         clean_lines.append(l)
-    return "\n".join(clean_lines)
+    res = "\n".join(clean_lines)
+    res = re.sub(r'https?://t\.co/\S+', '', res)
+    return res.strip()
+
+def fetch_untruncated_tweet_text(pg, username, tweet_id, fallback_text):
+    if not tweet_id or tweet_id.startswith("pw_"):
+        return fallback_text
+    try:
+        url = f"https://x.com/{username}/status/{tweet_id}"
+        pg.goto(url, wait_until="domcontentloaded", timeout=15000)
+        pg.wait_for_selector('article', timeout=10000)
+        time.sleep(1)
+
+        art = pg.locator('article').first
+        try:
+            sm = art.locator('[data-testid="tweet-text-show-more-link"]')
+            if sm.count() > 0:
+                sm.first.click(timeout=1000)
+                time.sleep(0.3)
+        except Exception:
+            pass
+
+        full_txt = art.locator('[data-testid="tweetText"]').first.inner_text(timeout=3000)
+        full_txt = clean_tweet_text(full_txt)
+        if full_txt and len(full_txt) >= len(fallback_text):
+            print(f"[playwright] @{username}: Получен 100% полный текст твита ({len(full_txt)} символов)")
+            return full_txt
+    except Exception as e:
+        print(f"[playwright] Не удалось загрузить прямую страницу твита {tweet_id}: {e}")
+    return fallback_text
 
 def scrape_latest_tweet_playwright(username):
     """
@@ -287,6 +311,10 @@ def fetch_all_influencer_tweets():
                         lik_el = art.locator('[data-testid="like"]').first
                         if lik_el.count() > 0: likes_cnt = lik_el.inner_text(timeout=1000) or "0"
                     except Exception: pass
+
+                    # Получаем 100% полный текст без обрезки через прямую страницу статуса твита
+                    if tweet_id and not tweet_id.startswith("pw_"):
+                        raw_text = fetch_untruncated_tweet_text(pg, username, tweet_id, raw_text)
 
                     result = {
                         "id": tweet_id,
