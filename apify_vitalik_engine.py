@@ -396,42 +396,47 @@ def process_influencers_feed():
             save_processed_id(tweet_id)
             continue
 
-        # 2. Формирование нативного поста для Telegram (без скриншотов HTML)
-        stats_line = ""
-        if likes_cnt != "0" or retweets_cnt != "0" or replies_cnt != "0":
-            stats_line = f"📊 ❤️ {likes_cnt} | 🔁 {retweets_cnt} | 💬 {replies_cnt}\n\n"
-
-        post_body = (
-            f"<b>{russian_title}</b>\n\n"
-            f"👤 <b>{author_name}</b> ({author_handle}) — <i>{author_role}</i>\n\n"
-            f"💬 <b>Оригинальный твит:</b>\n«{full_text}»\n\n"
-            f"{stats_line}"
-            f"{telegram_caption}"
+        # 2. Рендеринг карточки-мокапа твита в стиле Twitter с реальным аватаром и счётчиками
+        html_path = os.path.join(BASE_DIR, f"scratch_tweet_{tweet_id}.html")
+        from datetime import datetime
+        date_str = datetime.utcnow().strftime("%d %b. %Y г.")
+        generate_tweet_card_html(
+            author_name=author_name,
+            author_handle=author_handle,
+            avatar_url=None,
+            date_str=date_str,
+            tweet_text_en=full_text,
+            attached_img_url=attached_media_url,
+            views_str="",
+            comments_cnt=replies_cnt,
+            retweets_cnt=retweets_cnt,
+            likes_cnt=likes_cnt,
+            bookmarks_cnt="",
+            output_html_path=html_path
         )
 
-        sent = False
-        if bot_token and chat_id:
-            if attached_media_url:
-                local_img = os.path.join(BASE_DIR, f"images/tweet_media_{tweet_id}.jpg")
-                try:
-                    os.makedirs(os.path.dirname(local_img), exist_ok=True)
-                    import requests
-                    req_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-                    r = requests.get(attached_media_url, headers=req_headers, timeout=10)
-                    if r.status_code == 200 and len(r.content) > 1000:
-                        with open(local_img, 'wb') as f:
-                            f.write(r.content)
-                        sent = send_photo_to_telegram(post_body, local_img, bot_token, chat_id)
-                    else:
-                        sent = send_to_telegram(post_body, bot_token, chat_id)
-                except Exception as e:
-                    print(f"[influencers_engine] Не удалось отправить с картинкой ({e}), отправляем текстом")
-                    sent = send_to_telegram(post_body, bot_token, chat_id)
-            else:
-                sent = send_to_telegram(post_body, bot_token, chat_id)
+        card_png_path = os.path.join(BASE_DIR, f"images/influencer_tweet_{tweet_id}.png")
+        os.makedirs(os.path.dirname(card_png_path), exist_ok=True)
 
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(device_scale_factor=2)
+            page = context.new_page()
+            page.goto(f"file://{html_path}", wait_until="networkidle", timeout=10000)
+            page.wait_for_timeout(1000)
+            card_el = page.locator('.tweet-card')
+            if card_el.count() > 0:
+                card_el.screenshot(path=card_png_path)
+            else:
+                page.screenshot(path=card_png_path, full_page=True)
+            browser.close()
+
+        # 3. Публикация карточки-мокапа с аналитическим текстом в Telegram
+        final_caption = f"<b>{russian_title}</b>\n\n{telegram_caption}"
+        if bot_token and chat_id and os.path.exists(card_png_path) and os.path.getsize(card_png_path) > 1000:
+            sent = send_photo_to_telegram(final_caption, card_png_path, bot_token, chat_id)
             if sent:
-                print(f"[influencers_engine] УСПЕХ: Нативный пост от {author_name} опубликован в Telegram!")
+                print(f"[influencers_engine] УСПЕХ: Мокап твита {author_name} (аватар + лайки/ретвиты/комменты) опубликован в Telegram!")
                 save_processed_id(tweet_id)
                 save_processed_id_to_supabase(tweet_id, author_name)
                 published_count += 1
