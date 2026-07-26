@@ -2,11 +2,11 @@ name: Publish Crypto News
 
 on:
   schedule:
-    # 1. Новости каждые 30 минут (~1440 мин/мес)
+    # Новости каждые 15 минут
     - cron: '*/15 * * * *'
-    # 2. Дайджест цен в 06:15 и 18:15 UTC (09:15 и 21:15 по МСК)
+    # Дайджест цен в 06:15 и 18:15 UTC
     - cron: '15 6,18 * * *'
-    # 3. Интерактивный опрос в 11:00 UTC (14:00 по МСК)
+    # Интерактивный опрос в 11:00 UTC
     - cron: '0 11 * * *'
   workflow_dispatch:
     inputs:
@@ -21,10 +21,20 @@ on:
           - digest
           - poll
           - yesterday
+          - influencers
 
 jobs:
-  publish:
+  # ─── JOB 1: Новости (быстро, без Playwright) ────────────────────────────────
+  news:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'schedule' ||
+      github.event.inputs.mode == 'news' ||
+      github.event.inputs.mode == 'digest' ||
+      github.event.inputs.mode == 'poll' ||
+      github.event.inputs.mode == 'yesterday' ||
+      github.event.inputs.mode == 'auto' ||
+      github.event.inputs.mode == ''
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -39,38 +49,37 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install Pillow requests
+          pip install Pillow requests supabase
 
       - name: Run News Engine
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           MODE="${{ github.event.inputs.mode }}"
-          if [ "$MODE" = "news" ]; then
-            echo "Ручной запуск: Публикация новости..."
+          HOUR=$(date -u +%H)
+          MIN=$(date -u +%M)
+
+          if [ "$MODE" = "influencers" ]; then
+            echo "Этот job пропускается в режиме influencers."
+            exit 0
+          elif [ "$MODE" = "news" ]; then
             python news_engine.py
           elif [ "$MODE" = "yesterday" ]; then
-            echo "Ручной запуск: Публикация всех вчерашних новостей..."
             python publish_yesterday.py
           elif [ "$MODE" = "digest" ]; then
-            echo "Ручной запуск: Публикация дайджеста цен..."
             python news_engine.py --digest
           elif [ "$MODE" = "poll" ]; then
-            echo "Ручной запуск: Публикация опроса..."
             python news_engine.py --poll
           else
-            # Автоматический режим (по времени UTC)
-            HOUR=$(date -u +%H)
-            if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ]; then
-              echo "Авто-режим: Запуск дайджеста цен..."
+            if [ "$HOUR" = "06" ] || [ "$HOUR" = "18" ] && [ "$MIN" = "15" ]; then
               python news_engine.py --digest
-            elif [ "$HOUR" = "11" ]; then
-              echo "Авто-режим: Запуск интерактивного опроса..."
+            elif [ "$HOUR" = "11" ] && [ "$MIN" = "00" ]; then
               python news_engine.py --poll
             else
-              echo "Авто-режим: Запуск обычных новостей..."
               python news_engine.py
             fi
           fi
@@ -83,8 +92,46 @@ jobs:
           if git diff --cached --quiet; then
             echo "Нет изменений."
           else
-            git commit -m "Автоматическое обновление базы данных новостей и изображений [skip ci]"
-            # Предотвращаем конфликты
-            git pull --rebase origin main || git pull --rebase origin master || true
+            git commit -m "Автоматическое обновление базы данных [skip ci]"
+            git pull --rebase origin main || true
             git push origin HEAD || git push --force-with-lease origin HEAD
           fi
+
+  # ─── JOB 2: Инфлюенсеры (каждые 15 мин, с Playwright) ───────────────────────
+  influencers:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'schedule' ||
+      github.event.inputs.mode == 'influencers' ||
+      github.event.inputs.mode == 'auto' ||
+      github.event.inputs.mode == ''
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Pillow requests playwright supabase
+
+      - name: Install Playwright Chromium
+        run: playwright install chromium --with-deps
+
+      - name: Run Influencers Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TWITTER_AUTH_TOKEN: ${{ secrets.TWITTER_AUTH_TOKEN }}
+          TWITTER_CT0: ${{ secrets.TWITTER_CT0 }}
+        run: |
+          echo "Проверяем свежие твиты инфлюенсеров..."
+          python apify_vitalik_engine.py
+

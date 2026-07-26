@@ -176,22 +176,123 @@ def scrape_latest_tweet_playwright(username):
 
 def fetch_all_influencer_tweets():
     """
-    Собирает по 1 свежему твиту от каждого инфлюенсера через Playwright.
+    Собирает по 1 свежему твиту от каждого инфлюенсера через ОДИН Playwright браузер.
+    Один браузер на всех = в 3-4 раза быстрее.
     """
-    print(f"[influencers_engine] Playwright-скрейпинг {len(INFLUENCERS)} инфлюенсеров...")
+    print(f"[influencers_engine] Playwright-скрейпинг {len(INFLUENCERS)} инфлюенсеров (единый браузер)...")
     tweets = []
-    for inf in INFLUENCERS:
-        username = inf["username"]
-        print(f"[influencers_engine] Получаем @{username}...")
-        tweet = scrape_latest_tweet_playwright(username)
-        if tweet:
-            tweet["inf_name"] = inf["name"]
-            tweet["inf_role"] = inf["role"]
-            tweets.append(tweet)
-            print(f"[influencers_engine] ✓ @{username}: {tweet['text'][:60]}...")
-        else:
-            print(f"[influencers_engine] ✗ @{username}: твит не найден")
-        time.sleep(1)
+
+    with sync_playwright() as p:
+        b = p.chromium.launch(headless=True)
+        ctx = b.new_context(
+            viewport={"width": 1280, "height": 900},
+            device_scale_factor=2,
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+        # Устанавливаем куки авторизации один раз для всего контекста
+        if twitter_auth_token and twitter_ct0:
+            ctx.add_cookies([
+                {"name": "auth_token", "value": twitter_auth_token, "domain": ".x.com", "path": "/"},
+                {"name": "ct0", "value": twitter_ct0, "domain": ".x.com", "path": "/"},
+            ])
+            print(f"[influencers_engine] Куки авторизации установлены глобально")
+
+        pg = ctx.new_page()
+
+        for inf in INFLUENCERS:
+            username = inf["username"]
+            print(f"[influencers_engine] Получаем @{username}...")
+            try:
+                pg.goto(f"https://x.com/{username}", wait_until="domcontentloaded", timeout=20000)
+                pg.wait_for_selector('article', timeout=15000)
+                time.sleep(2)
+
+                result = None
+                articles = pg.locator('article')
+                count = articles.count()
+                print(f"[playwright] @{username}: найдено {count} article-элементов")
+
+                for i in range(min(count, 5)):
+                    art = articles.nth(i)
+
+                    # Пропускаем Pinned tweet
+                    try:
+                        pinned = art.locator('[data-testid="socialContext"]')
+                        if pinned.count() > 0:
+                            ctx_text = pinned.first.inner_text(timeout=1000)
+                            if "Pinned" in ctx_text or "Закрепл" in ctx_text:
+                                print(f"[playwright] @{username}: пропускаем Pinned #{i}")
+                                continue
+                    except Exception:
+                        pass
+
+                    # Раскрываем "Show more"
+                    try:
+                        show_more = art.locator('[data-testid="tweet-text-show-more-link"]')
+                        if show_more.count() > 0:
+                            show_more.first.click(timeout=2000)
+                            time.sleep(0.5)
+                    except Exception:
+                        pass
+
+                    # Текст твита
+                    raw_text = ""
+                    try:
+                        raw_text = art.locator('[data-testid="tweetText"]').first.inner_text(timeout=5000)
+                    except Exception:
+                        pass
+                    if not raw_text or len(raw_text.strip()) < 5:
+                        try:
+                            raw_text = art.inner_text(timeout=3000)
+                        except Exception:
+                            continue
+
+                    raw_text = clean_tweet_text(raw_text)
+                    if len(raw_text.strip()) < 10:
+                        continue
+
+                    # Медиа
+                    media_url = None
+                    try:
+                        img_el = art.locator('img[src*="pbs.twimg.com/media"], img[src*="pbs.twimg.com/card_img"]').first
+                        if img_el.count() > 0:
+                            media_url = img_el.get_attribute('src', timeout=2000)
+                    except Exception:
+                        pass
+
+                    # ID твита
+                    tweet_id = f"pw_{username}_{int(time.time())}"
+                    try:
+                        link_el = art.locator('a[href*="/status/"]').first
+                        if link_el.count() > 0:
+                            href = link_el.get_attribute('href', timeout=2000) or ""
+                            if "/status/" in href:
+                                tweet_id = href.split("/status/")[-1].split("?")[0]
+                    except Exception:
+                        pass
+
+                    result = {
+                        "id": tweet_id,
+                        "text": raw_text,
+                        "media_url": media_url,
+                        "username": username,
+                        "inf_name": inf["name"],
+                        "inf_role": inf["role"]
+                    }
+                    print(f"[playwright] @{username}: твит найден #{i}, ID={tweet_id}")
+                    break
+
+                if result:
+                    tweets.append(result)
+                    print(f"[influencers_engine] ✓ @{username}: {result['text'][:60]}...")
+                else:
+                    print(f"[influencers_engine] ✗ @{username}: твит не найден")
+
+            except Exception as e:
+                print(f"[influencers_engine] Ошибка @{username}: {e}")
+
+        b.close()
+
     print(f"[influencers_engine] Итого собрано: {len(tweets)} твитов.")
     return tweets
 
