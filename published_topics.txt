@@ -1,4 +1,3 @@
-Crypto exchange BitMart to shut down after nine years, BMX token crashes 58%
 Ring Protocol Adds Orbs Tools Across 4 Networks, Giving Traders Precise On-Chain Order Control
 Hydropower overtakes natural gas as Bitcoin mining’s top energy source
 Trump threatens expanded strikes on Iran’s nuclear sites as Bitcoin dips on geopolitical risk
@@ -18,3 +17,4 @@ South Korea’s largest bank to launch payment service on JPMorgan’s Kinexys
 A $650 million wave of bridge hacks just triggered a $7 billion mass migration to Chainlink
 Crypto promised to eliminate stockbrokers, but 94% of its tokenized market now relies on an Alpaca
 Argentina Opens the Door to USD Wages as Central Bank Approves Dollar Salary Accounts
+BStocks attracts 41% of users new to Binance’s trading platform
