@@ -68,6 +68,8 @@ def generate_tweet_card_html(
 </div>'''
 
     formatted_text = tweet_text_en.strip()
+    # Устраняем разрывы протокола https:// перед выводом в HTML
+    formatted_text = re.sub(r'(https?://)\s*[\r\n]+\s*', r'\1', formatted_text)
         
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -95,7 +97,7 @@ def generate_tweet_card_html(
   .verified-badge {{ width: 18px; height: 18px; fill: #1d9bf0; }}
   .author-handle {{ font-size: 15px; color: #536471; }}
   .more-btn {{ color: #536471; font-size: 18px; font-weight: bold; cursor: pointer; }}
-  .tweet-text {{ font-size: 16px; line-height: 1.38; color: #0f1419; margin-bottom: 14px; word-wrap: break-word; white-space: pre-wrap; }}
+  .tweet-text {{ font-size: 16px; line-height: 1.38; color: #0f1419; margin-bottom: 14px; word-wrap: break-word; overflow-wrap: anywhere; white-space: pre-wrap; }}
   .media-container {{ margin-bottom: 14px; border-radius: 12px; overflow: hidden; border: 1px solid #cfd9de; }}
   .media-img {{ width: 100%; height: auto; display: block; object-fit: contain; max-height: none; }}
   .meta-row {{ font-size: 15px; color: #536471; border-bottom: 1px solid #eff3f4; padding-bottom: 12px; margin-bottom: 12px; display: flex; gap: 6px; align-items: center; }}

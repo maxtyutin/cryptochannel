@@ -49,6 +49,8 @@ def format_count(num):
 def clean_tweet_text(text):
     if not text:
         return ""
+    # Убираем искусственные переводы строк сразу после протоколов https:// и http://
+    text = re.sub(r'(https?://)\s*[\r\n]+\s*', r'\1', text)
     lines = [l.strip() for l in text.split('\n') if l.strip()]
     clean_lines = []
     for l in lines:
@@ -59,6 +61,7 @@ def clean_tweet_text(text):
         clean_lines.append(l)
     res = "\n".join(clean_lines)
     res = re.sub(r'https?://t\.co/\S+', '', res)
+    res = re.sub(r'(https?://)\s*[\r\n]+\s*', r'\1', res)
     return res.strip()
 
 def fetch_untruncated_tweet_text(pg, username, tweet_id, fallback_text):
