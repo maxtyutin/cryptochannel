@@ -1,4 +1,3 @@
-EIF’s Megawatt Verdict: Not Every Bitcoin Mine Is Ready for AI
 South Korea’s largest bank to launch payment service on JPMorgan’s Kinexys
 A $650 million wave of bridge hacks just triggered a $7 billion mass migration to Chainlink
 Crypto promised to eliminate stockbrokers, but 94% of its tokenized market now relies on an Alpaca
@@ -18,3 +17,4 @@ Why two public companies quietly liquidated 511 Bitcoin in 24 hours to escape $3
 South Korea trading giant puts receivables onchain in tokenization test with LG CNS
 Bitcoin is back above $65,000 as U.S. and Iran hold fire. Oil drops 5%
 Interest rates in U.S., U.K., Japan and Coinbase, Strategy earnings: Crypto Week Ahead
+Cloud data firm Storj files for Chapter 11, extending a week of crypto failures. Token slides 16%
