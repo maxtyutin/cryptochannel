@@ -390,6 +390,12 @@ def process_influencers_feed():
         if not full_text or len(full_text) < 10:
             continue
 
+        username = tweet.get("username", "")
+        author_name = tweet.get("inf_name", username)
+        author_role = tweet.get("inf_role", "Крипто-эксперт")
+        author_handle = f"@{username}"
+        attached_media_url = tweet.get("media_url")
+
         is_retweet = tweet.get("is_retweet", False)
         orig_name = tweet.get("orig_author_name", "")
         orig_handle = tweet.get("orig_author_handle", "")
