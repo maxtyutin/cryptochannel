@@ -427,6 +427,10 @@ def process_influencers_feed():
 Верни JSON с ключами russian_title и telegram_caption.
 """
         res_json = call_gemini_api(prompt, gemini_key, is_json=True)
+        if not res_json:
+            print(f"[influencers_engine] ИИ вернул пустой ответ или ошибку для {author_name}, пропускаем твит")
+            continue
+        
         clean_json = res_json.strip()
         if clean_json.startswith("```"):
             start = clean_json.find("{")
