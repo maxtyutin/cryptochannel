@@ -1,4 +1,3 @@
-Why two public companies quietly liquidated 511 Bitcoin in 24 hours to escape $31.7 million in debt
 ‘To Protect Them’: Bank of Russia Governor Defends Controversial New Crypto Purchasing Caps
 South Korea trading giant puts receivables onchain in tokenization test with LG CNS
 Bitcoin is back above $65,000 as U.S. and Iran hold fire. Oil drops 5%
@@ -17,4 +16,5 @@ New York AG warns CLARITY Act could weaken state crypto enforcement
 Kalshi, Polymarket win pause against Minnesota's prediction market ban
 Hong Kong prepares banks for quantum threats amid tokenization push
 Zimbabwe admits seven fintech projects to regulatory sandbox
-Inside the CME and CFTC’s battle over onchain perpetual futures 
+Inside the CME and CFTC’s battle over onchain perpetual futures
+Hong Kong’s central bank puts a number on lenders' quantum preparedness. It's very low.
