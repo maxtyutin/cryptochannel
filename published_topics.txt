@@ -1,4 +1,3 @@
-Lawsuit claims 3.8M dormant BTC using police lost-and-found rules as Congress races to stop it with CLARITY
 Why two public companies quietly liquidated 511 Bitcoin in 24 hours to escape $31.7 million in debt
 ‘To Protect Them’: Bank of Russia Governor Defends Controversial New Crypto Purchasing Caps
 South Korea trading giant puts receivables onchain in tokenization test with LG CNS
@@ -18,3 +17,4 @@ New York AG warns CLARITY Act could weaken state crypto enforcement
 Kalshi, Polymarket win pause against Minnesota's prediction market ban
 Hong Kong prepares banks for quantum threats amid tokenization push
 Zimbabwe admits seven fintech projects to regulatory sandbox
+Inside the CME and CFTC’s battle over onchain perpetual futures 
