@@ -1,4 +1,3 @@
-What are perps, anyway? Everything you need to know about crypto’s hottest trading instrument
 Digital asset trading platform Uphold cuts 17% of global headcount as crypto winter bites
 Fanatics buys regulated exchange in bid to grow prediction markets business
 Cantor is advising crypto bank AMINA on path to potential public listing
@@ -18,3 +17,4 @@ Russia outlines new digital depository rules ahead of fall crypto framework roll
 BlackRock, Fidelity, other Wall Street giants back the Clarity Act
 Wall Street veteran Don Wilson says regulators are getting perps all wrong
 Ondo drops tokenized asset blockchain plans for private, high-speed trading network
+Ethereum startup EthSystems bets privacy is key to getting banks on public blockchains
