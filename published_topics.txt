@@ -1,4 +1,3 @@
-Fanatics buys regulated exchange in bid to grow prediction markets business
 Cantor is advising crypto bank AMINA on path to potential public listing
 Bitmine keeps buying Ether as ETH outperforms Bitcoin
 Cross River to enable P2P payments, banking services for X Money
@@ -18,3 +17,4 @@ Wall Street veteran Don Wilson says regulators are getting perps all wrong
 Ondo drops tokenized asset blockchain plans for private, high-speed trading network
 Ethereum startup EthSystems bets privacy is key to getting banks on public blockchains
 'Anything remotely dovish' from Fed could be good for bitcoin, says analyst
+Visa outlines stablecoin strategy during Q3 earnings call 
