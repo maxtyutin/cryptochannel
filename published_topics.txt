@@ -1,4 +1,3 @@
-Bitmine keeps buying Ether as ETH outperforms Bitcoin
 Cross River to enable P2P payments, banking services for X Money
 Tether’s XAUt gold token receives Shariah certification to expand Islamic finance access
 New York AG warns CLARITY Act could weaken state crypto enforcement
@@ -18,3 +17,4 @@ Ethereum startup EthSystems bets privacy is key to getting banks on public block
 'Anything remotely dovish' from Fed could be good for bitcoin, says analyst
 Visa outlines stablecoin strategy during Q3 earnings call
 Myanmar parliament passes crypto scam bill with penalties up to life
+Coinbase wants to be Canada’s ‘everything exchange,’ but says clearer rules are needed first
