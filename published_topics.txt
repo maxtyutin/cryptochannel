@@ -1,4 +1,3 @@
-Hong Kong prepares banks for quantum threats amid tokenization push
 Zimbabwe admits seven fintech projects to regulatory sandbox
 Inside the CME and CFTC’s battle over onchain perpetual futures
 Hong Kong’s central bank puts a number on lenders' quantum preparedness. It's very low.
@@ -18,3 +17,4 @@ South Korea plans stablecoin rules as opposition pushes crypto tax repeal
 Live updates: Bitcoin clears $64,000 in Asia hours ahead of Fed decision
 SpaceX is a battleground Solana must win
 Binance offers gold and silver options after commodity futures pull in billions in daily volume
+BNY targets $8.6 trillion transfer agency market on blockchain rails
