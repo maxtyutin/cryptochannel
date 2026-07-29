@@ -1,4 +1,3 @@
-BlackRock, Fidelity, other Wall Street giants back the Clarity Act
 Wall Street veteran Don Wilson says regulators are getting perps all wrong
 Ondo drops tokenized asset blockchain plans for private, high-speed trading network
 Ethereum startup EthSystems bets privacy is key to getting banks on public blockchains
@@ -18,3 +17,4 @@ The traditional 9-to-5 banking day is officially dying, says Morgan Stanley exec
 As crypto perpetual futures boom, Ethereum’s role is shifting
 Coinbase hit by spot trading slump: Wall Street trims expectations ahead of earnings
 US prosecutors propose changes to CLARITY as voting window narrows: Report
+Robinhood slides 4% despite earnings beat as crypto revenue cools
