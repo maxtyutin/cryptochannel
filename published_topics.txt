@@ -1,4 +1,3 @@
-Hong Kong’s central bank puts a number on lenders' quantum preparedness. It's very low.
 Bitcoin drops as South Korean stocks tumble, Senate shelves crypto Clarity Act
 Binance makes fighting crypto crime more difficult, says new report
 Core Scientific lands AMD AI deal as bitcoin mining operation winds down
@@ -18,3 +17,4 @@ Binance offers gold and silver options after commodity futures pull in billions 
 BNY targets $8.6 trillion transfer agency market on blockchain rails
 Ionic Digital jumps 26% in Nasdaq debut, giving Celsius Network claimholders an exit route
 Ethereum Foundation names pcaversaccio to board amid leadership changes
+Stablecoin firm Brale says new protocol can remove a major hurdle to scaling custom tokens
