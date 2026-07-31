@@ -1067,3 +1067,7 @@ https://cointelegraph.com/news/coldcard-mk3-warning-594-btc-sweep?utm_source=rss
 https://decrypt.co/374761/coinbase-misses-q2-earnings-crypto-trading-activity-slows
 https://decrypt.co/374758/treasury-secretary-bitcoin-satoshi-nakamoto-clarity-act
 https://www.coindesk.com/markets/2026/07/31/bitcoin-flat-near-usd64-000-as-kospi-s-record-17-surge-leaves-crypto-untouched
+https://www.coindesk.com/business/2026/07/31/quantum-solutions-hyperscale-data-tap-crypto-treasuries-to-fund-ai-data-centers
+https://www.coindesk.com/markets/2026/07/31/bitcoin-s-calm-is-back-and-so-is-the-setup-for-a-volatility-explosion
+https://www.coindesk.com/markets/2026/07/31/live-updates-bitcoin-steady-as-japan-holds-rates-at-1-keeping-the-yen-carry-trade-alive
+https://www.coindesk.com/tech/2026/07/31/major-bitcoin-wallet-flaw-drains-594-btc-in-25-minute-sweep
