@@ -1,4 +1,3 @@
-Major bitcoin wallet flaw drains 594 BTC in 25-minute sweep
 New York sues Kalshi, alleges it offers a gambling platform 'plain and simple'
 U.S. sanctions Iran-linked bitcoin insurance scheme for Strait of Hormuz ships
 Dubai-based crypto exchange tied to $4 billion Iran sanctioned-evasion network
@@ -18,3 +17,4 @@ US Is Banning Foreign Robots—Even Roombas
 Binance founder CZ calls for wallet diversification after $70 million Coldcard exploit
 Russia expands crypto mining ban to Moscow through 2032
 Wall Street is sitting on a $16.3 billion Bitcoin loss, and an August 14 deadline will expose who is quietly fleeing
+Bitcoin just slept through Japan’s rate decision, but a swollen yen short is quietly threatening a massive margin call
