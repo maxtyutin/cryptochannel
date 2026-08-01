@@ -1,4 +1,3 @@
-Quantum computing nears commercial breakthrough, IBM CEO says
 The good and the bad of perps, according to crypto traders
 Tether posts $1.5 billion operating profit in Q2 as reserve buffer falls by half
 Crypto faces 3 barriers to next bull run, STS Digital CEO says
@@ -18,3 +17,4 @@ Solana Foundation's new CISO warns AI is making crypto scams more convincing
 Everyone has the perps convergence backwards
 SEC to review Nasdaq bitcoin options approval after CME challenge
 Tokenized stock trading surged 288% in July, but one QQQ token drove most of it
+Minnesota crypto ATM ban goes into effect after reported $1M losses
