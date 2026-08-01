@@ -1109,3 +1109,4 @@ https://cointelegraph.com/news/minnesota-crypto-atm-ban-losses-scams?utm_source=
 https://cointelegraph.com/news/crypto-pac-michigan-thanedar-mckinney?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://decrypt.co/374810/cz-warns-bitcoin-holders-70-million-coldcard-wallet-exploit
 https://decrypt.co/374794/more-americans-know-about-ai-less-they-like-gallup
+https://www.coindesk.com/tech/2026/08/02/bitcoin-cold-wallet-attack-spreads-to-4-500-addresses-as-losses-near-usd89-million
