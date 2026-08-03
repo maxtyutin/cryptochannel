@@ -1,4 +1,3 @@
-📉 СПОТОВЫЕ БИТКОИН-ETF ПОТЕРЯЛИ $265 МЛН: АЛЛЮЗИЯ РОТАЦИИ В ETHEREUM
 Funding stock buybacks by selling your primary reserve asset is a dangerous game, but Lite Strategy just pulled it off without using a dime of debt
 Bitwise is liquidating six crypto option ETFs that offered 25% payouts while returning investors’ own capital
 Digital asset SPAC delays crucial merger vote, leaving a deeply undercapitalized Old Glory Bank waiting on a $50M lifeline
@@ -18,3 +17,4 @@ A tiny cluster of Solana bots unlocked a 3x trading advantage by routing through
 Coldcard exploit sparks Bitcoin flight, ‘bullish’ crypto consolidation: Hodler’s Digest, August 2
 South Korean stablecoin outflows top $367M in June: Report
 U.S. Jobs, Circle, Galaxy, American Bitcoin earnings: Crypto Week Ahead
+Robinhood wins UK crypto registration before new regulatory regime kicks off
