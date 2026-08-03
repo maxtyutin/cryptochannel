@@ -1,4 +1,3 @@
-Strategy holds STRC dividend at 12%
 How thin weekend Bitcoin liquidity turns minor geopolitical news into massive Monday price gaps for ETF holders
 📉 СПОТОВЫЕ БИТКОИН-ETF ПОТЕРЯЛИ $265 МЛН: АЛЛЮЗИЯ РОТАЦИИ В ETHEREUM
 Funding stock buybacks by selling your primary reserve asset is a dangerous game, but Lite Strategy just pulled it off without using a dime of debt
@@ -18,3 +17,4 @@ XRP extends the longest active ETF inflow streak in crypto as rival funds strugg
 How Interactive Strength erased a $50M FET token bet and sent common shareholders to the back of the line
 A tiny cluster of Solana bots unlocked a 3x trading advantage by routing through one proprietary protocol
 Coldcard exploit sparks Bitcoin flight, ‘bullish’ crypto consolidation: Hodler’s Digest, August 2
+South Korean stablecoin outflows top $367M in June: Report 
