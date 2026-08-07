@@ -1216,3 +1216,4 @@ https://www.coindesk.com/markets/2026/08/07/live-updates-bitcoin-flat-at-usd64-3
 https://www.coindesk.com/business/2026/08/07/wintermute-gains-u-s-broker-dealer-status-in-wall-street-push
 https://www.coindesk.com/markets/2026/08/07/coldcard-fallout-shows-up-onchain-as-210-000-bitcoin-leaves-old-wallets
 https://www.coindesk.com/markets/2026/08/07/cmt
+https://www.coindesk.com/tech/2026/08/07/ethereum-staking-token-weeth-splits-from-restaking-as-rewards-debate-heats-up
