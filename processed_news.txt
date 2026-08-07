@@ -1235,3 +1235,6 @@ https://decrypt.co/375159/bitcoin-payment-service-btcpay-critical-flaw-active-at
 https://decrypt.co/375166/trump-media-abandons-crypto-treasury-prediction-market
 https://www.coindesk.com/business/2026/08/07/trump-media-pulls-back-from-crypto-scraps-crypto-com-cro-treasury-deal
 https://www.coindesk.com/business/2026/08/07/trump-backed-american-bitcoin-director-justin-mateen-buys-nearly-usd2-million-of-abtc-stock
+https://cointelegraph.com/news/donald-trump-media-company-crypto-deal?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/375163/treasury-sanctions-crypto-exchanges-laundered-millions-iran
+https://decrypt.co/375149/flock-cameras-uber-drivers-nationwide-plate-scanning-fleet
