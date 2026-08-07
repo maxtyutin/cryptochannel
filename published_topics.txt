@@ -1,4 +1,3 @@
-Live updates: Coinbase lets U.K. users trade U.S. equities. BTC trades near $65,000
 NFT startup founder charged with misusing funds from $10 million fundraising
 Bitcoin’s low volatility doesn’t necessarily mean low risk
 JPMorgan says Hyperliquid ETF inflows have stalled as competition mounts
@@ -18,3 +17,4 @@ Binance Bitcoin volume ratio hits record as futures outweigh spot eight times ov
 Why Bitcoin's BIP-110 refuses to die despite near-zero miner support
 U.S. unexpectedly shed 23,000 jobs in July, putting Fed rate hikes in question
 A part of FTX survived, and it’s the case for the CLARITY Act
+OKX's Rafique doubts Clarity Act will pass, warns optimism is already priced into bitcoin
