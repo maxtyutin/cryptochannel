@@ -1286,3 +1286,4 @@ https://cointelegraph.com/news/bitcoin-bip-110-mandatory-signaling?utm_source=rs
 https://news.bitcoin.com/crypto-news/bip-110-splits-bitcoin-as-rival-miners-clash-at-block-961632/
 https://news.bitcoin.com/regulation-and-legal/brazil-triggers-24-hour-hold-on-10k-crypto-transfers/
 https://cryptobriefing.com/texas-governor-freezes-data-center-ercot-audit/
+https://news.bitcoin.com/market-updates/crypto-weekly-ada-and-privacy-coins-outperform-while-xrp-slides/
