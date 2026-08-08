@@ -1281,3 +1281,4 @@ https://cryptoslate.com/this-1-5-billion-hack-is-exposing-just-how-irreversible-
 https://news.bitcoin.com/regulation-and-legal/moreno-signals-end-to-clarity-act-talks-ahead-of-cloture-vote/
 https://news.bitcoin.com/press-releases/gate-dexbuilder-launches-first-event-contracts-builder-unveils-3-million-grant-program-to-accelerate-market-ecosystem/
 https://news.bitcoin.com/regulation-and-legal/france-pushes-bill-to-share-crypto-tax-data-with-48-nations/
+https://www.coindesk.com/tech/2026/08/07/frame-bitcoin-s-bip-110-enters-mandatory-signaling-with-less-than-3-miner-support
