@@ -1254,3 +1254,6 @@ https://www.coindesk.com/tech/2026/08/08/another-bitcoin-infrastructure-exploit-
 https://news.bitcoin.com/regulation-and-legal/saylor-says-bitcoin-doesnt-need-clarity-as-senate-delays-vote/
 https://news.bitcoin.com/regulation-and-legal/lummis-warns-us-crypto-rules-remain-broken-as-clarity-fight-stalls/
 https://news.bitcoin.com/bitcoin-etf/bitcoin-ether-etfs-add-220-million-as-blackrock-leads-again/
+https://www.coindesk.com/policy/2026/08/08/u-s-senate-opens-first-stage-of-crypto-clarity-act-voting-to-give-bill-a-chance-next-month
+https://cryptobriefing.com/btcpay-lightning-node-exploit/
+https://cryptobriefing.com/barcelona-romero-transfer-atletico-madrid/
