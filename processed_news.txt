@@ -1282,3 +1282,7 @@ https://news.bitcoin.com/regulation-and-legal/moreno-signals-end-to-clarity-act-
 https://news.bitcoin.com/press-releases/gate-dexbuilder-launches-first-event-contracts-builder-unveils-3-million-grant-program-to-accelerate-market-ecosystem/
 https://news.bitcoin.com/regulation-and-legal/france-pushes-bill-to-share-crypto-tax-data-with-48-nations/
 https://www.coindesk.com/tech/2026/08/07/frame-bitcoin-s-bip-110-enters-mandatory-signaling-with-less-than-3-miner-support
+https://cointelegraph.com/news/bitcoin-bip-110-mandatory-signaling?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://news.bitcoin.com/crypto-news/bip-110-splits-bitcoin-as-rival-miners-clash-at-block-961632/
+https://news.bitcoin.com/regulation-and-legal/brazil-triggers-24-hour-hold-on-10k-crypto-transfers/
+https://cryptobriefing.com/texas-governor-freezes-data-center-ercot-audit/
