@@ -1277,3 +1277,4 @@ https://www.coindesk.com/business/2026/08/08/hardware-wallet-sales-in-russia-mor
 https://decrypt.co/375169/bitcoin-red-team-ai-finding-critical-vulnerabilities
 https://cryptoslate.com/bitcoin-and-ethereum-etfs-break-1b-in-their-best-week-since-april-and-blackrock-brought-in-80-of-the-cash/
 https://cryptoslate.com/bitcoins-first-institutional-bear-market-is-starting-to-take-shape-and-draining-liquidity/
+https://cryptoslate.com/this-1-5-billion-hack-is-exposing-just-how-irreversible-stolen-crypto-really-is/
