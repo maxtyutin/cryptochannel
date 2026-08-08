@@ -1,4 +1,3 @@
-Binance Bitcoin volume ratio hits record as futures outweigh spot eight times over
 Why Bitcoin's BIP-110 refuses to die despite near-zero miner support
 U.S. unexpectedly shed 23,000 jobs in July, putting Fed rate hikes in question
 A part of FTX survived, and it’s the case for the CLARITY Act
@@ -17,4 +16,5 @@ Bitcoin’s AI security sprint found 6,700 issues in 55 hours, but no one knows 
 Inside the uncollateralized deal that locked up 6 million SUI until 2028 while SUI Group trades at a 25% NAV discount
 Bitcoin holders risk losing real BTC if they sell coins from BIP-110 fork, says developer
 New XRP Ledger amendments target $530 million in tokenized Wall Street assets
-US court backs Bybit’s bid to trace funds from $1.5B North Korea hack 
+US court backs Bybit’s bid to trace funds from $1.5B North Korea hack
+BitGo investors face flood of Aug. 7 class-action deadline warnings
