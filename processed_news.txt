@@ -1274,3 +1274,4 @@ https://decrypt.co/375174/senate-keeps-clarity-act-alive-with-crypto-bill-vote-s
 https://cryptoslate.com/bitcoin-xrp-solana-and-tron-beat-ethereum-and-cardano-every-month-since-2022-on-investor-buying/
 https://cryptoslate.com/four-years-after-ftx-crypto-exchanges-still-prove-assets-without-proving-solvency/
 https://www.coindesk.com/business/2026/08/08/hardware-wallet-sales-in-russia-more-than-double-as-new-crypto-rules-near
+https://decrypt.co/375169/bitcoin-red-team-ai-finding-critical-vulnerabilities
