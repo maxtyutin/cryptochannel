@@ -1278,3 +1278,5 @@ https://decrypt.co/375169/bitcoin-red-team-ai-finding-critical-vulnerabilities
 https://cryptoslate.com/bitcoin-and-ethereum-etfs-break-1b-in-their-best-week-since-april-and-blackrock-brought-in-80-of-the-cash/
 https://cryptoslate.com/bitcoins-first-institutional-bear-market-is-starting-to-take-shape-and-draining-liquidity/
 https://cryptoslate.com/this-1-5-billion-hack-is-exposing-just-how-irreversible-stolen-crypto-really-is/
+https://news.bitcoin.com/regulation-and-legal/moreno-signals-end-to-clarity-act-talks-ahead-of-cloture-vote/
+https://news.bitcoin.com/press-releases/gate-dexbuilder-launches-first-event-contracts-builder-unveils-3-million-grant-program-to-accelerate-market-ecosystem/
