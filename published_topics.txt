@@ -1,4 +1,3 @@
-US Senate to vote on advancing CLARITY Act in September after Thune files cloture
 Bitcoin, XRP, Solana and Tron beat Ethereum and Cardano every month since 2022 on investor buying
 Four years after FTX, crypto exchanges still prove assets without proving solvency
 Hardware wallet sales in Russia more than double as new crypto rules near
@@ -18,3 +17,4 @@ Ukrainian drone detonates near vital gas pipeline in Bulgaria, exposing NATO air
 Ripple Says EU Crypto Expansion Is Ready to Scale After MiCA Win
 67 Investors Paid $10M for NFT Tokens That Launched Worthless
 Stolen Bitcoin at Center of Kidnapping Plot, 3 Face 20 Years
+BTCPay restricts remote Lightning access after attackers steal funds

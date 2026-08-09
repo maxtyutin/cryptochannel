@@ -1298,3 +1298,4 @@ https://news.bitcoin.com/crypto-news/ripple-says-eu-crypto-expansion-is-ready-to
 https://news.bitcoin.com/featured/67-investors-paid-10m-for-nft-tokens-that-launched-worthless/
 https://www.coindesk.com/tech/2026/08/09/controversial-bitcoin-fork-bip-110-mines-two-blocks-then-stops
 https://news.bitcoin.com/featured/stolen-bitcoin-at-center-of-kidnapping-plot-3-face-20-years/
+https://cointelegraph.com/news/btcpay-restricts-remote-lightning-access-after-attackers-steal-funds?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
