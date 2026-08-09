@@ -1325,3 +1325,4 @@ https://cryptoslate.com/investors-poured-267-million-into-bitwises-solana-etf-bu
 https://news.bitcoin.com/regulation-and-legal/grayscale-warns-us-risks-crypto-exodus-if-clarity-act-fails/
 https://news.bitcoin.com/finance/fed-hike-bets-crack-as-september-hold-odds-storm-into-lead/
 https://cryptoslate.com/a-major-bitcoin-miner-burned-through-357-btc-on-secret-compute-deals-while-its-output-plummeted/
+https://decrypt.co/375177/bitcoin-anti-spam-fork-splutters-halt-mining-just-two-blocks
