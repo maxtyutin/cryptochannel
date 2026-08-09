@@ -1329,3 +1329,4 @@ https://decrypt.co/375177/bitcoin-anti-spam-fork-splutters-halt-mining-just-two-
 https://news.bitcoin.com/featured/prediction-markets-explode-circle-has-hot-q2-and-more-weekly-recap/
 https://cryptoslate.com/crypto-holders-face-an-aug-27-deadline-to-save-21-tokens-before-kraken-liquidates-them-into-thin-order-books/
 https://cryptoslate.com/a-proposed-ethereum-upgrade-threatens-to-kill-native-yield-and-force-sharplinks-125m-treasury-into-high-risk-defi/
+https://cryptoslate.com/with-0-in-revenue-and-35-idle-machines-in-storage-an-inactive-bitcoin-miner-printed-1-65-billion-shares-to-stay-alive/
