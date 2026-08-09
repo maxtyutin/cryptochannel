@@ -1296,3 +1296,5 @@ https://news.bitcoin.com/featured/bitcoins-splintered-bip-110-fork-falls-behind-
 https://cryptobriefing.com/ukrainian-drone-bulgaria-gas-pipeline/
 https://news.bitcoin.com/crypto-news/ripple-says-eu-crypto-expansion-is-ready-to-scale-after-mica-win/
 https://news.bitcoin.com/featured/67-investors-paid-10m-for-nft-tokens-that-launched-worthless/
+https://www.coindesk.com/tech/2026/08/09/controversial-bitcoin-fork-bip-110-mines-two-blocks-then-stops
+https://news.bitcoin.com/featured/stolen-bitcoin-at-center-of-kidnapping-plot-3-face-20-years/
