@@ -1301,3 +1301,4 @@ https://news.bitcoin.com/featured/stolen-bitcoin-at-center-of-kidnapping-plot-3-
 https://cointelegraph.com/news/btcpay-restricts-remote-lightning-access-after-attackers-steal-funds?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://news.bitcoin.com/finance/mara-pledges-18750-btc-for-600-million-new-bitcoin-backed-loans/
 https://news.bitcoin.com/regulation-and-legal/cyprus-targets-on-site-audits-for-crypto-custodians/
+https://cryptobriefing.com/iran-confirms-no-direct-us-talks-only-intermediary-messages/
