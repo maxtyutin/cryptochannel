@@ -1,4 +1,3 @@
-Crypto is going through a massive dot-com style shakeout as over 100 projects fold in 2026
 AI financial advisers carry a hidden Bitcoin bias activated by a single specific switch
 Bitcoin investors pour $853 million into spot ETFs. BlackRock’s IBIT claims the bulk
 Hyperliquid’s RWA perps boom is eating into the revenue that backs HYPE
@@ -18,3 +17,4 @@ Tokenized RWA Sector Hits $38B as Treasury Debt Dominates Market
 A pre-revenue AI crypto startup funneled $12 million into EV as bad crypto trades erased 97% of cash in six months
 Washington lobbyists skeptical of prediction market limits before Congress ends
 Investors poured $82 million into Canary’s XRP ETF, but falling prices erased double what they put in
+Crypto’s first quantum attack will look like unexplained breach: Quantus founder
