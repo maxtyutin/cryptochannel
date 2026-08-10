@@ -1332,3 +1332,6 @@ https://cryptoslate.com/a-proposed-ethereum-upgrade-threatens-to-kill-native-yie
 https://cryptoslate.com/with-0-in-revenue-and-35-idle-machines-in-storage-an-inactive-bitcoin-miner-printed-1-65-billion-shares-to-stay-alive/
 https://news.bitcoin.com/crypto-news/tokenized-rwa-sector-hits-38b-as-treasury-debt-dominates-market/
 https://cryptoslate.com/a-pre-revenue-ai-crypto-startup-funneled-12-million-into-ev-as-bad-crypto-trades-erased-97-of-cash-in-six-months/
+https://news.bitcoin.com/regulation-and-legal/clarity-act-odds-sink-as-senate-delay-threatens-2026-crypto-vote/
+https://news.bitcoin.com/crypto-news/bip-110-backers-plot-minority-chains-pow-reset-to-fire-bitcoin-miners/
+https://cryptobriefing.com/lobbyists-skeptical-prediction-market-limits-congress/
