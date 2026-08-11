@@ -1396,3 +1396,5 @@ https://decrypt.co/375364/solana-price-death-cross-bull-bear-case-next-move
 https://www.coindesk.com/markets/2026/08/11/bitcoin-stuck-as-etf-inflows-offset-selling-but-inflation-data-could-spark-a-move
 https://www.coindesk.com/policy/2026/08/11/cftc-orders-kalshi-to-continue-offering-prediction-markets-in-new-york-after-state-lawsuit
 https://decrypt.co/375381/openai-exec-brad-lightcap-quits-leadership-shake-up-ipo
+https://decrypt.co/375376/btcpay-bitcoin-bounty-critical-wallet-exploit
+https://decrypt.co/375375/sec-prepares-escape-hatch-securities-registration-crypto-projects
