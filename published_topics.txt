@@ -1,4 +1,3 @@
-SharpLink reports $394M in Q2 net loss fueled by ETH decline
 If crypto goes back to the congressional drawing board, 3 Democrat women loom large
 Bitcoin drops to one-week low as retail buys gold at highest prices since June
 EToro reports second quarter crypto loss even as total profit beats estimates
@@ -18,3 +17,4 @@ Crypto.com rolls out tokenized stock derivatives as crypto exchanges push into e
 Dogecoin and BNB lead majors higher as bitcoin slips near $63,700
 CoreWeave surges 16% on $2.58 billion revenue quarter as AI infrastructure demand eclipses crypto
 Bank of England to test stablecoin, digital currency use in cross-border finance
+Russia moves to restrict retail crypto trading to bitcoin, ether and USDT
