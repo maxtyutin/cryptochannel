@@ -1,4 +1,3 @@
-Coinbase picks Abu Dhabi for its global tokenized asset push
 MoneyGram expands on Solana with global crypto-to-cash service
 Pokémon cards are becoming multibillion dollar market. Crypto wants to fix how they trade
 SharpLink reports $394M in Q2 net loss fueled by ETH decline
@@ -18,3 +17,4 @@ Ravencoin hits record low as network exploit puts transactions at risk
 Harmony’s ONE dives 26% after an attack appears to mint tokens equal to quarter of supply
 Live updates: Bitcoin at $63,600 as Japan's Metaplanet moves 3,881 BTC between wallets
 Crypto.com rolls out tokenized stock derivatives as crypto exchanges push into equities
+Dogecoin and BNB lead majors higher as bitcoin slips near $63,700
