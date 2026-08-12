@@ -1398,3 +1398,5 @@ https://www.coindesk.com/policy/2026/08/11/cftc-orders-kalshi-to-continue-offeri
 https://decrypt.co/375381/openai-exec-brad-lightcap-quits-leadership-shake-up-ipo
 https://decrypt.co/375376/btcpay-bitcoin-bounty-critical-wallet-exploit
 https://decrypt.co/375375/sec-prepares-escape-hatch-securities-registration-crypto-projects
+https://cointelegraph.com/news/ravencoin-rvn-record-low-consensus-exploit?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/sec-cftc-sue-goliath-ventures-400m-crypto-ponzi?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
