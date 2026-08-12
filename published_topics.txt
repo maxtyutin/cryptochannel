@@ -1,4 +1,3 @@
-Strategy CEO says company will resume Bitcoin accumulation this year
 Brazil's largest lender Itaú is stepping deeper into the tokenization
 ARP Digital secures Dubai VARA broker-dealer license
 Following Senate delay, crypto bill has a narrow window to become law
@@ -18,3 +17,4 @@ Russia moves to restrict retail crypto trading to bitcoin, ether and USDT
 XRP trading could get spicy after CPI report as futures bets hit highest since October
 FlightAware drops Kalshi lawsuit over a market niche that data shows it never took off
 Slovenia joins EU’s MiCA stablecoin register with first issuer
+Miden bets on privacy stablecoins with introduction of USDCx
