@@ -1,4 +1,3 @@
-Software stocks break away from bitcoin: What the rare divergence means for crypto
 Ravencoin could roll back four days of transactions after critical block flaw
 Coinbase picks Abu Dhabi for its global tokenized asset push
 MoneyGram expands on Solana with global crypto-to-cash service
@@ -18,3 +17,4 @@ SEC Prepares Escape Hatch From Securities Registration for Crypto Projects
 SEC, CFTC sue Goliath Ventures over $400M crypto Ponzi scheme
 Ravencoin hits record low as network exploit puts transactions at risk
 Harmony’s ONE dives 26% after an attack appears to mint tokens equal to quarter of supply
+Live updates: Bitcoin at $63,600 as Japan's Metaplanet moves 3,881 BTC between wallets
