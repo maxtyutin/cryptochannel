@@ -1,4 +1,3 @@
-U.S. SEC sets meeting to propose Reg Crypto to support certain digital assets offerings
 Riot Platforms surges 20% in pre-market trading on $9.1 billion Anthropic deal
 Software stocks break away from bitcoin: What the rare divergence means for crypto
 Ravencoin could roll back four days of transactions after critical block flaw
@@ -18,3 +17,4 @@ Bitcoin stuck as ETF inflows offset selling, but inflation data could spark a mo
 Another OpenAI Exec Quits in Leadership Shake-Up as AI Giant Eyes IPO
 SEC Prepares Escape Hatch From Securities Registration for Crypto Projects
 SEC, CFTC sue Goliath Ventures over $400M crypto Ponzi scheme
+Ravencoin hits record low as network exploit puts transactions at risk 
