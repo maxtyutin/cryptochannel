@@ -1,4 +1,3 @@
-Harmony’s ONE dives 26% after an attack appears to mint tokens equal to quarter of supply
 Live updates: Bitcoin at $63,600 as Japan's Metaplanet moves 3,881 BTC between wallets
 Crypto.com rolls out tokenized stock derivatives as crypto exchanges push into equities
 Dogecoin and BNB lead majors higher as bitcoin slips near $63,700
@@ -18,3 +17,4 @@ HashKey begins beta distribution of Hong Kong-regulated HKDAP stablecoin
 NYC council announces probe into ‘predatory marketing practices’ on prediction markets
 Hawaii crypto ATM ban to take effect on Oct. 1
 Securitize falls 20% after earnings miss as tokenization revenue falls short
+Morgan Stanley's infrastructure partner Zerohash rebuffed in pitch to be U.S. trust bank
