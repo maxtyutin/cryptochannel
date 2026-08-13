@@ -1,4 +1,3 @@
-Morgan Stanley's infrastructure partner Zerohash rebuffed in pitch to be U.S. trust bank
 ASX shareholder plans to sue former directors over failed blockchain project
 Arizona crypto ATM law helps 35 scam victims recover $171K
 Bitcoin firms ask AI labs for same tools attackers already have
@@ -18,3 +17,4 @@ Forecasts for $1 million bitcoin price likely look too ambitious, key ratio sugg
 Tether says it completed long-promised 'Big Four' audit of finances behind $180 billion USDT stablecoin
 Trezor warns 14,000 customers after fulfilment partner suffers data breach
 Delio CEO sentenced to 15 years in prison on crypto fraud in South Korea
+Robinhood Chain nears $1B TVL as Uniswap drives liquidity: Standard Chartered
