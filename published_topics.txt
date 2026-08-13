@@ -1,4 +1,3 @@
-Miden bets on privacy stablecoins with introduction of USDCx
 Crypto Long & Short:
 Wintermute plans $1 billion AI push beyond crypto: Bloomberg
 Goldman Sachs leaps into bitcoin income ETFs with $2.25 billion NEOS buyout
@@ -18,3 +17,4 @@ Bitcoin slips near $63,500 as traders look past CPI to Fed’s next tests
 Bitcoin treasury company Metaplanet unveils BitBonds with $1.3 million private debt sale
 MUFG to test real-time blockchain settlement for Japanese government bond trades
 Brazil’s largest bitcoin treasury firm plans ETF with 95% allocation to Strategy's STRC
+‘DeFi doesn’t exist anymore,’ just onchain finance: Andre Cronje
