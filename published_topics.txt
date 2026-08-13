@@ -1,4 +1,3 @@
-Goldman Sachs leaps into bitcoin income ETFs with $2.25 billion NEOS buyout
 Kalshi taps DoubleZero for Wall Street-style high-speed data feed
 Kraken adds S&P 500 to funded trading program, commodities to follow
 HashKey begins beta distribution of Hong Kong-regulated HKDAP stablecoin
@@ -18,3 +17,4 @@ Brazil’s largest bitcoin treasury firm plans ETF with 95% allocation to Strate
 ‘DeFi doesn’t exist anymore,’ just onchain finance: Andre Cronje
 Bullish Q2 adjusted earnings in line as rise in subscription revenue offsets digital asset slowdown
 Swissquote cuts full-year guidance as 1H crypto income plunges, shares slide
+Crypto for Advisors: The crypto advice gap
