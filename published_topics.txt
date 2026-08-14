@@ -1,4 +1,3 @@
-Forecasts for $1 million bitcoin price likely look too ambitious, key ratio suggests
 Tether says it completed long-promised 'Big Four' audit of finances behind $180 billion USDT stablecoin
 Trezor warns 14,000 customers after fulfilment partner suffers data breach
 Delio CEO sentenced to 15 years in prison on crypto fraud in South Korea
@@ -18,3 +17,4 @@ Trump family's World Liberty Financial delay plans to sell Maldives resort token
 Volatility exits crypto, TradFi markets even as U.S.-Iran risks linger, sovereign debt rises
 Shinhan Asset Management partners with Plume on tokenized fund pilot
 Solana’s fee overhaul increases burn and makes resource hogs pay
+Israel’s largest bank to offer crypto trading with Galaxy
