@@ -1,4 +1,3 @@
-MUFG to test real-time blockchain settlement for Japanese government bond trades
 Brazil’s largest bitcoin treasury firm plans ETF with 95% allocation to Strategy's STRC
 ‘DeFi doesn’t exist anymore,’ just onchain finance: Andre Cronje
 Bullish Q2 adjusted earnings in line as rise in subscription revenue offsets digital asset slowdown
@@ -18,3 +17,4 @@ Ethereum Foundation pivots away from Poseidon in post-quantum plan
 Figure reports $4.3B in loan marketplace volume as profit nearly triples
 JPMorgan shuttered its banking relationship with predictions platform Polymarket: FT
 Bitcoin holders Strategy and Metaplanet face stock-index exclusion under MSCI’s new proposal
+Neutrl pauses NUSD redemptions over undisclosed reserve issue 
