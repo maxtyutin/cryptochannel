@@ -1487,3 +1487,4 @@ https://www.coindesk.com/markets/2026/08/14/tokenization-stocks-slip-as-sec-dela
 https://decrypt.co/375656/coldcard-bitcoin-thefts-slow-losses-top-150-million
 https://cointelegraph.com/news/dartmouth-endowment-crypto-investments-btc-eth-sol-dropped?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/kraken-parent-payward-revenue-rises-as-trading-volume-falls-q2?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/375684/china-z-ai-glm-5-3-top-open-weight-coding-model
