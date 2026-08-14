@@ -1,4 +1,3 @@
-Trezor warns 14,000 customers after fulfilment partner suffers data breach
 Delio CEO sentenced to 15 years in prison on crypto fraud in South Korea
 Robinhood Chain nears $1B TVL as Uniswap drives liquidity: Standard Chartered
 Anthropic's AI Agents Started a Virtual War. The Quotes Are Unhinged
@@ -18,3 +17,4 @@ Shinhan Asset Management partners with Plume on tokenized fund pilot
 Solana’s fee overhaul increases burn and makes resource hogs pay
 Israel’s largest bank to offer crypto trading with Galaxy
 Morgan Stanley’s BlackRock Bitcoin ETF holdings rise 23% in Q2
+Another Bitcoin Miner Sells Off BTC to Fund AI Data Center Pivot
