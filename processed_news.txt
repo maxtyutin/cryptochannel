@@ -1495,3 +1495,4 @@ https://cointelegraph.com/news/ireland-industry-standards-crypto-gambling-aml?ut
 https://decrypt.co/375715/france-tax-data-leak-wrench-attacks-bitcoin
 https://decrypt.co/375670/openai-staff-blame-rush-ship-rogue-agent-hack
 https://www.coindesk.com/policy/2026/08/14/trump-expected-to-attend-white-house-meeting-with-crypto-ceos-sources-say
+https://cryptoslate.com/ethereum-abandons-its-8-year-cryptography-bet-after-proof-systems-flip-the-tradeoff/

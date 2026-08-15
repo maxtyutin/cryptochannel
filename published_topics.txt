@@ -1,4 +1,3 @@
-RedotPay said to put $1 billion U.S. IPO plan on hold: Bloomberg
 Trump family's World Liberty Financial delay plans to sell Maldives resort token
 Volatility exits crypto, TradFi markets even as U.S.-Iran risks linger, sovereign debt rises
 Shinhan Asset Management partners with Plume on tokenized fund pilot
@@ -18,3 +17,4 @@ Ireland plans industry standards for illicit crypto use
 France Tax Data Leak Could Fuel Scams, Attacks Targeting Bitcoin Holders
 OpenAI Staff Blame Rush to Ship for Rogue Agent Hack
 Trump expected to attend White House meeting with crypto CEOs, sources say
+Ethereum abandons its 8-year cryptography bet after proof systems flip the tradeoff
