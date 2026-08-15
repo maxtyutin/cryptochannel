@@ -1,4 +1,3 @@
-Ethereum abandons its 8-year cryptography bet after proof systems flip the tradeoff
 A Bitcoin treasury with $67 million in BTC has just $5,397 in cash and needs money immediately
 CyberWallet users have until Aug. 15 before crypto withdrawals become a smart contract recovery job
 Prediction markets are becoming financial data, but a 63% price does not always mean 63% odds
@@ -18,3 +17,4 @@ Solana treasury earns $2.5M in staking rewards but had to sell equity to raise $
 How AI Agents Are Deleting the Steep Web3 Tooling Curve
 US government warns countries to choose sides in AI race
 Kalshi ordered to stop broad range of prediction markets in Washington
+$600B of Biden’s clean energy funding survives Trump’s cuts
