@@ -1543,3 +1543,5 @@ https://news.bitcoin.com/market-updates/katie-stockton-bitcoin-major-low/
 https://news.bitcoin.com/featured/bip-110-breakaway-chain-faces-a-long-fight-to-survive/
 https://news.bitcoin.com/finance/the-great-long-bond-selloff-forces-a-brutal-fiscal-reckoning/
 https://cryptoslate.com/crypto-crash-liquidations-face-massive-data-gap-as-public-records-contradict-18b-solana-claim/
+https://cointelegraph.com/news/bybit-launches-unitree-pre-ipo-perpetual-as-crypto-platforms-push-into-private-markets?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://news.bitcoin.com/crypto-news/white-house-crypto-meeting-trump-coinbase-ripple-august-19/
