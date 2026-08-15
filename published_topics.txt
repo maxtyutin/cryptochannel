@@ -1,4 +1,3 @@
-Solana treasury earns $2.5M in staking rewards but had to sell equity to raise $12M in cash for operations
 How AI Agents Are Deleting the Steep Web3 Tooling Curve
 US government warns countries to choose sides in AI race
 Kalshi ordered to stop broad range of prediction markets in Washington
@@ -18,3 +17,4 @@ Robot maker Unitree is going public. Hyperliquid traders see 4x upside from IPO 
 Swiss mega-bank UBS ramps up its Bitcoin exposure with a massive 24-fold surge in ETF call options
 Apple Turns to Alibaba to Help Build AI Model for China
 Tokenized stock holders more than double as monthly volume surges
+A staked Ethereum ETF processed $48M in redemptions while keeping 86% of ETH locked, 21Shares filing shows
