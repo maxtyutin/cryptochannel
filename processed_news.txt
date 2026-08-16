@@ -1587,3 +1587,4 @@ https://cryptoslate.com/record-user-activity-and-a-collapse-in-whale-selling-sho
 https://www.coindesk.com/tech/2026/08/16/crypto-wallet-safepal-reveals-a-data-breach-exposing-nearly-40-000-customers-order-info
 https://www.coindesk.com/business/2026/08/14/mica-s-cleanup-is-creating-a-new-scam-wave-across-the-european-union
 https://decrypt.co/375725/california-bill-ban-ai-chatbots-therapy-mental-health
+https://cryptoslate.com/over-1-3-million-staked-tokens-remain-stranded-onchain-after-a-major-validator-missed-its-deadline-to-exit-aztec/
