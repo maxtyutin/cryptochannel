@@ -1641,3 +1641,4 @@ https://www.coindesk.com/tech/2026/08/17/ethereum-s-next-big-upgrade-has-66-prop
 https://www.coindesk.com/tech/2026/08/17/how-a-bug-in-coldcard-s-code-went-unnoticed-for-years-leading-to-usd100-million-in-hacked-funds
 https://www.coindesk.com/opinion/2026/08/17/the-coldcard-hack-proves-reputation-is-not-a-security-model
 https://www.coindesk.com/markets/2026/08/17/tom-lee-s-bitmine-now-owns-4-8-of-ethereum-supply-after-latest-eth-purchase
+https://www.coindesk.com/policy/2026/08/17/u-s-treasury-department-proposes-genius-act-stablecoin-rule
