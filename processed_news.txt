@@ -1625,3 +1625,6 @@ https://news.bitcoin.com/crypto-news/trader-282k-cz-wallet-marscoin-burn/
 https://news.bitcoin.com/regulation-and-legal/malta-regulator-flags-unlicensed-crypto-marketing-firm/
 https://cryptobriefing.com/taiwan-boosts-defense-budget-over-t1t-aims-for-peace-amid-china-tensions/
 https://www.coindesk.com/markets/2026/08/17/september-fed-interest-rate-increase-is-very-unlikely-goldman-sachs-says
+https://www.coindesk.com/markets/2026/08/17/live-updates-bitcoin-flat-near-usd63-500-but-the-flows-have-quietly-turned
+https://cryptoslate.com/safepal-breach-exposes-40000-customers-as-hardware-wallet-attacks-escalate-from-data-leaks-to-100-million-theft/
+https://news.bitcoin.com/featured/bitcoin-consumer-confidence-ai-rotation-glassnode/
