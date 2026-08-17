@@ -1,4 +1,3 @@
-Chainalysis sues US over $95M ICE contract with TRM Labs
 XRP traders bet on a rebound as price slips to $1 and bearish chatter surges
 Someone in California Has 7 Days to Claim $1.5 Million Before It Vanishes Forever
 The bitcoin futures market looks like a crowded club with a tiny exit – and it could cause pain
@@ -18,3 +17,4 @@ How a bug in Coldcard’s code went unnoticed for years, leading to $100 million
 Tom Lee's Bitmine now owns 4.8% of Ethereum supply after latest ETH purchase
 U.S. Treasury Department proposes GENIUS Act stablecoin rule
 Compound bets $52 million, new leadership team in switch to institutional focus
+Harmony plans rollback, wiping 109,000 transactions after ONE exploit
