@@ -1722,3 +1722,4 @@ https://cointelegraph.com/news/interstice-falconx-cross-chain-swap-engine-canton
 https://www.coindesk.com/policy/2026/08/18/u-s-accounting-standards-group-proposes-way-to-see-stablecoins-as-cash-equivalent
 https://cointelegraph.com/news/us-sec-crypto-rules-clarity-act?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://decrypt.co/375912/rare-books-amazon-ai-scanned-destroyed
+https://decrypt.co/375903/mozilla-ai-smart-firefox-opt-in

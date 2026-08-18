@@ -1,4 +1,3 @@
-Visa looking for new stablecoin settlement partner after BVNK sale to Mastercard
 Crypto’s easy-money era is ending in a wave of failures
 Citi plans to launch bitcoin custody for institutional clients later this year
 Bitcoin miners’ AI pivot pays off, but mining could revive with one twist
@@ -18,3 +17,4 @@ Bitcoin Wallet Maker BitBox Says AI Found Severe Flaws in Firmware
 FalconX, Interstice Connect Canton to Ethereum, Solana and Robinhood Chain
 U.S. accounting-standards group proposes way to see stablecoins as 'cash equivalent'
 Rare Books Traced to Amazon AI Training Facility to Be Scanned and Destroyed
+Mozilla Tests an AI 'Smart Window' in Firefox—But Only If You Opt In
