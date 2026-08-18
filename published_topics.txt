@@ -1,4 +1,3 @@
-KuCoin’s new perp rule can turn one funding-rate extreme into 36 hours of hourly settlements
 Tether Pushes Into Artificial Intelligence as User Base Tops 650M
 BitBox patches ‘severe’ wallet flaws that could put funds at risk
 China adds 8 banks to digital yuan network as operator count hits 30
@@ -18,3 +17,4 @@ Japan's Metaplanet launching U.S. bitcoin treasury company through $135 million 
 Neuberger teams with Securitize on multi-chain tokenized fixed-income fund launch
 Bitcoin has gone quiet as traders chase ‘5x or 10x’ payoffs elsewhere
 Kraken’s Krak debuts US debit card as Payward broadens financial services push
+Federal prosecutors blast ex-Celsius CEO’s motion to vacate as ‘without merit’
