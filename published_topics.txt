@@ -1,4 +1,3 @@
-Solana’s Agave 4.2 activation target arrives with mainnet feature gates still pending
 OpenAI’s Answer to Rogue Agents and Hacks Is More AI, Not Less
 Forced liquidations begin in 30 days for business crypto accounts missing new verification rules on Bybit
 Prediction Markets Give the Fed 74% Odds of Standing Pat in September
@@ -18,3 +17,4 @@ The bitcoin price level where leveraged bulls could get whacked
 Ethereum Foundation warns some tools may break with Glamsterdam upgrade
 KuCoin’s new perp rule can turn one funding-rate extreme into 36 hours of hourly settlements
 Tether Pushes Into Artificial Intelligence as User Base Tops 650M
+BitBox patches ‘severe’ wallet flaws that could put funds at risk 

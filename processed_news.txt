@@ -1681,3 +1681,5 @@ https://www.coindesk.com/markets/2026/08/18/the-bitcoin-price-level-where-levera
 https://cointelegraph.com/news/ethereum-foundation-warns-some-tools-may-break-with-glamsterdam-upgrade?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cryptoslate.com/kucoins-new-perp-rule-can-turn-one-funding-rate-extreme-into-36-hours-of-hourly-settlements/
 https://news.bitcoin.com/crypto-news/tether-pushes-into-artificial-intelligence-as-user-base-tops-650m/
+https://www.coindesk.com/tech/2026/08/18/live-updates-bitcoin-holds-usd64-000-as-surging-yields-and-oil-drain-risk-appetite
+https://cointelegraph.com/news/bitbox-patches-severe-wallet-firmware-flaws?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
