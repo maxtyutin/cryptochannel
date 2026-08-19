@@ -1737,3 +1737,4 @@ https://www.coindesk.com/markets/2026/08/19/robot-maker-unitree-s-ipo-surges-600
 https://www.coindesk.com/markets/2026/08/19/maya-protocol-exploit-drains-bitcoin-and-other-assets-as-pool-value-drops-usd11-million
 https://cryptoslate.com/ethereums-12-gpu-proving-problem-just-got-a-4-gpu-answer/
 https://cryptoslate.com/hives-84-7-million-swedish-tax-provision-eclipsed-revenue-even-as-bitcoin-output-hit-a-record/
+https://news.bitcoin.com/regulation-and-legal/asic-pulls-3106-crypto-scams-as-ai-networks-target-aussie-savings/
