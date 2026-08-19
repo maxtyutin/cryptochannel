@@ -1775,3 +1775,4 @@ https://decrypt.co/375990/crypto-stocks-rip-strategy-coinbase-bitcoin
 https://cryptoslate.com/bitcoin-holders-face-potential-exchange-freezes-as-new-chain-rollout-tests-replay-safety-and-market-stability/
 https://cointelegraph.com/news/bitcoincom-integrates-uae-registered-usdu-stablecoin-into-self-custodial-wallet?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cryptoslate.com/solana-is-slashing-per-block-compute-limits-so-its-new-350ms-speed-boost-doesnt-overload-the-network/
+https://decrypt.co/376026/trump-ai-bigger-than-internet-light-touch-regulation
