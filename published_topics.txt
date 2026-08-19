@@ -1,4 +1,3 @@
-Cypherpunk launches Zcash mining fleet controlling 18% of network hashrate
 Markets Confident OpenAI Releases Its Next AI Model in Weeks
 Bitcoin Wallet Maker BitBox Says AI Found Severe Flaws in Firmware
 FalconX, Interstice Connect Canton to Ethereum, Solana and Robinhood Chain
@@ -18,3 +17,4 @@ Robot maker Unitree’s IPO surges 600%, outpacing crypto traders’ premarket b
 Ethereum’s 12-GPU proving problem just got a 4-GPU answer
 HIVE’s $84.7 million Swedish tax provision eclipsed revenue even as Bitcoin output hit a record
 ASIC Pulls 3,106 Crypto Scams as AI Networks Target Aussie Savings
+Arthur Hayes takes CEO role at Flop Labs ahead of Q4 airdrop
