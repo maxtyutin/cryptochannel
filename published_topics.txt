@@ -1,4 +1,3 @@
-Solana is slashing per-block compute limits so its new 350ms speed boost doesn’t overload the network
 Trump Says AI Could Be 'Bigger Than the Internet' as He Pushes Light-Touch Regulation
 Down 50% on crypto and burning $8 million in cash, this Nasdaq firm just pivoted to event robots to survive
 Bitcoin's Sharpest Rally in Five Months Flips Markets From Bearish to Coin Flip
@@ -18,3 +17,4 @@ BitGo Korea secures VASP registration for institutional crypto custody
 A crypto network just voted to abandon its standalone blockchain and unlock 27% of its token supply
 Metaplanet Puts 2,100 BTC Into Super League for US Expansion
 Elon Musk's X is exploring stablecoins to pay influencers and content providers
+Banking Regulator Races to Finalize GENIUS Act Stablecoin Rules
