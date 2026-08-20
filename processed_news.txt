@@ -1786,3 +1786,5 @@ https://news.bitcoin.com/featured/scaramucci-backs-btc-above-100k-as-bear-phase-
 https://news.bitcoin.com/finance/trump-opens-bitcoin-door-as-us-debt-blows-past-40-trillion/
 https://cryptoslate.com/bitcoin-treasury-hyperscale-sells-686-btc-to-clear-loans-but-says-cash-wont-cover-next-12-months/
 https://news.bitcoin.com/security/binance-helps-stop-1-2m-governance-attack-in-under-48-hours/
+https://www.coindesk.com/markets/2026/08/20/ether-jumps-18-to-usd2-250-as-bitcoin-tops-usd69-000-in-broad-crypto-rally
+https://news.bitcoin.com/market-updates/xrp-sees-23-of-onchain-trading-volume-in-a-three-hour-trading-window/
