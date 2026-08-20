@@ -1785,3 +1785,4 @@ https://news.bitcoin.com/regulation-and-legal/trump-hosts-top-crypto-ceos-at-whi
 https://news.bitcoin.com/featured/scaramucci-backs-btc-above-100k-as-bear-phase-nears-end/
 https://news.bitcoin.com/finance/trump-opens-bitcoin-door-as-us-debt-blows-past-40-trillion/
 https://cryptoslate.com/bitcoin-treasury-hyperscale-sells-686-btc-to-clear-loans-but-says-cash-wont-cover-next-12-months/
+https://news.bitcoin.com/security/binance-helps-stop-1-2m-governance-attack-in-under-48-hours/
