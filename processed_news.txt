@@ -1892,3 +1892,5 @@ https://decrypt.co/376244/wall-street-washington-bitcoin-rally
 https://cryptoslate.com/a-22-9-million-capital-deficit-threatens-to-derail-an-energy-firms-pivot-to-off-grid-bitcoin-mining/
 https://decrypt.co/376270/coldcard-new-security-after-bitcoin-exploit
 https://www.coindesk.com/policy/2026/08/21/crypto-advocates-join-in-suing-illinois-over-digital-asset-tax
+https://cryptoslate.com/trump-backed-4-billion-usd1-stablecoin-has-wallet-powers-its-own-github-does-not-show/
+https://cryptoslate.com/maya-protocol-exploit-wallet-still-holds-20-83-btc-as-11-million-pool-impact-remains-unresolved/
