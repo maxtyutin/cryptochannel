@@ -1,4 +1,3 @@
-Bitdeer signs $400M AI cloud computing deal for Malaysia facility
 MiCA cracks down on USDT in Europe... but no one else cares
 Crypto for Advisors: What are tokenized deposits?
 Bitcoin's jump above $71,000 sets up bullish golden cross pattern
@@ -18,3 +17,4 @@ Tensions Flare as CME, Kalshi Execs Clash Over Prediction Markets in DC
 Nasdaq-listed company warned it may not survive 12 months after its crypto treasury crashed 46%
 Datavault wants to buy a bank and fund it with $35 million after reporting $1.4 million cash
 ARK’s Valente Sees RWA Trading Reshaping DeFi Platform Economics
+Ethereum’s next upgrade turns a 2-second block bottleneck into a roughly 9-second window
