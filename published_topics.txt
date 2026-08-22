@@ -1,4 +1,3 @@
-Solana cuts blockchain slot time to 350 milliseconds
 Morning Minute: CFTC Will Give Crypto Clarity If Congress Won’t
 XRP Erases Its Most Bearish Signal—And the Ripple-Linked Coin Is Flying
 Ethena's ENA token surges 48%, but altcoin season will have to wait
@@ -18,3 +17,4 @@ Unresolved $11 million liquidity crash leaves pools exposed as attacker still ho
 MANTRA Chain stays offline after exploit as Aug. 21 restart hinges on patch test
 South Korea Deploys AI to Bust Crypto Market Manipulation
 Ethereum researchers are racing to close a zkEVM security gap before December
+Grayscale Names 3 Crypto Tokens That Could Gain From New SEC Rules
