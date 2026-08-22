@@ -1896,3 +1896,4 @@ https://cryptoslate.com/trump-backed-4-billion-usd1-stablecoin-has-wallet-powers
 https://cryptoslate.com/maya-protocol-exploit-wallet-still-holds-20-83-btc-as-11-million-pool-impact-remains-unresolved/
 https://cryptoslate.com/mantra-chain-stays-offline-after-exploit-as-aug-21-restart-hinges-on-patch-test/
 https://news.bitcoin.com/regulation-and-legal/south-korea-deploys-ai-to-bust-crypto-market-manipulation/
+https://cryptoslate.com/ethereum-researchers-are-racing-to-close-a-zkevm-security-gap-before-december/
