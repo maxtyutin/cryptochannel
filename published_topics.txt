@@ -1,4 +1,3 @@
-OpenAI absorbs Instant team to enhance AI application infrastructure
 Adam Back’s Bitcoin treasury deal died, but its $15M obligation did not
 Ormat Technologies pivots to AI-driven geothermal power with EGS projects
 Expect Changes in Rewards and Fees at Crypto Exchanges as Strategies Shift
@@ -18,3 +17,4 @@ Tokenized stocks risk repeating Wall Street’s 1960s ‘paper crisis,’ Fairmi
 MiCA is coming for DeFi vaults, but regulation will be difficult
 A Third of the Post-ChatGPT Web Is AI-Written, Pew Finds
 Crypto exchange BitMart weighs partial restart and creditor payouts weeks after announcing shutdown
+AI Has Made Bitcoin Software a Target—This Group Is Fighting Back
