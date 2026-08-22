@@ -1,4 +1,3 @@
-Holders face permanent token destruction with no guarantee of value as deadline looms for Shade’s privacy protocol
 Pass the Clarity Act
 Onchain, in court: What happened in crypto legal news this week
 Ray Dalio says to buy ‘a bit’ of Bitcoin amid potential debt crisis
@@ -18,3 +17,4 @@ UK Tax Agency Sends 81,000 Crypto Tax Letters as Scrutiny Rises
 How a Treasury buyback tweak helped bitcoin surge 25% to nearly $80,000 in days
 Zcash jumps 48% to over $800 as Grayscale spot ETF push adds to ‘next bitcoin’ buzz
 Druckenmiller Bets $88m on Bitdeer and Hyperliquid Strategies
+OpenAI absorbs Instant team to enhance AI application infrastructure
