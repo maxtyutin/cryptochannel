@@ -1,4 +1,3 @@
-Coldcard now requires 65 key presses after seed exploit, while exposed funds still must move
 Big Banks Demand Identity Checks for Secondary Stablecoin Markets
 Bitcoin Miners Get a Lifeline as Hashprice Explodes 20% Higher
 Israel orders IDF to expedite destruction of Hezbollah infrastructure in Lebanon
@@ -18,3 +17,4 @@ Layer 1 network dilutes supply by 75% overnight to fund survival after main deve
 Digital Gold Stirs at Last – Week in Review
 Enzo Maresca’s exit from Chelsea: what went wrong and what came next
 Robot Brains Could Have Their ‘ChatGPT Moment’ by 2027, ACE Robotics Chairman Says
+Crypto card spending tops $1 billion as stablecoins move into everyday purchases
