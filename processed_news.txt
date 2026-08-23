@@ -1991,3 +1991,4 @@ https://www.coindesk.com/policy/2026/08/23/regulation-crypto-is-here-state-of-cr
 https://cryptoslate.com/the-us-approved-high-leverage-bitcoin-trading-while-crypto-founders-remain-legally-blocked-from-raising-funds/
 https://cryptoslate.com/bitcoin-core-considers-dropping-encrypted-routing-support-as-poor-node-health-exposes-users-to-eclipse-attacks/
 https://news.bitcoin.com/crypto-news/peter-schiff-says-ai-could-turn-into-bitcoins-biggest-threat/
+https://news.bitcoin.com/mining/bitcoin-mining-hits-a-crossroads-as-difficulty-hovers-near-the-floor/
