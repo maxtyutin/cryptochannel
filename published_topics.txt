@@ -1,4 +1,3 @@
-Sandbox Bridge Hack Mints 14.9B SAND While Coinbase Delists Futures
 Ripple relies on locked XRP reserves to back a $275 million institutional credit line
 Term Labs suffers $8.5M governance exploit as attacker seizes control of strategy vaults
 As foreign investors dump $29 billion in Treasury bills, Washington pivots to stablecoin issuers to back US debt
@@ -18,3 +17,4 @@ Fed study finds crypto investors driven by beliefs, easily swayed by returns
 Pakistan gives crypto platforms a September 5 deadline to comply or leave
 How a $20M crypto payout left a micro-cap firm with under $83K in usable cash reserves
 Bitcoin miner IPO demands 99.8% of funds from public buyers while handing them just 10% equity
+Regulation Crypto is here: State of Crypto 
