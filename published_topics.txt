@@ -1,4 +1,3 @@
-Inside transfer wipes out $1M executive debt as crypto firm offloads payments business without independent valuation
 Japan’s Crypto Freeze Cracks as Nomura Wins Coveted New License
 Illinois’ 0.2% Crypto Tax Sparks a Full-Blown Courtroom War
 A $1 billion meme coin purchase puts a huge 167% share dilution down to a single vote for ZeroStack
@@ -18,3 +17,4 @@ Neko Health and Neuralink reportedly collaborate to screen trial candidates usin
 HyperliquidX open interest surpasses $13B for first time since October 10
 Bitcoin’s ECX Fork Is Coming: When It Hits and Who Gets Free Coins
 Iran executes protester Majid Adineh amid US-Israel tensions
+Coldcard now requires 65 key presses after seed exploit, while exposed funds still must move

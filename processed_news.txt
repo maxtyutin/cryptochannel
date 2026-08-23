@@ -1959,3 +1959,4 @@ https://cryptobriefing.com/neko-health-neuralink-screen-trial-candidates/
 https://cryptobriefing.com/hyperliquidx-open-interest-surpasses-13b-for-first-time-since-october-10/
 https://news.bitcoin.com/featured/bitcoins-ecx-fork-is-coming-when-it-hits-and-who-gets-free-coins/
 https://cryptobriefing.com/iran-executes-protester-majid-adineh-amid-us-israel-tensions/
+https://cryptoslate.com/coldcard-now-requires-65-key-presses-after-seed-exploit-while-exposed-funds-still-must-move/
