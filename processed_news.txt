@@ -1961,3 +1961,4 @@ https://news.bitcoin.com/featured/bitcoins-ecx-fork-is-coming-when-it-hits-and-w
 https://cryptobriefing.com/iran-executes-protester-majid-adineh-amid-us-israel-tensions/
 https://cryptoslate.com/coldcard-now-requires-65-key-presses-after-seed-exploit-while-exposed-funds-still-must-move/
 https://news.bitcoin.com/regulation-and-legal/big-banks-demand-identity-checks-for-secondary-stablecoin-markets/
+https://news.bitcoin.com/mining/bitcoin-miners-get-a-lifeline-as-hashprice-explodes-20-higher/
