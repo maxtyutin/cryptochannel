@@ -1,4 +1,3 @@
-Term Labs suffers $8.5M governance exploit as attacker seizes control of strategy vaults
 As foreign investors dump $29 billion in Treasury bills, Washington pivots to stablecoin issuers to back US debt
 Isfahan nuclear fuel plant was first target of US-Israeli assaults: Nuclear chief
 Stablecoin Depegs Explained: What Really Happens When a Digital Dollar Breaks the Buck
@@ -18,3 +17,4 @@ How a $20M crypto payout left a micro-cap firm with under $83K in usable cash re
 Bitcoin miner IPO demands 99.8% of funds from public buyers while handing them just 10% equity
 Regulation Crypto is here: State of Crypto
 The US approved high-leverage Bitcoin trading while crypto founders remain legally blocked from raising funds
+Bitcoin Core considers dropping encrypted routing support as poor node health exposes users to eclipse attacks
