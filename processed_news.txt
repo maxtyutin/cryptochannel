@@ -1967,3 +1967,4 @@ https://cryptoslate.com/seamless-access-to-global-crypto-platforms-could-evapora
 https://news.bitcoin.com/mining/eu-carbon-taxes-push-bitcoin-mining-to-russia-study-claims/
 https://cryptobriefing.com/china-cuts-oil-imports-driving-30-drop-in-global-oil-prices-amid-iran-tensions/
 https://cryptoslate.com/america-is-creating-a-new-class-of-crypto-banks-but-they-arent-really-banks/
+https://news.bitcoin.com/security/sandbox-sand-bridge-exploit-unbacked-tokens/
