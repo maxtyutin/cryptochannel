@@ -2052,3 +2052,5 @@ https://www.coindesk.com/policy/2026/08/24/crypto-political-group-details-list-o
 https://www.coindesk.com/business/2026/08/24/coinbase-debuts-tokenized-stocks-on-base-network-joining-race-to-bring-equities-on-blockchain
 https://cointelegraph.com/markets/bitcoin-price-hits-80k-as-24-hour-crypto-short-liquidations-pass-m?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://decrypt.co/376375/hypeliquid-price-record-high-token-unlock
+https://decrypt.co/376372/zcash-eight-year-high-price-futures-bets
+https://decrypt.co/376349/bitcoin-ethereum-etfs-23-billion-aum-inflows
