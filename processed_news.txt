@@ -2021,3 +2021,6 @@ https://cryptoslate.com/bitcoin-holders-face-unresolved-fork-risks-as-new-ecash-
 https://news.bitcoin.com/blockchain/peaqos-and-world-id-bring-zk-proofs-to-autonomous-robots/
 https://www.coindesk.com/markets/2026/08/24/crypto-roars-back-as-bitcoin-posts-its-second-best-week-since-early-2021
 https://www.coindesk.com/markets/2026/08/24/jackson-hole-symposium-u-s-pce-prices-iren-earnings-crypto-week-ahead
+https://www.coindesk.com/business/2026/08/24/live-updates-bitcoin-holds-usd77-000-as-xrp-zcash-pull-back-after-a-big-weekly-rally
+https://cointelegraph.com/markets/bitcoin-etf-inflows-billion-strongest-week-october?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cryptoslate.com/evm-network-halts-block-production-after-supply-exploit-as-ton-connection-remains-dark/
