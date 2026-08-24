@@ -2017,3 +2017,5 @@ https://cointelegraph.com/news/pakistan-crypto-licensing-portal-september-5-dead
 https://www.coindesk.com/markets/2026/08/24/ethereum-lending-app-term-finance-loses-usd8-5-million-after-attacker-buys-voting-power
 https://cointelegraph.com/news/banks-regulators-quantum-resistant-crypto-pilot?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://www.coindesk.com/markets/2026/08/24/ether-is-crushing-bitcoin-and-the-golden-cross-says-it-may-not-be-done-yet
+https://cryptoslate.com/bitcoin-holders-face-unresolved-fork-risks-as-new-ecash-test-chain-launches-ahead-of-october-deadline/
+https://news.bitcoin.com/blockchain/peaqos-and-world-id-bring-zk-proofs-to-autonomous-robots/
