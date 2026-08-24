@@ -1,4 +1,3 @@
-The next phase of tokenization is utility
 US Treasury to launch largest financial offensive against Iran tomorrow
 Bank of Russia Eases Qualified Investor Rules With New Finance Test
 Anthropic’s Fable 5 accounts for just 6% of purchased tokens as cheaper Opus 5 steals the show
@@ -18,3 +17,4 @@ Germany widens MiCA lead as latest EU register update adds 6 banks
 Gemini strikes Apex deal to widen prediction markets reach
 $400M AI crypto treasury firm seeks second reverse split while restoring capacity for 3 billion shares
 Standard Chartered becomes first bank to distribute Hong Kong dollar stablecoin
+Strategy raises $2 billion through MSTR sales and creates new USD Cash pool
