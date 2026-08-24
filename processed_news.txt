@@ -2054,3 +2054,8 @@ https://cointelegraph.com/markets/bitcoin-price-hits-80k-as-24-hour-crypto-short
 https://decrypt.co/376375/hypeliquid-price-record-high-token-unlock
 https://decrypt.co/376372/zcash-eight-year-high-price-futures-bets
 https://decrypt.co/376349/bitcoin-ethereum-etfs-23-billion-aum-inflows
+https://www.coindesk.com/markets/2026/08/24/bitcoin-nears-usd80-000-but-analysts-say-the-next-pullback-will-be-key
+https://cointelegraph.com/news/coinbase-stand-crypto-advocacy-group-endorses-midterm-candidates?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/coinbase-taps-chainlink-for-tokenized-stock-data-on-base?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/376393/coinbase-tokenized-stocks-base-ethereum
+https://cryptoslate.com/zilliqa-points-to-hardware-wallet-flaw-discarding-entropy-to-expose-crypto-keys-enabling-683m-zil-theft/

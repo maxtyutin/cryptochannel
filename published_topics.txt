@@ -1,4 +1,3 @@
-Ether is crushing bitcoin and the 'golden cross' says it may not be done yet
 PeaqOS and World ID Bring ZK Proofs to Autonomous Robots
 Jackson  Hole Symposium, U.S. PCE prices, IREN earnings: Crypto Week Ahead
 EVM network halts block production after supply exploit as TON connection remains dark
@@ -18,3 +17,4 @@ Crypto political group details list of U.S. congressional allies its backing thi
 Coinbase debuts tokenized stocks on Base network, joining race to bring equities on blockchain
 Hyperliquid Hits Record High as $1.2 Billion Token Unlock Looms
 Bitcoin, Ethereum ETFs Grew $23 Billion Last Week—Only $2.6 Billion Was New Money
+Zilliqa points to hardware wallet flaw discarding entropy to expose crypto keys, enabling 683M ZIL theft
