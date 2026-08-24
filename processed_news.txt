@@ -2060,3 +2060,5 @@ https://cointelegraph.com/news/coinbase-taps-chainlink-for-tokenized-stock-data-
 https://decrypt.co/376393/coinbase-tokenized-stocks-base-ethereum
 https://cryptoslate.com/zilliqa-points-to-hardware-wallet-flaw-discarding-entropy-to-expose-crypto-keys-enabling-683m-zil-theft/
 https://cointelegraph.com/news/bernstein-circle-usdc-growth-140-price-target?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/gemini-plans-to-distribute-crypto-prediction-markets-through-apex-brokerages?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/376396/mysterious-ai-model-ox-alpha

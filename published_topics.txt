@@ -1,4 +1,3 @@
-Jackson  Hole Symposium, U.S. PCE prices, IREN earnings: Crypto Week Ahead
 EVM network halts block production after supply exploit as TON connection remains dark
 Cleaning firm dumps Dogecoin to fund $100M AI pivot amid stock dilution warning
 Germany widens MiCA lead as latest EU register update adds 6 banks
@@ -18,3 +17,4 @@ Hyperliquid Hits Record High as $1.2 Billion Token Unlock Looms
 Bitcoin, Ethereum ETFs Grew $23 Billion Last Week—Only $2.6 Billion Was New Money
 Zilliqa points to hardware wallet flaw discarding entropy to expose crypto keys, enabling 683M ZIL theft
 Bernstein sees new USDC growth cycle, sets $140 Circle price target
+AI Model Ox Alpha Is Free, Beats Claude Fable, and Nobody Knows Who Built It
