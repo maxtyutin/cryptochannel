@@ -1,4 +1,3 @@
-Korean bank taps Ripple for payments, Pakistan opens crypto licensing: Asia Express
 Bitcoin tops $80,000, solana jumps 8% but rally now runs into overbought warning
 Crypto rally spills into dog and cat memecoins as smaller tokens double in a week
 Monad proposes wallet upgrade that could survive lost keys and quantum attacks
@@ -18,3 +17,4 @@ Bitwise turns Coinbase's tokenized stocks into automated AI, robotics and tech p
 Chainalysis-run sting targets child exploitation networks with aid of Binance, Coinbase
 LayerZero unveils trading infrastructure for crypto and tokenized markets, ZRO surges
 Strategy’s $66B Bitcoin machine hinges on capital markets, not BTC price: Report
+Arcus launches tokenized perp positions on Robinhood Chain
