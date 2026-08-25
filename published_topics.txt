@@ -1,4 +1,3 @@
-Crypto rally spills into dog and cat memecoins as smaller tokens double in a week
 Monad proposes wallet upgrade that could survive lost keys and quantum attacks
 US targets Iran’s crypto sector, cites over $100M in oil-linked payments
 Franklin Templeton and Hashkey roll out U.S. tokenized money fund in Asia
@@ -18,3 +17,4 @@ LayerZero unveils trading infrastructure for crypto and tokenized markets, ZRO s
 Strategy’s $66B Bitcoin machine hinges on capital markets, not BTC price: Report
 Arcus launches tokenized perp positions on Robinhood Chain
 Bitcoin enters ‘initial phase’ of new bull market, but $83K remains key: CryptoQuant
+Solana transactions hit record 4.2B as SOL rallies 40%
