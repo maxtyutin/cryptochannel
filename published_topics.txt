@@ -1,4 +1,3 @@
-Bitwise turns Coinbase's tokenized stocks into automated AI, robotics and tech portfolios
 Chainalysis-run sting targets child exploitation networks with aid of Binance, Coinbase
 LayerZero unveils trading infrastructure for crypto and tokenized markets, ZRO surges
 Strategy’s $66B Bitcoin machine hinges on capital markets, not BTC price: Report
@@ -18,3 +17,4 @@ These Researchers Just Shrunk an AI Model and Somehow Made It Smarter
 Bitcoin miner Sphere 3D faces $2.2M tariff claim equal to 77% of its cash
 Phantom’s plan to drop Sui exposes the hidden power wallet interfaces hold over user funds
 Soluna’s 1 billion-share proposal exposes the funding challenge behind its AI and Bitcoin expansion
+Bitcoin holds $79,000, ether, solana slip as traders bank a week of gains
