@@ -1,4 +1,3 @@
-Arcus launches tokenized perp positions on Robinhood Chain
 Bitcoin enters ‘initial phase’ of new bull market, but $83K remains key: CryptoQuant
 Solana transactions hit record 4.2B as SOL rallies 40%
 Crypto Market Flips From Fear to 'Extreme Greed' for First Time Since 2024
@@ -18,3 +17,4 @@ Bitcoin holds $79,000, ether, solana slip as traders bank a week of gains
 40 malicious Firefox add-ons targeted crypto wallets, and 9 began as sports-score tools
 Moonwell has a $1.8M liquidity hole and its latest plan allocates $0 to fix it
 USDC Leads Crypto Card Spending as Top-Ups Reach $13.8 Billion
+US bank lobby wants stablecoin holders to open an account before cashing out
