@@ -1,4 +1,3 @@
-World Liberty Financial launches USD1 natively on Canton Network
 Alibaba to Release Qwen 3.8-Flash-Next as a Preview of What Qwen 4 Will Offer
 Zerohash back for second effort at OCC trust bank charter
 U.S. state banking associations plan to launch their own nationwide blockchain network
@@ -18,3 +17,4 @@ Tornado Cash developer Roman Storm’s retrial delayed to April 2027
 Japan targets early 2030s launch for blockchain-based stock and bond settlement system
 Live updates: Zcash pulls back 8% as its Grayscale ETF goes live, capping a 60% rally
 Euro stablecoins get a mainstream push as Revolut begins rolling out EURR in Europe
+Strategy cuts net leverage to near zero as cash nearly matches convertible debt
