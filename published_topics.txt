@@ -1,4 +1,3 @@
-Crypto custody firm Copper has potential buyers. But offers are way below its $500 million asking price
 Bitwise turns Coinbase's tokenized stocks into automated AI, robotics and tech portfolios
 Chainalysis-run sting targets child exploitation networks with aid of Binance, Coinbase
 LayerZero unveils trading infrastructure for crypto and tokenized markets, ZRO surges
@@ -18,3 +17,4 @@ XRP Hot Streak Cools as Traders Hit a Wall: Where Does It Go Next?
 These Researchers Just Shrunk an AI Model and Somehow Made It Smarter
 Bitcoin miner Sphere 3D faces $2.2M tariff claim equal to 77% of its cash
 Phantom’s plan to drop Sui exposes the hidden power wallet interfaces hold over user funds
+Soluna’s 1 billion-share proposal exposes the funding challenge behind its AI and Bitcoin expansion
