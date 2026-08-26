@@ -1,4 +1,3 @@
-LayerZero unveils trading infrastructure for crypto and tokenized markets, ZRO surges
 Strategy’s $66B Bitcoin machine hinges on capital markets, not BTC price: Report
 Arcus launches tokenized perp positions on Robinhood Chain
 Bitcoin enters ‘initial phase’ of new bull market, but $83K remains key: CryptoQuant
@@ -18,3 +17,4 @@ Phantom’s plan to drop Sui exposes the hidden power wallet interfaces hold ove
 Soluna’s 1 billion-share proposal exposes the funding challenge behind its AI and Bitcoin expansion
 Bitcoin holds $79,000, ether, solana slip as traders bank a week of gains
 40 malicious Firefox add-ons targeted crypto wallets, and 9 began as sports-score tools
+Moonwell has a $1.8M liquidity hole and its latest plan allocates $0 to fix it
