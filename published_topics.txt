@@ -1,4 +1,3 @@
-Strategy cuts net leverage to near zero as cash nearly matches convertible debt
 ECB claims digital euro will offer 'maximum level of privacy' amid surveillance fears
 The 3 catalysts that could define bitcoin's next move
 Dallas Fed warns tokenized deposits could strip $700 billion from U.S. banks' lending capacity
@@ -18,3 +17,4 @@ Polish Olympic chief arrested as prosecutors probe suspected crypto-linked bribe
 Virtu, Tradeweb complete onchain repo using Marshall Islands digital bond
 BitGo to buy NYDIG trading arm for $42.5M in cash and stock plus $15M earnout
 Solana vote to double disinflation passes by a hair in dramatic finish
+Fed Chair Kevin Warsh at Jackson Hole: 'We have work to do' on inflation
