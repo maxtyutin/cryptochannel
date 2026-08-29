@@ -1,4 +1,3 @@
-Students want crypto classes but learn on social media: OKX survey
 Ethereum developers propose first step to protect ETH staking from quantum attacks
 Shinhan and Visa team up to test stablecoin issuance and B2B settlements in South Korea
 Crypto Long & Short: Tokenized equities: the model underneath the trade
@@ -18,3 +17,4 @@ Fed Chair Kevin Warsh at Jackson Hole: 'We have work to do' on inflation
 The Clarity Act slipped to September. Banks are building anyway
 Bitcoin wallets untouched for 10 years moved $40 million. Most avoided exchanges
 Ripple is preparing XRP Ledger for quantum computers before ‘Q-Day’ arrives
+Tokenized assets are busier than the data shows
