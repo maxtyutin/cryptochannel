@@ -2192,3 +2192,5 @@ https://cointelegraph.com/news/saylor-signals-strategy-is-back-to-bitcoin-buying
 https://decrypt.co/376884/strategy-bitcoin-2-8-billion-profit-saylor-btc-buy
 https://decrypt.co/376863/ai-models-hacked-companies-ai-labs-cyber-defenses
 https://cryptoslate.com/ceo-jeremy-allaire-says-circle-built-the-internet-financial-system-but-cirbtc-has-only-40-btc/
+https://decrypt.co/376911/polygon-quietly-patched-security-flaws
+https://decrypt.co/376897/bitcoin-etfs-snap-streak-ethereum-funds-extend
