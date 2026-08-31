@@ -1,4 +1,3 @@
-Ripple is preparing XRP Ledger for quantum computers before ‘Q-Day’ arrives
 Tokenized assets are busier than the data shows
 Ditching 'digital gold': BPI study suggests everyday Americans prefer control and micro-investing
 Swift’s $1.5 quadrillion network faces a blockchain test
@@ -18,3 +17,4 @@ Bitcoin ETFs Snap Nine-Day Inflow Streak as Ethereum Funds Extend Their Run
 Bitcoin’s new quantum defenses, 18.9M SOL cancelled: Hodler’s Digest
 September Fed rate hike fears look overblown as the probability stands at just 58%, not 90%
 Ireland bars crypto from new tax-advantaged investment accounts
+NYSE owner ICE taps tZERO for tokenized securities push, takes stake in firm
