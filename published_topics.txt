@@ -1,4 +1,3 @@
-The next trillion-dollar currency may not be a stablecoin — it might not even have a name yet
 Polygon discloses security flaws fixed in recent hard forks
 Trump-promoted brand touts GOLD before token collapse
 A $1.1 million crypto card hack crashed a neobank's token 49%
@@ -18,3 +17,4 @@ NYSE owner ICE taps tZERO for tokenized securities push, takes stake in firm
 Kalshi lays down first lifetime ban for ex-member of Congress George Santos
 North Korean hackers are moving tens of millions on Hyperliquid as Trump pushes to onshore the crypto platform
 Bitmine makes largest ether purchase since June as Tom Lee points to crypto's strong Q3
+Webull expands crypto trading into Canada through Coinbase collaboration
