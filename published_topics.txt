@@ -1,4 +1,3 @@
-Bitcoin’s new quantum defenses, 18.9M SOL cancelled: Hodler’s Digest
 September Fed rate hike fears look overblown as the probability stands at just 58%, not 90%
 Ireland bars crypto from new tax-advantaged investment accounts
 NYSE owner ICE taps tZERO for tokenized securities push, takes stake in firm
@@ -18,3 +17,4 @@ Crypto-backed PAC scales back ad spending in Massachusetts primary
 ⚖️ SEC ИНИЦИИРУЕТ ОБСУЖДЕНИЕ КРУГЛОСУТОЧНОГО ТРЕЙДИНГА И ОБНОВЛЯЕТ ПРАВИЛА ДЛЯ ТРАНСФЕР-АГЕНТОВ
 Live updates: BlackRock's IBIT drives $236 million bitcoin ETF outflow
 A Fed rate increase would be a mistake, some observers say as bitcoin, gold, stocks fall
+CrowdStrike and federal authorities dismantle Russian malware that secretly stole crypto for 8 years
