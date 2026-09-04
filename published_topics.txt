@@ -1,4 +1,3 @@
-Crypto Long & Short: Crypto VCs are mistaking consensus for discipline
 DOJ says Hamas crypto seizures reached $560,000 as FBI took over fundraising sites
 Coinbase launches regulated crypto derivatives in Canada
 Dogecoin becomes only losing bet for Japan-listed firm as it sells altcoins for bitcoin
@@ -18,3 +17,4 @@ From warning to listing: UK’s largest retail investment platform opens access 
 U.S. Sheriff’s association shifts opposition stance to Clarity Act to 'neutral'
 AMC CEO tells Robinhood to stop issuing stock token as industry executives weigh in
 U.S. added stronger than expected 162,000 jobs in August as labor market bounced back
+We checked 6 years of bitcoin data. The NFP report isn't big price mover
