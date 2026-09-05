@@ -1,4 +1,3 @@
-OpenAI puts $1 billion behind cyber defense after unveiling AI that can find zero-days
 IMF confirms El Salvador’s bitcoin growth was funded by private donations, not public money
 Zcash jumps 20% to landmark $1,000 level as short sellers lose $34 million
 From warning to listing: UK’s largest retail investment platform opens access to crypto ETNs
@@ -18,3 +17,4 @@ Dollar-backed stablecoins can push local currencies lower, Bank of Korea study f
 Why crypto experts say buying and holding bitcoin easily beats trying to time the market
 Ancient Bitcoin Wallet That Turned $120 Into $3 Million Wakes Up
 What Is Robinhood Chain? The Ethereum Layer-2 Network for Tokenized Stocks and Meme Coins
+Update Your Browser: Google Patches Chrome Flaw Hackers Were Already Using
