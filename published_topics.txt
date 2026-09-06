@@ -1,4 +1,3 @@
-U.S. added stronger than expected 162,000 jobs in August as labor market bounced back
 We checked 6 years of bitcoin data. The NFP report isn't big price mover
 Pineapple Financial puts $1B in mortgage records on Injective
 FinCEN ties $13B in crypto scams to non-US operations
@@ -18,3 +17,4 @@ DAOs are forcing crypto protocols to choose between code and emergency brakes
 From power laws to AI networks, why complex Bitcoin price models memorize market noise
 Tether-backed Orionx to shut down after audit flags $7M custody gap
 Solana’s weekly ETF inflows fell 97% while CME funds became less net short
+Satoshi-era Bitcoin wakes after 16 years of dormancy as 600 BTC moves
