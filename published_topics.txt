@@ -1,4 +1,3 @@
-U.S. Sheriff’s association shifts opposition stance to Clarity Act to 'neutral'
 AMC CEO tells Robinhood to stop issuing stock token as industry executives weigh in
 U.S. added stronger than expected 162,000 jobs in August as labor market bounced back
 We checked 6 years of bitcoin data. The NFP report isn't big price mover
@@ -18,3 +17,4 @@ Update Your Browser: Google Patches Chrome Flaw Hackers Were Already Using
 Users exposed by Trezor breach grows sixfold after supposedly deleted shipping logs are found
 DAOs are forcing crypto protocols to choose between code and emergency brakes
 From power laws to AI networks, why complex Bitcoin price models memorize market noise
+Tether-backed Orionx to shut down after audit flags $7M custody gap
