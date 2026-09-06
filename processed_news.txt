@@ -2263,3 +2263,4 @@ https://decrypt.co/resources/what-robinhood-chain-ethereum-layer-2-network-token
 https://decrypt.co/377501/google-chrome-zero-day-exploited
 https://cryptoslate.com/users-exposed-by-trezor-breach-grows-sixfold-after-supposedly-deleted-shipping-logs-are-found/
 https://cryptoslate.com/daos-are-forcing-crypto-protocols-to-choose-between-code-and-emergency-brakes/
+https://cryptoslate.com/the-smartest-bitcoin-price-models-keep-losing-to-the-dumbest-forecast/
