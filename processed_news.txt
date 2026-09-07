@@ -2277,3 +2277,4 @@ https://cointelegraph.com/magazine/white-hats-take-4000-btc-from-liquid-btc-etfs
 https://decrypt.co/377494/pencil-finance-1-million-student-loan
 https://www.coindesk.com/markets/2026/09/07/this-cat-memecoin-has-paid-holders-usd2-8-million-in-zcash-as-zec-tops-usd1-200
 https://www.coindesk.com/tech/2026/09/07/solana-to-triple-transaction-size-as-apps-get-room-for-more-complex-trades
+https://www.coindesk.com/business/2026/09/07/dbs-and-citi-enable-instant-24-7-cross-border-tokenised-deposit-payments-on-the-swift-ledger
