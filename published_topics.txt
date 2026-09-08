@@ -1,4 +1,3 @@
-DAOs are forcing crypto protocols to choose between code and emergency brakes
 From power laws to AI networks, why complex Bitcoin price models memorize market noise
 Tether-backed Orionx to shut down after audit flags $7M custody gap
 Solana’s weekly ETF inflows fell 97% while CME funds became less net short
@@ -18,3 +17,4 @@ Polish prosecutors charge fifth suspect in a massive crypto probe
 Stablecoin wallets challenge traditional bank accounts as main consumer money hub
 Ethereum commits to letting users pay gas fees without having to hold ETH
 Metaplanet CEO breaks silence but shareholders say the hard questions remain unanswered
+UK financial watchdog weighs lifting prediction markets ban: Report
