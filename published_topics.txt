@@ -1,4 +1,3 @@
-This Crypto Project Just Funded 1,000 Student Loans Entirely On-Chain
 This cat memecoin has paid holders $2.8 million in Zcash as ZEC tops $1,200
 Solana to triple transaction size as apps get room for more complex trades
 DBS and Citi complete weekend USD payment via Swift’s Digital Ledger using tokenized deposits
@@ -18,3 +17,4 @@ Visa combines VisaNet data with onchain lending to power stablecoin card working
 Ethereum makes quantum resistance a top priority with a 2029 deadline
 New York town weighs crypto mining and AI data center ban
 Moonshot’s Kimi rattled markets. U.S. agencies now say it was trained on American models
+India’s financial intelligence unit flags 15 crypto platforms for AML lapses
