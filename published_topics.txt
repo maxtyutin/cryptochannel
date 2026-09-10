@@ -1,4 +1,3 @@
-Ethereum makes quantum resistance a top priority with a 2029 deadline
 New York town weighs crypto mining and AI data center ban
 Moonshot’s Kimi rattled markets. U.S. agencies now say it was trained on American models
 India’s financial intelligence unit flags 15 crypto platforms for AML lapses
@@ -18,3 +17,4 @@ MoneyGram unveils stablecoin-backed card as digital dollars move into everyday s
 OKX brings OpenAI and Anthropic bets to Europe as pre-IPO trading grows
 Why a new SEC plan could ease a legal headache for tokenized securities
 New Clarity Act text tweaks DeFi, credit union provisions, but road ahead for bill remains murky
+Europe’s top regulator questions Polymarket and Kalshi’s EU access, warns of authorization gaps
