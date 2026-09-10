@@ -2306,3 +2306,5 @@ https://www.coindesk.com/business/2026/09/09/consensys-to-split-metamask-into-it
 https://cointelegraph.com/news/doublezero-adds-kalshi-election-market-data-ahead-of-us-midterms?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/consensys-to-split-into-metamask-and-institutional-blockchain-company?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/trm-labs-doubles-valuation-to-2b-in-series-c-expansion?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/us-sanctions-xinbi-restrains-52m-crypto?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/377831/bitcoin-wallet-trezor-hackers-breach-email
