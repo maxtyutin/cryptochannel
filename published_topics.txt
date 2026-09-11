@@ -1,4 +1,3 @@
-KYC data is an irresistible honeypot for hackers, and we must change how it is collected
 Kalshi election data goes live on DoubleZero ahead of U.S. midterms
 Robinhood’s CEO Vlad Tenev fires back at AMC CEO in escalating fight over stock tokens
 U.S. Treasury sanctions another widespread cyber-scam hub, Xinbi Guarantee
@@ -18,3 +17,4 @@ Polymarket names former Amazon finance chief Warren Jenson as its first CFO
 Metaplanet equity backlash, SE Asia crypto funding doubles: Asia Express
 Kalshi wants 24/7 Tesla and Nvidia perps as Wall Street fights over who regulates them
 Live updates: Bitcoin sinks to $77,000 as CPI lands with hike odds near 70%
+Bitcoin pulls back as another golden cross fails to deliver
