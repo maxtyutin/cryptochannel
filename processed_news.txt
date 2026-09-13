@@ -2363,3 +2363,4 @@ https://www.coindesk.com/opinion/2026/09/13/quantum-proof-blockchain-why-math-no
 https://www.coindesk.com/policy/2026/09/13/is-clarity-dead-a-vibes-based-analysis-state-of-crypto
 https://www.coindesk.com/news-analysis/2026/09/11/crypto-s-clarity-act-is-a-schroedinger-s-cat-in-life-death-limbo-as-u-s-senate-returns
 https://decrypt.co/378103/ai-agents-spending-money-research
+https://cryptoslate.com/hackers-mint-trillions-in-fake-bitcoin-but-15-btc-bridge-recovery-leaves-liquidity-providers-unpaid/
