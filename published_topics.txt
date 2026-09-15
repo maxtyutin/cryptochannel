@@ -1,4 +1,3 @@
-Quantum-proof blockchain: why math, not machines, holds the key
 Is Clarity dead? A vibes-based analysis: State of Crypto
 AI Agents Spending Money Online? New Research Says Not Really
 Hackers mint trillions in fake Bitcoin, but 15 BTC bridge recovery leaves liquidity providers unpaid
@@ -18,3 +17,4 @@ Velocity extends Series A to $48M at $200M valuation with backing from Visa, Cir
 European Central Bank calls for merchants to participate in digital euro pilot
 Standard Chartered predicts Arbitrum's ARB to rise 70-fold to $10, citing Robinhood Chain revenue
 Crypto stocks sink after Senate rejects Clarity Act
+Solana lender Kamino taps fintech veteran Michael Weisz as CEO for massive U.S. expansion
