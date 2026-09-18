@@ -1,4 +1,3 @@
-Fed raises rates by 25 basis points in first hike since July 2023
 Celsius sues BitMEX for $495 million over 2020 crash liquidations
 U.S. House's tax committee advances crypto tax bill in wake of Clarity Act loss
 US lawmakers advance bill to lock Trump’s Bitcoin reserve into law
@@ -18,3 +17,4 @@ Layer-2 and DeFi tokens lead broad crypto advance as post-Fed hike nerves fade
 DHS’s predictive policing is unconstitutional, un-American and should be stopped
 Crypto tech provider Haruko hit by cyberattack affecting 15 clients, some funds lost
 ECB President Christine Lagarde intervened to block Binance’s EU MiCA license: WSJ
+Zcash targets November upgrade to make private payments up to three times faster
