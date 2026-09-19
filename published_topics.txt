@@ -1,4 +1,3 @@
-CFTC expands regulatory relief for passive trading software providers
 North Korea drives onchain malware surge, CoinEx shuts: Asia Express
 SBI Group backs payments firm dtcpay in $25 million funding round
 XRP on the brink of a golden cross as focus switches to altcoins
@@ -18,3 +17,4 @@ Ripple says asset managers are preparing for XRP Ledger’s next payments upgrad
 VanEck criticizes Metaplanet over executive dilution despite compensation cuts
 Bastion wins conditional OCC approval for national trust bank charter
 Bitcoin's Sharpest Rally in Two Years Ran Almost Entirely on Short Liquidations
+Grayscale Is Making Its Red-Hot Zcash ETF More Affordable
