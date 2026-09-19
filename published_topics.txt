@@ -1,4 +1,3 @@
-US lawmakers advance bill to lock Trump’s Bitcoin reserve into law
 Zcash jumps 23% as bitcoin and major tokens rise despite Fed’s first hike since 2023
 Ripple adds XRP payments to Stripe and Tempo’s AI standard in new developer kit
 How Circle’s institutional Arc blockchain got taken over by memecoins on day one
@@ -18,3 +17,4 @@ ECB President Christine Lagarde intervened to block Binance’s EU MiCA license:
 Zcash targets November upgrade to make private payments up to three times faster
 Coinbase files to bring single-stock perpetual futures to US market
 Binance launches 24/7 FX perps with weekend pricing system
+Crypto stocks rebound after CLARITY Act selloff
