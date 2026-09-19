@@ -2434,3 +2434,7 @@ https://www.coindesk.com/tech/2026/09/18/zcash-targets-november-upgrade-to-make-
 https://cointelegraph.com/news/coinbase-files-to-bring-single-stock-perpetual-futures-to-us-market?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/binance-expands-tradfi-push-with-247-foreign-exchange-perpetuals?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/crypto-stocks-rebound-after-clarity-selloff-as-us-regulators-move-ahead?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/cftc-submits-crypto-market-regulation-plan-for-white-house-review?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/378681/coinbase-single-stock-perps-apple-tesla-nvidia
+https://decrypt.co/378667/zcash-upgrade-make-private-payments-3x-faster
+https://decrypt.co/378664/kevin-oleary-bitcoin-1-million-quantum-catch
