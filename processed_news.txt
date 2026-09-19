@@ -2440,3 +2440,4 @@ https://decrypt.co/378667/zcash-upgrade-make-private-payments-3x-faster
 https://decrypt.co/378664/kevin-oleary-bitcoin-1-million-quantum-catch
 https://cointelegraph.com/news/hong-kong-jails-former-banker-over-16b-false-credit-cryptocurrency-bribes-report?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://www.coindesk.com/markets/2026/09/17/we-have-lost-control-crypto-pioneer-warns-ai-could-trigger-systemic-banking-and-infrastructure-shocks
+https://www.coindesk.com/tech/2026/09/19/ripple-says-asset-managers-are-preparing-for-xrp-ledger-s-next-payments-upgrade
