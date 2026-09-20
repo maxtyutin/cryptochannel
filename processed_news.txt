@@ -2451,3 +2451,4 @@ https://cointelegraph.com/news/bastion-wins-conditional-occ-approval-for-nationa
 https://decrypt.co/378688/how-clarity-act-defeat-sec-cftc-wheel-crypto
 https://decrypt.co/378686/bitcoin-sharpest-rally-two-years-short-liquidations
 https://decrypt.co/378675/grayscale-zcash-etf-more-affordable-split
+https://decrypt.co/378674/solana-heartbeat-quickens-speed-upgrade
