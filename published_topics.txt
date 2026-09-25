@@ -1,4 +1,3 @@
-Crypto Long & Short: Inside the chain settling $150 billion of stablecoins a week
 White House adviser defends President Trump's crypto ties in wake of Clarity Act defeat
 Kalshi says it is not being investigated by the CFTC over trading activity
 Former Hack VC partner Hsin-Ju Chuang found dead following public dispute with the firm
@@ -18,3 +17,4 @@ Bitcoin holders are cashing out, just not the way they did at prior market tops
 Circle and Tether step in to freeze hacker wallet after massive Bitget crypto heist
 Tokenization is moving faster than Washington
 Tether confirms minimal EQIBank exposure following $89M US asset seizure
+Another appeals court rules against prediction market provider Kalshi, says sports contracts are subject to state regulations
