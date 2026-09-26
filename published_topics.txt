@@ -1,4 +1,3 @@
-Dogecoin down 8%, bitcoin under $84,000 as Treasury yields hit highest level since 2007
 EU financial watchdogs warn quantum computing poses imminent threat to blockchain encryption
 Brooklyn man sent to prison for 12 years for stealing $16M in a Coinbase phishing scheme
 Cathie Wood's ARK teams with Securitize to tokenize venture fund with OpenAI, Anthropic stakes
@@ -18,3 +17,4 @@ U.S. SEC's steadiest crypto advocate, Hester Peirce, to depart next week
 Blockchain Association sees leadership shift shortly after crypto Clarity Act fizzles
 Solana’s 150-millisecond settlement upgrade reaches second public test network
 XRP Ledger’s Batch upgrade slips to Oct. 9 after validator support resets
+Bitcoin could soon get Zcash-style 'shielded' privacy without changing its rules
