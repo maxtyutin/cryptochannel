@@ -1,4 +1,3 @@
-Former Hack VC partner Hsin-Ju Chuang found dead following public dispute with the firm
 Inside the FBI’s little-known annual crypto crime gathering
 Dogecoin down 8%, bitcoin under $84,000 as Treasury yields hit highest level since 2007
 EU financial watchdogs warn quantum computing poses imminent threat to blockchain encryption
@@ -18,3 +17,4 @@ Tether confirms minimal EQIBank exposure following $89M US asset seizure
 Another appeals court rules against prediction market provider Kalshi, says sports contracts are subject to state regulations
 U.S. SEC's steadiest crypto advocate, Hester Peirce, to depart next week
 Blockchain Association sees leadership shift shortly after crypto Clarity Act fizzles
+Solana’s 150-millisecond settlement upgrade reaches second public test network
