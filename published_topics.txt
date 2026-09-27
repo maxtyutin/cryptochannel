@@ -1,4 +1,3 @@
-Another appeals court rules against prediction market provider Kalshi, says sports contracts are subject to state regulations
 U.S. SEC's steadiest crypto advocate, Hester Peirce, to depart next week
 Blockchain Association sees leadership shift shortly after crypto Clarity Act fizzles
 Solana’s 150-millisecond settlement upgrade reaches second public test network
@@ -18,3 +17,4 @@ Vitalik Buterin maps Ethereum’s shift beyond a blockchain in sweeping 2030 vis
 SEC Staff Says Token Buybacks Don't Make Crypto a Security—If the Network Works
 Solana’s plan for fairer trades stalls as block producers still choose which orders get in
 Pump Fun is not authorized to solicit some Canadian investors, AMF warns
+Aave’s live stock-token loans expose USDC lenders to a weekend price gap
