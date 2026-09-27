@@ -2540,3 +2540,6 @@ https://www.coindesk.com/news-analysis/2026/09/27/how-months-of-work-on-the-clar
 https://cointelegraph.com/news/riot-platforms-repays-200m-credit-facility-releases-collateral?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/news/australia-summons-openai-anthropic-chiefs-to-senate-inquiry-on-health-data-hack-report?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://www.coindesk.com/tech/2026/09/27/vitalik-buterin-maps-ethereum-s-shift-beyond-a-blockchain-in-sweeping-2030-vision
+https://decrypt.co/379402/ai-agents-keep-escaping-creators-control
+https://decrypt.co/379400/bitcoins-quantum-problem-three-ways-researchers-are-trying-to-fix-it
+https://decrypt.co/379398/sec-staff-token-buybacks-dont-make-crypto-security
