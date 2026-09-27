@@ -1,4 +1,3 @@
-Tokenization is moving faster than Washington
 Tether confirms minimal EQIBank exposure following $89M US asset seizure
 Another appeals court rules against prediction market provider Kalshi, says sports contracts are subject to state regulations
 U.S. SEC's steadiest crypto advocate, Hester Peirce, to depart next week
@@ -18,3 +17,4 @@ Riot Platforms repays $200M credit facility, releases collateral
 Australia asks OpenAI, Anthropic chiefs to Senate inquiry on rogue hack: Report
 Vitalik Buterin maps Ethereum’s shift beyond a blockchain in sweeping 2030 vision
 SEC Staff Says Token Buybacks Don't Make Crypto a Security—If the Network Works
+Solana’s plan for fairer trades stalls as block producers still choose which orders get in

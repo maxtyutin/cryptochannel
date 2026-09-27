@@ -2543,3 +2543,4 @@ https://www.coindesk.com/tech/2026/09/27/vitalik-buterin-maps-ethereum-s-shift-b
 https://decrypt.co/379402/ai-agents-keep-escaping-creators-control
 https://decrypt.co/379400/bitcoins-quantum-problem-three-ways-researchers-are-trying-to-fix-it
 https://decrypt.co/379398/sec-staff-token-buybacks-dont-make-crypto-security
+https://cryptoslate.com/solanas-plan-for-fairer-trades-stalls-as-block-producers-still-choose-which-orders-get-in/
