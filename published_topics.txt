@@ -1,4 +1,3 @@
-XRP Ledger’s Batch upgrade slips to Oct. 9 after validator support resets
 Bitcoin could soon get Zcash-style 'shielded' privacy without changing its rules
 Kraken’s parent Payward is betting billions on becoming financial infrastructure, not just a crypto exchange
 Binance deal gives Circle a boost in stablecoin race with Tether, analysts say
@@ -18,3 +17,4 @@ Aave’s live stock-token loans expose USDC lenders to a weekend price gap
 Zano rolls blockchain back a month after Gateway Address exploit
 California's Newsom signs memecoin ban and calls it 'The Opposite of Trump'
 AI agents could drain cheap bank deposits, Apollo's Torsten Slok warns
+Chainlink launches new version of its crypto bridge tech 'CCIP' to give apps more control over their security
