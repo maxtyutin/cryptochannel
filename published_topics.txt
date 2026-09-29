@@ -1,4 +1,3 @@
-Australia asks OpenAI, Anthropic chiefs to Senate inquiry on rogue hack: Report
 Vitalik Buterin maps Ethereum’s shift beyond a blockchain in sweeping 2030 vision
 SEC Staff Says Token Buybacks Don't Make Crypto a Security—If the Network Works
 Solana’s plan for fairer trades stalls as block producers still choose which orders get in
@@ -18,3 +17,4 @@ Zcash developers begin moving Tachyon code into faster private-payment software
 Ethereum users get another way to pay privately as zk.money returns after three years
 Cboe, S&P Dow Jones may explore tokenized options contracts under extended licensing deal
 Democrats killed the Clarity Act
+Robinhood adds AI agents, perps and weekend trading in push to win active traders
