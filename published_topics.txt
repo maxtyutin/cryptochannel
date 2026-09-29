@@ -1,4 +1,3 @@
-Saylor outlines ‘bill of digital rights’ to help build prosperity in future economy
 Riot Platforms repays $200M credit facility, releases collateral
 Australia asks OpenAI, Anthropic chiefs to Senate inquiry on rogue hack: Report
 Vitalik Buterin maps Ethereum’s shift beyond a blockchain in sweeping 2030 vision
@@ -18,3 +17,4 @@ Near Intents blocks $50 million in Bitget hacker swaps, here's what happened
 Bitcoin beats gold, surge to $100,000 in play
 Zcash developers begin moving Tachyon code into faster private-payment software
 Ethereum users get another way to pay privately as zk.money returns after three years
+Cboe, S&P Dow Jones may explore tokenized options contracts under extended licensing deal
