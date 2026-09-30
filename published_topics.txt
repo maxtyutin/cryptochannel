@@ -1,4 +1,3 @@
-SEC Staff Says Token Buybacks Don't Make Crypto a Security—If the Network Works
 Solana’s plan for fairer trades stalls as block producers still choose which orders get in
 Pump Fun is not authorized to solicit some Canadian investors, AMF warns
 Aave’s live stock-token loans expose USDC lenders to a weekend price gap
@@ -18,3 +17,4 @@ Cboe, S&P Dow Jones may explore tokenized options contracts under extended licen
 Democrats killed the Clarity Act
 Robinhood adds AI agents, perps and weekend trading in push to win active traders
 Trump accord calls for tech firms to ‘self police’ their own frontier AI
+Winklevoss-owned Gemini switches Zcash software ahead of faster 25-second blocks
