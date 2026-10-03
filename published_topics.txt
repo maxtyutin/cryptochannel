@@ -1,4 +1,3 @@
-Standard Chartered sees Ethena’s USDe reaching $40B, ENA hitting $2
 Crypto advocacy group announces picks for US Congress as midterms loom
 MetaMask exits Ethereum validators amid undisclosed security incident
 Dogecoin gets DeFi testnet as DogeOS bets miners will eventually secure its apps
@@ -18,3 +17,4 @@ Once a $2 billion Ethereum layer-2, Blast is shutting down after assets plunge 9
 Trump’s potential AI czar, Jay Clayton, helped pioneer the SEC’s crypto crackdown
 European crypto users have ‘more faith’ in regulated firms under MiCA: Bitpanda co-CEO
 $4.2B crypto bank Anchorage Digital cuts 17% of workforce: Report
+NEAR Intents recovers entire stolen $3.8M after ultimatum to exploiter
