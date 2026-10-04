@@ -2614,3 +2614,6 @@ https://decrypt.co/380019/trump-jay-clayton-sec-ripple-ai-push-super-intelligenc
 https://decrypt.co/380017/banking-group-sues-block-crypto-side-door-banking
 https://decrypt.co/380007/uptober-starts-green-bitcoin-etfs-draw-134-million
 https://www.coindesk.com/policy/2026/10/04/there-s-an-election-next-month-state-of-crypto
+https://decrypt.co/380014/near-intents-recovers-3-8-million-after-48-hour-ultimatum
+https://cryptoslate.com/bitcoins-85000-recovery-awaits-proof-that-etf-investors-kept-buying-after-payrolls/
+https://cryptoslate.com/bitcoin-cores-new-fix-closes-gap-that-could-redirect-funds-without-stealing-keys/
