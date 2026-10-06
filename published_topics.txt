@@ -1,4 +1,3 @@
-NEAR Intents recovers entire stolen $3.8M after ultimatum to exploiter
 Crypto's Sisyphean struggle
 Payments firm OpenPayd targets year-end Nasdaq listing to fund U.S. expansion and acquisitions
 Crypto job postings triple to over 1,200 in September, but applications fall
@@ -18,3 +17,4 @@ U.S. dollar climbs to 18-month high as bitcoin holds firm around $86,000
 Stripe to expand stablecoin cards to over 100 countries by the end of the year
 Crypto's campaign arm, Fairshake, sets lists of U.S. House favorites it'll spend on
 More than 60 U.S. stocks including Nvidia and Tesla are headed onchain. Here’s how it works
+U.S. CFTC joins SEC in proposing crypto regulations, though spot-market gap lingers
