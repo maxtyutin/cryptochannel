@@ -1,4 +1,3 @@
-Crypto's Sisyphean struggle
 Payments firm OpenPayd targets year-end Nasdaq listing to fund U.S. expansion and acquisitions
 Crypto job postings triple to over 1,200 in September, but applications fall
 Cathie Wood says smart investors need to start watching where AI agents spend money
@@ -18,3 +17,4 @@ Stripe to expand stablecoin cards to over 100 countries by the end of the year
 Crypto's campaign arm, Fairshake, sets lists of U.S. House favorites it'll spend on
 More than 60 U.S. stocks including Nvidia and Tesla are headed onchain. Here’s how it works
 U.S. CFTC joins SEC in proposing crypto regulations, though spot-market gap lingers
+U.S. scraps proposed $10,000 reporting rule for for crypto sent to private wallets
