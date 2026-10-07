@@ -1,4 +1,3 @@
-Bitcoin Core’s new fix closes gap that could redirect funds without stealing keys
 Ethereum’s past outflow charts can change when more exchange wallets are identified
 Safe investor asks Swiss watchdog to intervene in governance dispute
 U.S. dollar climbs to 18-month high as bitcoin holds firm around $86,000
@@ -18,3 +17,4 @@ Robinhood adds bitcoin worth $25 million to its balance sheet
 Ether is about to lose a steady buyer as Tom Lee says Bitmine will stop token purchases
 Gate bets all-in-one money app is crypto’s biggest consumer trend this year and next
 Polygon taps TRON’s $94 billion stablecoin supply for seamless cross-border transfers
+Wells Fargo in talks with Kraken parent Payward for crypto trading liquidity
