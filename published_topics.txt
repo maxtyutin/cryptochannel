@@ -1,4 +1,3 @@
-'Uptober' Starts Green as Bitcoin ETFs Draw $134 Million
 There's an election next month: State of Crypto
 Bitcoin Core’s new fix closes gap that could redirect funds without stealing keys
 Ethereum’s past outflow charts can change when more exchange wallets are identified
@@ -18,3 +17,4 @@ Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing
 Pudgy Penguins-backed Abstract to shut down after ‘tens of millions’ in losses
 Robinhood adds bitcoin worth $25 million to its balance sheet
 Ether is about to lose a steady buyer as Tom Lee says Bitmine will stop token purchases
+Gate bets all-in-one money app is crypto’s biggest consumer trend this year and next
