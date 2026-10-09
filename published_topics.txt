@@ -1,4 +1,3 @@
-Peter Thiel-backed Founders Fund leads a $5 million token buy in crypto collateral protocol Anvil
 Conduit sues Tether over allegedly freezing $2.8M without explanation
 Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing
 Pudgy Penguins-backed Abstract to shut down after ‘tens of millions’ in losses
@@ -18,3 +17,4 @@ Top Democrat among Senate investigators probes ties between Cantor Fitzgerald, T
 Crypto crumbles as anniversary of flash crash nears
 XRP Ledger adds new controls for banks, stablecoins and tokenized funds
 DWF Labs subsidiaries sue BitGo for $141 million over alleged token lock-up breach
+Zcash developers set January target for quantum-resistant payments after ‘bunker mode’ scare
