@@ -1,4 +1,3 @@
-Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing
 Pudgy Penguins-backed Abstract to shut down after ‘tens of millions’ in losses
 Robinhood adds bitcoin worth $25 million to its balance sheet
 Ether is about to lose a steady buyer as Tom Lee says Bitmine will stop token purchases
@@ -18,3 +17,4 @@ XRP Ledger adds new controls for banks, stablecoins and tokenized funds
 DWF Labs subsidiaries sue BitGo for $141 million over alleged token lock-up breach
 Zcash developers set January target for quantum-resistant payments after ‘bunker mode’ scare
 New York AG secures up to $35 million and lifetime crypto ban from Celsius’ Alex Mashinsky
+Robinhood Chain considers technology that gives paying traders priority
