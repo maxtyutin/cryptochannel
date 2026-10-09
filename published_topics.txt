@@ -1,4 +1,3 @@
-Pudgy Penguins-backed Abstract to shut down after ‘tens of millions’ in losses
 Robinhood adds bitcoin worth $25 million to its balance sheet
 Ether is about to lose a steady buyer as Tom Lee says Bitmine will stop token purchases
 Gate bets all-in-one money app is crypto’s biggest consumer trend this year and next
@@ -18,3 +17,4 @@ DWF Labs subsidiaries sue BitGo for $141 million over alleged token lock-up brea
 Zcash developers set January target for quantum-resistant payments after ‘bunker mode’ scare
 New York AG secures up to $35 million and lifetime crypto ban from Celsius’ Alex Mashinsky
 Robinhood Chain considers technology that gives paying traders priority
+U.S. CFTC moves to fold event contracts into swaps regulations as legal fight rages
