@@ -1,4 +1,3 @@
-Crypto is expanding the boundaries of what can be priced
 Peter Thiel-backed Founders Fund leads a $5 million token buy in crypto collateral protocol Anvil
 Conduit sues Tether over allegedly freezing $2.8M without explanation
 Winklevoss-backed Zcash ETF files with SEC for Nasdaq listing
@@ -18,3 +17,4 @@ Wall Street's tokenization boom could have bigger winners than bitcoin and ether
 Top Democrat among Senate investigators probes ties between Cantor Fitzgerald, Tether
 Crypto crumbles as anniversary of flash crash nears
 XRP Ledger adds new controls for banks, stablecoins and tokenized funds
+DWF Labs subsidiaries sue BitGo for $141 million over alleged token lock-up breach
