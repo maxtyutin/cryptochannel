@@ -1,4 +1,3 @@
-Crypto Long & Short: Zcash and the case for privacy in the age of AI
 Crypto news site Cointelegraph seeks buyer after web traffic plunges
 Ripple is earning fees financing leveraged stock bets, a business long run by banks
 Bitcoin and ether holders urged to enter ‘bunker mode’ against possible AI attacks
@@ -18,3 +17,4 @@ US plans to seize $1B in crypto linked to Iran this week: Scott Bessent
 Bitcoin's volatility has plunged, but extreme price swings are more frequent than in 2018
 Tokenized commodities look beyond gold as lending and oil open new markets
 Robinhood Chain slowdown spreads from fees to trading as transactions fall more than 40%
+Justin Sun says Tron’s post-quantum cryptography has gone live on testnet
