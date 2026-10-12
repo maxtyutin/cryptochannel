@@ -1,4 +1,3 @@
-U.S. CFTC moves to fold event contracts into swaps regulations as legal fight rages
 Ledger investigates potential wallet tampering after reports of $86 million in crypto stolen
 US plans to seize $1B in crypto linked to Iran this week: Scott Bessent
 Bitcoin's volatility has plunged, but extreme price swings are more frequent than in 2018
@@ -18,3 +17,4 @@ Bitcoin, Ethereum and Solana ETFs All in the Red for October
 XRP Ledger defends emergency patch for unlimited XRP bug
 Ledger says unauthorized implant found in at least one device sold by CryptoBilis
 Tom Lee sees $2 trillion wealth transfer fueling crypto demand as Bitmine buys more ether
+Palantir's Europe head warns the region is 'missing the boat' on AI just as it did with the internet
