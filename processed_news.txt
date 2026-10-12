@@ -2682,3 +2682,4 @@ https://cointelegraph.com/news/ledger-confirms-unauthorized-hardware-implant-los
 https://cointelegraph.com/news/cftc-proposals-aimed-at-separating-prediction-markets-from-casino-gambling?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://decrypt.co/380653/tokenized-stocks-show-real-demand-but-remain-volatile-and-illiquid-imf-finds
 https://decrypt.co/380640/bitcoin-ethereum-solana-etfs-red-october
+https://cointelegraph.com/news/xrp-ledger-defends-emergency-patch-for-unlimited-xrp-bug?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
