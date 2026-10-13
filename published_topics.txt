@@ -1,4 +1,3 @@
-Tokenized commodities look beyond gold as lending and oil open new markets
 Robinhood Chain slowdown spreads from fees to trading as transactions fall more than 40%
 Justin Sun says Tron’s post-quantum cryptography has gone live on testnet
 Sam Altman-backed Bitcoin life insurer, Meanwhile, raises more funds
@@ -17,4 +16,5 @@ Tom Lee sees $2 trillion wealth transfer fueling crypto demand as Bitmine buys m
 Palantir's Europe head warns the region is 'missing the boat' on AI just as it did with the internet
 Tokenized catastrophe bonds target the disaster-insurance gap
 Standard Chartered offers RLUSD custody in Dubai and plans LMAX collateral link
-FTX’s crypto mining venture is now used to advance AI 
+FTX’s crypto mining venture is now used to advance AI
+Bitcoin whale that sat through the March 2020 crash moves $378 million
