@@ -1,4 +1,3 @@
-Stablecoin supply stalls, but payments jump 45% as Visa, Mastercard and Stripe connect crypto to cash
 Wall Street freaked out Friday. VIX and bitcoin say the fear may fade Monday.
 The White House's crypto chief departs: State of Crypto
 Latvia eyes crypto tax payments in 2027 as parliament overhauls crypto taxation
@@ -18,3 +17,4 @@ JPMorgan sees 10% annual bitcoin returns, topping stocks, bonds and gold over ne
 France's parliament approves vote to hit stablecoin trades with 31% capital gains tax
 BlackRock seeks to shield bitcoin investors from losses after rival fund weathers 50% crash
 The Coinbase allegations expose Bitcoin's corporate governance gap
+Kazakhstan court bars Coinbase, five others from unlicensed crypto services in Astana International Financial Centre
