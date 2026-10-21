@@ -1,4 +1,3 @@
-U.S. CFTC rebuffs CME legal stance in consequential fight over perpetual futures
 Zerohash rolls out a new tool to move crypto without copying wallet addresses
 Tether: Senator's investigation misses positive work that's led to lower Iran volumes
 Solana treasury firm SkyAI sells all SOL holdings, launches $201M buyback
@@ -18,3 +17,4 @@ Why centralized exchanges refuse to list legacy crypto tokens without explicit S
 How a16z-backed DATA is rethinking its blockchain strategy after $30 million Sui deal
 Trump to throw spotlight on overseas crypto abuses at White House event
 Bybit will look for big broker partnerships to take on Robinhood in the U.S.
+Crypto Long & Short: Why real-world assets need fixed-rate loans onchain
