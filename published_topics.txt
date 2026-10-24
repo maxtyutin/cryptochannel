@@ -1,4 +1,3 @@
-American Bankers Association: OCC’s GENIUS rules ‘undermine’ US Congress
 Bitcoin ETFs attract $1.08 billion in 3 days but it may not be enough for a steep rally
 Asian stocks tumble, bitcoin retreats as China enters bear market
 Bitcoin slides below $82,000 as AI doubts return, with DeFi tokens leading declines
@@ -18,3 +17,4 @@ IRS plans lower tax disclosure penalties, including for crypto: Forbes
 Wells Fargo and five others object to OKX-ICE tokenized stock listings: Report
 Initia halts blockchain after exploit reportedly drains over $2.6M
 Franklin Templeton adds $150 million in fund shares to XRP Ledger, all in one wallet
+SEC flags tokenization as high-risk area in 2027 market examinations
