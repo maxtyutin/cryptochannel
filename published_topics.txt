@@ -1,4 +1,3 @@
-Bybit will look for big broker partnerships to take on Robinhood in the U.S.
 Crypto Long & Short: Why real-world assets need fixed-rate loans onchain
 American Bankers Association: OCC’s GENIUS rules ‘undermine’ US Congress
 Bitcoin ETFs attract $1.08 billion in 3 days but it may not be enough for a steep rally
@@ -18,3 +17,4 @@ Bitcoin Core changes security rules as AI makes finding code bugs dangerously ea
 Live updates: Bitcoin holds above $81,000 as oil prices hit six-month high
 IRS plans lower tax disclosure penalties, including for crypto: Forbes
 Wells Fargo and five others object to OKX-ICE tokenized stock listings: Report
+Initia halts blockchain after exploit reportedly drains over $2.6M
