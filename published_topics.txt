@@ -1,4 +1,3 @@
-Wells Fargo and five others object to OKX-ICE tokenized stock listings: Report
 Initia halts blockchain after exploit reportedly drains over $2.6M
 Franklin Templeton adds $150 million in fund shares to XRP Ledger, all in one wallet
 SEC flags tokenization as high-risk area in 2027 market examinations
@@ -18,3 +17,4 @@ Bitcoin ETFs Snap Two-Week Losing Streak Despite Late-Week Slide
 Latvia targets tokenization rules in 2027 with commercial property in focus
 ECB official sees digital euro as key to protecting EU ‘sovereignty’
 How $37 million stolen from Americans moved through a Bahamas bank into Tether’s USDT
+Paolo Ardoino wants AI to run Bitcoin mines. Who gets permission to act?
