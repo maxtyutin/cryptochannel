@@ -1,4 +1,3 @@
-Ripple gets a final go-ahead to launch its own U.S. national trust bank
 Crypto wallet maker Keystone to destroy almost 19,000 devices after security breach
 Bitcoin shows signs of weakness while Ripple's bank win fails to bolster XRP
 Nasdaq-100 comes onchain as Janus Henderson and Centrifuge launch first licensed fund
@@ -18,3 +17,4 @@ The chart bitcoin traders should be paying attention to
 A new framework for tokenized asset tracking
 Polymarket brings ultra-short crypto prediction markets to U.S. platform
 Stanley Druckenmiller's first X post backs Hyperliquid venture after $23 million indirect investment
+Polymarket suspends trading after third-party breach leads to user losses
