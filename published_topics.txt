@@ -1,4 +1,3 @@
-CF Benchmarks brings Wall Street pricing infrastructure onchain, including data used by BlackRock
 Treasury's Bessent sees crypto as America's next tool for keeping the U.S. dollar on top
 Robinhood's crypto revenue fell 55% from last year, but topped Street forecasts
 U.S. agency hits Utah with lawsuit to shield Kalshi's ability to offer betting there
@@ -18,3 +17,4 @@ Polymarket suspends trading after third-party breach leads to user losses
 Binance loses $5.7 billion in largest crypto hack to date
 KuCoin exits Russia and Belarus as crypto exchanges withdraw from Western-sanctioned markets
 India's largest exchange curbs crypto futures trading as Binance incident disrupts liquidity
+Strategy CFO Andrew Kang resigns as company posts record operating profit
