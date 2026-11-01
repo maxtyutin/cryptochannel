@@ -1,4 +1,3 @@
-Polymarket suspends trading after third-party breach leads to user losses
 Binance loses $5.7 billion in largest crypto hack to date
 KuCoin exits Russia and Belarus as crypto exchanges withdraw from Western-sanctioned markets
 India's largest exchange curbs crypto futures trading as Binance incident disrupts liquidity
@@ -18,3 +17,4 @@ Traders are already placing leveraged bets on Anthropic’s IPO using crypto con
 Texas brothers sentenced to 15 years in prison for armed crypto robbery, kidnapping
 Why AI Models Cheat: Reward Hacking, Explained
 Bitcoin’s recovery faces rising derivatives exposure and $643 million in ETF outflows
+Solana’s reward records leave stakers with a gap in validator fee data
