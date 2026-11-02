@@ -2923,3 +2923,5 @@ https://cointelegraph.com/news/thorchain-halts-swaps-after-block-reorg-bug-slowi
 https://cointelegraph.com/news/binance-net-outflows-surge-to-58b-as-withdrawals-resume-after-record-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://decrypt.co/382309/bitcoin-etf-investors-exits-record-binance-hack
 https://decrypt.co/382295/how-to-run-ai-model-locally-why-you-might-want
+https://www.coindesk.com/markets/2026/11/02/bitcoin-eases-to-usd77-900-as-binance-customers-pull-usd3-6-billion-after-withdrawals-reopen
+https://www.coindesk.com/markets/2026/11/02/metals-io-issues-tokens-backed-by-25-tonnes-of-physical-copper-stored-in-germany
