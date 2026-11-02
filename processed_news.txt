@@ -2919,3 +2919,7 @@ https://www.coindesk.com/policy/2026/11/01/the-crypto-reader-s-guide-to-the-2026
 https://www.coindesk.com/tech/2026/11/01/ai-agents-bypassed-crypto-spending-limits-without-human-approval-researchers-find-in-a-new-test
 https://cointelegraph.com/news/deepseek-developing-ai-agent-requiring-less-human-input-report?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
 https://cointelegraph.com/magazine/36b-flees-binance-on-reopen-thorchain-co-founder-opposes-coin-freeze-hodlers-digest?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/thorchain-halts-swaps-after-block-reorg-bug-slowing-binance-hackers?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://cointelegraph.com/news/binance-net-outflows-surge-to-58b-as-withdrawals-resume-after-record-hack?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound
+https://decrypt.co/382309/bitcoin-etf-investors-exits-record-binance-hack
+https://decrypt.co/382295/how-to-run-ai-model-locally-why-you-might-want
