@@ -1,4 +1,3 @@
-AI agents bypassed crypto spending limits without human approval, researchers find in a new test
 DeepSeek developing AI agent requiring less human input: Report
 $3.64B flees Binance on reopen, THORChain co-founder opposes coin freeze: Hodler’s Digest
 How to Run an AI Model Locally—And Why You Might Want To
@@ -18,3 +17,4 @@ Live updates: Crypto's big election gamble faces voters as Democrats gain ground
 ZachXBT names French bank Crédit Mutuel Arkéa as suspected victim of $133 million crypto theft
 The election changes Washington. The work on crypto continues
 U.S. Democratic sweep could be the final nail in the ‘Clarity Act’s coffin’
+Wall Street rethinks AI data center boom as Texas election raises new risks
