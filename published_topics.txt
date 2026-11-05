@@ -1,4 +1,3 @@
-Metals.io issues tokens backed by 25 tonnes of physical copper stored in Germany
 Brazil’s Mercado Bitcoin halts withdrawals after $40 million drained across 10 chains
 EU entity suspected of losing $106 million from crypto exchange accounts, ZachXBT says
 NYSE tokenized stock plans take shape as four more transfer agents join
@@ -18,3 +17,4 @@ Wall Street rethinks AI data center boom as Texas election raises new risks
 Tokenization and stablecoins may weather Democrats' sweep as broader crypto rules face uncertainty
 Crypto's Washington hopes fade, but Grayscale and BlackRock see growth ahead
 Trump Media moves $342 million in bitcoin to Crypto.com, blockchain data show
+Bitcoin is resilient, but leverage is missing and demand still tepid
