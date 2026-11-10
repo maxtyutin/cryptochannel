@@ -1,4 +1,3 @@
-Gnosis Pay breach exposes card details, personal data and crypto wallet information
 US sanctions Canadian money-exchange firms over Iran ties
 Bitcoin holders have received eCash — What can you do with it?
 Ex-FBI counterintelligence agent stole almost $2.5M in crypto
@@ -18,3 +17,4 @@ Coinbase gets full U.S. trust charter from federal banking regulator
 A bitcoin block just neared a 2015 transaction record, but paid only $180 in fees
 Robinhood backs tokenization of its stock on OKX–ICE platform even as most companies opt out
 Google’s AI chip push adds more pressure on Nvidia
+Securitize pushes into $6 trillion asset-backed finance market with River One acquisition
