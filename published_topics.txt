@@ -1,4 +1,3 @@
-A bitcoin block just neared a 2015 transaction record, but paid only $180 in fees
 Robinhood backs tokenization of its stock on OKX–ICE platform even as most companies opt out
 Google’s AI chip push adds more pressure on Nvidia
 Securitize pushes into $6 trillion asset-backed finance market with River One acquisition
@@ -18,3 +17,4 @@ MSCI confirms Strategy’s removal from indexes at end of November
 Suiet wallet to shut down in latest exit from Sui ecosystem
 Canaan may sell more bitcoin for stock buybacks as mining-rig revenue falls 96%
 Jupiter adds Anchorage-backed USDGO to its $1 billion Solana lending platform
+DTCC adds Solana to Wall Street tokenization plans, targeting 2027 rollout
