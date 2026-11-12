@@ -1,4 +1,3 @@
-What the election results mean for crypto: State of Crypto
 Stablecoin growth has stalled. The payments boom hasn't
 Vitalik ‘pivots’ ETH to store of value, crypto suffers after US midterms: Hodler’s Digest
 Coinbase gets full U.S. trust charter from federal banking regulator
@@ -18,3 +17,4 @@ Bitcoin holds steady as CoreWeave earnings revive AI outlook, Anthropic said to 
 Meet Spiko, the largest tokenized fund in the world you’ve probably never heard about
 Crypto Long & Short: The GENIUS Act’s guarantees don’t cover DeFi lending
 Bitcoin barely flinches at hot CPI as ETF selling slows
+MSCI confirms Strategy’s removal from indexes at end of November
